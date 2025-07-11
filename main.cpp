@@ -1,6 +1,7 @@
 #include <iostream>
 using namespace std;
 #include <cstdlib> //FOR EXIT()
+#include <cstdint> //FOR uint64_t
 #define MAXGAMEMOVES 2048
 #define BOARD_SQ_NUM 120
 // You define this only in debugging
@@ -49,9 +50,9 @@ struct s_board
 
 };
 
-int smalltobig(int f,int r)
+int smalltobig(int file,int rank)
 {
-    return (f+21)+(r*10);
+    return (file+21)+(rank*10);
 }
 int sq64tosq120[64];        //8 * 8
 int sq120tosq64[BOARD_SQ_NUM];// 10 * 12
@@ -92,12 +93,32 @@ void print12064()
         cout<<sq120tosq64[i]<<" ";
     }
 }
+
+void PrintBitBoard(uint64_t bb)    //PARAMETER(BITBOARD)
+{
+    uint64_t shiftme=1ULL;
+    int sq=0;
+    int sq64=0;
+    for(int rank=8;rank>0;rank--)
+    {
+        for(int file=1;file<=8;file++)
+            {
+                sq=smalltobig(file,rank);   //passing file,rank to get 10 * 12 index
+                sq64++; 
+                if((shiftme<<sq64) && bb)   //IF PIECE PRESENT
+                cout<<"X ";
+                else cout<<"- ";
+            }
+        cout<<endl;
+    }
+}
+
 int main()
 {
-    init120to64();
-    print12064();
-    cout<<endl;
-    
+    //init120to64();
+    //print12064();
+    uint64_t bb=0ULL;
+    PrintBitBoard(bb);    
     //ASSERT(5==4);
     cout<<"end";
 }
