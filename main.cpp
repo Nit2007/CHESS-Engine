@@ -3,20 +3,23 @@ using namespace std;
 #include <cstdlib> //FOR EXIT()
 #define MAXGAMEMOVES 2048
 #define BOARD_SQ_NUM 120
+// You define this only in debugging
+#define DEBUG       
 
-#define DEBUG 
-#ifndef DEBUG      //checks if debug is defined
-#define ASSERT(n)
+#ifndef DEBUG       //CHECKS IF DEBUG IS DEFINED
+// In release mode: do nothing
+    #define ASSERT(n)            
 #else
-    #define ASSERT(n)                       \
-        if(!n){                             \
-            cerr<<#n<<"-failed\n";           \
-            cerr<<"on"<<__DATE__<<endl;         \
-            cerr<<"at"<<__TIME__<<endl;         \
-            cerr<<"in file "<<__FILE__<<endl;   \
-            cerr<<"at line" << __LINE__<<endl;  \
-            exit(1)                  ;}
-
+// In debug mode: do actual checking        // Print error info and exit
+    #define ASSERT(n)                           \
+        if (!(n)) {                             \ 
+            cerr << #n << " - Failed\n";        \
+            cerr << "On " << __DATE__ << endl;  \
+            cerr << "At " << __TIME__ << endl;  \
+            cerr << "In File " << __FILE__ << endl; \
+            cerr << "At Line " << __LINE__ << endl; \
+            exit(1);                            \
+        }
 #endif
 struct s_undo
 {
@@ -79,13 +82,14 @@ void print12064()
 {
     for(int i=0;i<64;i++)
     {
+        if(i!=0 && i%8==0)cout<<endl;
         cout<<sq64tosq120[i]<<" ";
-        if(i%8==0)cout<<endl;
     }
+    cout<<endl<<endl;
     for(int i=0;i<BOARD_SQ_NUM;i++)
     {
+        if(i!=0 && i%10==0)cout<<endl;
         cout<<sq120tosq64[i]<<" ";
-        if(i%10==0)cout<<endl;
     }
 }
 int main()
@@ -93,8 +97,8 @@ int main()
     init120to64();
     print12064();
     cout<<endl;
-    int x=5;
-    ASSERT(x==4);
+    
+    //ASSERT(5==4);
     cout<<"end";
 }
 
