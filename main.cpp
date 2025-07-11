@@ -93,34 +93,42 @@ void print12064()
         cout<<sq120tosq64[i]<<" ";
     }
 }
-
+int SQ64(int sq120) {
+    return sq120tosq64[sq120];
+}
 void PrintBitBoard(uint64_t bb)    //PARAMETER(BITBOARD)
 {
     uint64_t shiftme=1ULL;
     int sq=0;
     int sq64=0;
-    for(int rank=8;rank>0;rank--)
+    for(int rank=7;rank>=0;rank--)
     {
-        for(int file=1;file<=8;file++)
+        for(int file=0;file<=7;file++)
             {
                 sq=smalltobig(file,rank);   //passing file,rank to get 10 * 12 index
-                sq64++; 
-                if((shiftme<<sq64) && bb)   //IF PIECE PRESENT
+                sq64= SQ64(sq);
+                //sq64++; 
+                if((bb & (shiftme<<sq64))!=0)   //IF PIECE PRESENT
                 cout<<"X ";
                 else cout<<"- ";
             }
         cout<<endl;
     }
+    cout<<endl<<endl;
 }
 
 int main()
 {
-    //init120to64();
+    init120to64();
     //print12064();
     uint64_t bb=0ULL;
-    PrintBitBoard(bb);    
+    PrintBitBoard(bb);   
+    
+    bb=15ULL;
+    PrintBitBoard(bb);   
+
+    bb=8ULL;
+    PrintBitBoard(bb);   
     //ASSERT(5==4);
     cout<<"end";
 }
-
-
