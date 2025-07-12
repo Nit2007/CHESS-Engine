@@ -103,7 +103,7 @@ void PrintBitBoard(uint64_t bb)    //PARAMETER(BITBOARD)
     int sq64=0;
     for(int rank=7;rank>=0;rank--)
     {
-        for(int file=0;file<=7;file++)
+        for(int file=0;file<8;file++)
             {
                 sq=smalltobig(file,rank);   //passing file,rank to get 10 * 12 index
                 sq64= SQ64(sq);
@@ -116,15 +116,46 @@ void PrintBitBoard(uint64_t bb)    //PARAMETER(BITBOARD)
     }
     cout<<endl<<endl;
 }
+//FOR CONVERTING CHESS SQUARE NAME TO (FILE,RANK)
+int square120[8][8];
+void initsquare120(){
+for(int rank=0;rank<8;rank++)
+    {
+        for(int file=0;file<8;file++)
+            {
+                square120[rank][file]=smalltobig(file,rank);
+            }
+    }
+}
+int fileCharToIndex(char c) {
+    return tolower(c) - 'a'; // 'a' = 0
+}
+
+int rankCharToIndex(char c) {
+    return c - '1'; // '1' = 0
+}
+
+int getSquareFromString(const string& sq) {
+    if (sq.length() != 2) return -1;
+    int file = fileCharToIndex(sq[0]);
+    int rank = rankCharToIndex(sq[1]);
+    if (file < 0 || file > 7 || rank < 0 || rank > 7) return -1;
+    return square120[rank][file];
+}
+
 
 int main()
 {
     init120to64();
     //print12064();
+    initsquare120();
     uint64_t bb=0ULL;
     PrintBitBoard(bb);   
     
-    bb=15ULL;
+    
+    int sq120=getSquareFromString("d2");
+    //bb<<sq120;
+    bb|=(1ULL<<SQ64(sq120));
     PrintBitBoard(bb);   
 
     bb=8ULL;
