@@ -5,6 +5,7 @@ extern int sq64tosq120[64];
 extern int sq120tosq64[BOARD_SQ_NUM];
 extern int square120[8][8];
 
+void allinit();
 int smalltobig(int file,int rank);
 void init120to64();
 void print12064();
@@ -19,9 +20,7 @@ int getSquareFromString(const string& sq);
 
 int main()
 {
-    init120to64();
-    //print12064();
-    initsquare120();
+    allinit();
     uint64_t bb=0ULL;
     PrintBitBoard(bb);   
     //bb=8ULL;
