@@ -1,6 +1,8 @@
 #include "defs.h"
 #include "struct.h"
 
+uint64_t setBitMask[64];
+uint64_t clearBitMask[64];
 // Bitboard utility functions
 
 void PrintBitBoard(uint64_t bb)    //PARAMETER(BITBOARD)
@@ -48,4 +50,18 @@ int countBitBoard(uint64_t bb)
             bb = bb>>1;
         }
     return count;
+}
+
+void initBitMask()
+{
+    for(int index=0;index<64;index++)
+        {
+            setBitMask[index]=0ULL;
+            clearBitMask[index]=0ULL;
+        }
+    for(int index=0;index<64;index++)
+        {
+            setBitMask[index]= (1ULL<<index);
+            clearBitMask[index]= ~setBitMask[index];
+        }
 }
