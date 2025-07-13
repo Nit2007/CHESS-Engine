@@ -198,13 +198,11 @@ int main()
     cout<<"COUNT : "<<countBitBoard(bb)<<endl;
     PrintBitBoard(bb);
 
-    cout<<"POPPED : "<<popBitBoard(&bb); PrintBitBoard(bb);
-    cout<<"POPPED : "<<popBitBoard(&bb); PrintBitBoard(bb);
-    cout<<"POPPED : "<<popBitBoard(&bb); PrintBitBoard(bb);
-    cout<<"POPPED : "<<popBitBoard(&bb); PrintBitBoard(bb);
-     PrintBitBoard(bb);
+    cout<<"POPPED : "<<popBitBoard(&bb)<<endl; PrintBitBoard(bb);
+    cout<<"POPPED : "<<popBitBoard(&bb)<<endl; PrintBitBoard(bb);
+    cout<<"POPPED : "<<popBitBoard(&bb)<<endl; PrintBitBoard(bb);
     
-    PrintBitBoard(bb);   
+   
     //ASSERT(5==4);
     cout<<"end";
 }
