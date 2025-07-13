@@ -143,6 +143,31 @@ int getSquareFromString(const string& sq) {
     return square120[rank][file];
 }
 
+int popBitBoard(uint64_t *bb)//Removes (pops) the least significant bit (LSB) from the bitboard
+{//Returns the index (0–63) of the bit that was removed
+    if(*bb==0)return -1;
+    uint64_t b=*bb;
+    int index=0;
+    
+    while( (b & 1ULL) == 0 )
+        {
+            index++;
+            b = b>>1;
+        }
+    *bb &= (*bb-1);
+    return index;
+}
+
+int countBitBoard(uint64_t bb)
+{
+    int count=0;
+    while( bb)
+        {
+            if( (bb & 1ULL))count++;
+            bb = bb>>1;
+        }
+    return count;
+}
 
 int main()
 {
@@ -151,14 +176,34 @@ int main()
     initsquare120();
     uint64_t bb=0ULL;
     PrintBitBoard(bb);   
-    
+    //bb=8ULL;
     
     int sq120=getSquareFromString("d2");
-    //bb<<sq120;
     bb|=(1ULL<<SQ64(sq120));
-    PrintBitBoard(bb);   
+    cout<<"COUNT : "<<countBitBoard(bb)<<endl;
+    PrintBitBoard(bb);  
 
-    bb=8ULL;
+    sq120=getSquareFromString("d3");
+    bb|=(1ULL<<SQ64(sq120));
+    cout<<"COUNT : "<<countBitBoard(bb)<<endl;
+    PrintBitBoard(bb);
+
+    sq120=getSquareFromString("d4");
+    bb|=(1ULL<<SQ64(sq120));
+    cout<<"COUNT : "<<countBitBoard(bb)<<endl;
+    PrintBitBoard(bb);
+
+    sq120=getSquareFromString("d7");
+    bb|=(1ULL<<SQ64(sq120));
+    cout<<"COUNT : "<<countBitBoard(bb)<<endl;
+    PrintBitBoard(bb);
+
+    cout<<"POPPED : "<<popBitBoard(&bb); PrintBitBoard(bb);
+    cout<<"POPPED : "<<popBitBoard(&bb); PrintBitBoard(bb);
+    cout<<"POPPED : "<<popBitBoard(&bb); PrintBitBoard(bb);
+    cout<<"POPPED : "<<popBitBoard(&bb); PrintBitBoard(bb);
+     PrintBitBoard(bb);
+    
     PrintBitBoard(bb);   
     //ASSERT(5==4);
     cout<<"end";
