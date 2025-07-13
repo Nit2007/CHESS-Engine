@@ -48,6 +48,14 @@ int main()
     cout<<"POPPED : "<<popBitBoard(&bb)<<endl; PrintBitBoard(bb);
     cout<<"POPPED : "<<popBitBoard(&bb)<<endl; PrintBitBoard(bb);
     cout<<"POPPED : "<<popBitBoard(&bb)<<endl; PrintBitBoard(bb);
+
+    uint64_t playbitboard = 0ULL;
+    for(int i=0;i<64;i++)
+        {
+        cout<<"index : "<<i<<endl;
+        PrintBitBoard(setBitBoard[i]);
+        cout<<endl;
+        }
     
    
     //ASSERT(5==4);
