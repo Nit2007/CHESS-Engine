@@ -1,5 +1,5 @@
-#include "defs.h"
-#include "struct.h"
+#include "defs.hpp"
+#include "struct.hpp"
 
 int sq64tosq120[64];        //8 * 8
 int sq120tosq64[BOARD_SQ_NUM];// 10 * 12
