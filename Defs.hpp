@@ -37,7 +37,7 @@ void initsquare120();
 int fileCharToIndex(char c);
 int rankCharToIndex(char c);
 int getSquareFromString(const string& sq);
-void setBit(uint64_t bb , int sq);
-void clearBit(uint64_t bb , int sq);
+void setBit(uint64_t &bb , int sq);
+void clearBit(uint64_t &bb , int sq);
 
 
