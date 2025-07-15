@@ -1,5 +1,5 @@
-#include "defs.h"
-#include "struct.h"
+#include "defs.hpp"
+#include "struct.hpp"
 
 uint64_t setBitMask[64];
 uint64_t clearBitMask[64];
