@@ -1,5 +1,5 @@
 #pragma once 
-#include "Defs.hpp";
+#include "Defs.hpp"
 
 struct s_undo
 {
