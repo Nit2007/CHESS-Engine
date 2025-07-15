@@ -44,6 +44,10 @@ int main()
         PrintBitBoard(setBitBoard[i]);
         cout<<endl;
         }
+    cout<<"-------------------------------------------------------------------------------";
+    PrintBitBoard(bb);
+    setbit(bb,62);PrintBitBoard(bb);
+    clearbit(bb,62);PrintBitBoard(bb);
     
    
     //ASSERT(5==4);
