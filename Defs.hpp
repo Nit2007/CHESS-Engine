@@ -22,3 +22,18 @@ using namespace std;
             exit(1);                            \
         }
 #endif
+
+
+void allinit();
+int smalltobig(int file,int rank);
+void init120to64();
+void print12064();
+int SQ64(int sq120);
+void PrintBitBoard(uint64_t bb);
+int popBitBoard(uint64_t *bb);
+int countBitBoard(uint64_t bb);
+void initsquare120();
+int fileCharToIndex(char c);
+int rankCharToIndex(char c);
+int getSquareFromString(const string& sq);
+
