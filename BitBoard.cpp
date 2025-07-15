@@ -66,12 +66,12 @@ void initBitMask()
         }
 }
 
-void setBit(uint64_t bb , int sq)
+void setBit(uint64_t &bb , int sq)
 {
     bb|=setBitMask[sq];
 }
 
-void clearBit(uint64_t bb , int sq)
+void clearBit(uint64_t &bb , int sq)
 {
      bb&=clearBitMask[sq];
 }
