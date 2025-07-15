@@ -1,3 +1,4 @@
+#pragma once 
 #include "Defs.hpp";
 
 struct s_undo
