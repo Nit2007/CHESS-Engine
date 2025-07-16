@@ -1,5 +1,5 @@
-#include "Defs.hpp"
-#include "Struct.hpp"
+#include "Defs.h"
+#include "Struct.h"
 
 uint64_t setBitMask[64];
 uint64_t clearBitMask[64];
@@ -31,7 +31,7 @@ int popBitBoard(uint64_t *bb)//Removes (pops) the least significant bit (LSB) fr
     if(*bb==0)return -1;
     uint64_t b=*bb;
     int index=0;
-    
+
     while( (b & 1ULL) == 0 )
         {
             index++;
@@ -64,14 +64,4 @@ void initBitMask()
             setBitMask[index]= (1ULL<<index);
             clearBitMask[index]= ~setBitMask[index];
         }
-}
-
-void setBit(uint64_t &bb , int sq)
-{
-    bb|=setBitMask[sq];
-}
-
-void clearBit(uint64_t &bb , int sq)
-{
-     bb&=clearBitMask[sq];
 }
