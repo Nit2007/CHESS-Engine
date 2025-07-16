@@ -1,5 +1,5 @@
-#include "defs.h"
-#include "struct.h"
+#include "Defs.h"
+#include "Struct.h"
 
 extern int sq64tosq120[64];
 extern int sq120tosq64[BOARD_SQ_NUM];
