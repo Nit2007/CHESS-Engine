@@ -46,8 +46,8 @@ int main()
         }
     cout<<"-------------------------------------------------------------------------------";
     PrintBitBoard(bb);
-    setbit(bb,62);PrintBitBoard(bb);
-    clearbit(bb,62);PrintBitBoard(bb);
+    setBit(bb,62);PrintBitBoard(bb);
+    clearBit(bb,62);PrintBitBoard(bb);
     
    
     //ASSERT(5==4);
