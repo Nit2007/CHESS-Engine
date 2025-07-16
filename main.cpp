@@ -168,7 +168,32 @@ int countBitBoard(uint64_t bb)
         }
     return count;
 }
+uint64_t setBitMask[64];
+uint64_t clearBitMask[64];
+void initBitMask()
+{
+    for(int index=0;index<64;index++)
+        {
+            setBitMask[index]=0ULL;
+            clearBitMask[index]=0ULL;
+        }
+    for(int index=0;index<64;index++)
+        {
+            setBitMask[index]= (1ULL<<index);
+            clearBitMask[index]= ~setBitMask[index];
+        }
+}
 
+void setBit(uint64_t &bb , int sq)
+{
+    bb|=setBitMask[sq];
+}
+
+
+void clearBit(uint64_t &bb , int sq)
+{
+     bb&=clearBitMask[sq];
+}
 int main()
 {
     init120to64();
@@ -202,7 +227,8 @@ int main()
     cout<<"POPPED : "<<popBitBoard(&bb)<<endl; PrintBitBoard(bb);
     cout<<"POPPED : "<<popBitBoard(&bb)<<endl; PrintBitBoard(bb);
     
-   
+   setBit(bb,60);PrintBitBoard(bb);
+   clearBit(bb,60); PrintBitBoard(bb);
     //ASSERT(5==4);
     cout<<"end";
 }
