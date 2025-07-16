@@ -1,15 +1,9 @@
-#include "Defs.hpp"
-#include "Struct.hpp"
+#include "Defs.h"
+#include "Struct.h"
 
 int sq64tosq120[64];        //8 * 8
 int sq120tosq64[BOARD_SQ_NUM];// 10 * 12
 
-void allinit()
-{
-    init120to64();
-    initsquare120();
-    initBitMask();
-}
 int smalltobig(int file,int rank)
 {
     return (file+21)+(rank*10);
