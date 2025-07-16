@@ -226,9 +226,10 @@ int main()
     cout<<"POPPED : "<<popBitBoard(&bb)<<endl; PrintBitBoard(bb);
     cout<<"POPPED : "<<popBitBoard(&bb)<<endl; PrintBitBoard(bb);
     cout<<"POPPED : "<<popBitBoard(&bb)<<endl; PrintBitBoard(bb);
-    
-   setBit(bb,60);PrintBitBoard(bb);
-   clearBit(bb,60); PrintBitBoard(bb);
+    uint64_t bp=0ULL;
+    initBitMask();
+   setBit(bp,60);PrintBitBoard(bp);
+   clearBit(bp,60); PrintBitBoard(bp);
     //ASSERT(5==4);
-    cout<<"end";
+    cout<<"end"<<endl;
 }
