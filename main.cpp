@@ -13,7 +13,7 @@ using namespace std;
 #else
 // In debug mode: do actual checking        // Print error info and exit
     #define ASSERT(n)                           \
-        if (!(n)) {                             \ 
+        if (!(n)) {                             \
             cerr << #n << " - Failed\n";        \
             cerr << "On " << __DATE__ << endl;  \
             cerr << "At " << __TIME__ << endl;  \
@@ -47,7 +47,7 @@ struct s_board
     
     int ply;
     int hisply;
-    //int castleperm;
+    int castleperm;
     
     uint64_t poskey;
 
@@ -218,13 +218,72 @@ void clearBit(uint64_t &bb , int sq)
 {
      bb&=clearBitMask[sq];
 }
-int main()
+
+
+#define RAND_64 ((uint64_t)rand() | \
+                ((uint64_t)rand() << 15) | \
+                ((uint64_t)rand() << 30) | \
+                ((uint64_t)rand() << 45) | \
+                (((uint64_t)rand() & 0xF) << 60))
+
+
+
+uint64_t PieceKeys[13][120];
+uint64_t SideKey;
+uint64_t CastleKeys[16];
+
+void InitHashKeys() {
+   for (int index = 0; index < 13; ++index) {
+        for (int index2 = 0; index2 < 120; ++index2) {
+            PieceKeys[index][index2] = RAND_64;
+        }
+    }
+SideKey = RAND_64;
+    for (int index = 0; index < 16; ++index) {
+        CastleKeys[index] = RAND_64;
+    }
+}
+
+uint64_t GeneratePosKey(const s_board* pos) {
+    int sq = 0;
+    int piece = EMPTY;
+    uint64_t finalKey = 0;
+
+    for (sq = 0; sq < BRD_SQ_NUM; ++sq) {
+        piece = pos->pieces[sq];
+        if (piece != NO_SQ && piece != EMPTY) {
+            ASSERT(piece >= WP && piece <= BK);
+            finalKey ^= PieceKeys[piece][sq];
+        }
+    }
+
+    if (pos->side == WHITE) {
+        finalKey ^= SideKey;
+    }
+
+    if (pos->enpas != NO_SQ) {
+        ASSERT(pos->enpas >= 0 && pos->enpas < BRD_SQ_NUM);
+        finalKey ^= PieceKeys[EMPTY][pos->enpas];
+    }
+
+    ASSERT(pos->castleperm >= 0 && pos->castleperm <= 15);
+    finalKey ^= CastleKeys[pos->castleperm];
+
+    return finalKey;
+}
+
+void allinit()
 {
     init120to64();
-    //print12064();
     initsquare120();
+    InitHashKeys();
+}
+int main()
+{
+    allinit();
+    
     uint64_t bb=0ULL;
-    PrintBitBoard(bb);   
+    PrintBitBoard(bb);   //print12064();
     //bb=8ULL;
     
     int sq120=getSquareFromString("d2");
