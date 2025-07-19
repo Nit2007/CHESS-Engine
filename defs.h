@@ -68,5 +68,6 @@ extern int rankCharToIndex(char c) ;
 extern int getSquareFromString(const string& sq);
 extern void InitHashKeys();
 extern uint64_t GeneratePosKey(const s_board* pos) ;
+extern void ResetBoard( s_board* pos);
 extern void allinit();
 
