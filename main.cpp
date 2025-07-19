@@ -1,15 +1,6 @@
 #include "defs.h"
 #include "struct.h"
 
-extern void PrintBitBoard(uint64_t bb);
-extern int getSquareFromString(const string& sq);
-extern int SQ64(int sq120);
-extern int countBitBoard(uint64_t bb);
-extern int popBitBoard(uint64_t *bb);
-extern void initBitMask();
-extern void setBit(uint64_t &bb , int sq);
-extern void clearBit(uint64_t &bb , int sq);
-extern void allinit();
 
 int main()
 {
