@@ -46,3 +46,27 @@ enum Bool {FALSE, TRUE};
                 ((uint64_t)rand() << 30) | \
                 ((uint64_t)rand() << 45) | \
                 (((uint64_t)rand() & 0xF) << 60))
+// bitboard.cpp
+extern int sq64tosq120[64];        //8 * 8
+extern int sq120tosq64[BOARD_SQ_NUM];// 10 * 12
+extern void init120to64();
+extern void void print12064();
+extern void PrintBitBoard(uint64_t bb);
+extern int SQ64(int sq120);
+extern int countBitBoard(uint64_t bb);
+extern int popBitBoard(uint64_t *bb);
+extern uint64_t setBitMask[64];
+extern uint64_t clearBitMask[64];
+extern void initBitMask();
+extern void setBit(uint64_t &bb , int sq);
+extern void clearBit(uint64_t &bb , int sq);
+extern int smalltobig(int file,int rank);
+// board.cpp
+extern void initsquare120();
+extern int fileCharToIndex(char c);
+extern int rankCharToIndex(char c) ;
+extern int getSquareFromString(const string& sq);
+extern void InitHashKeys();
+extern uint64_t GeneratePosKey(const s_board* pos) ;
+extern void allinit();
+
