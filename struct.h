@@ -24,8 +24,8 @@ struct s_board
     int enpas;
     int fifty;
     
-    int ply;
-    int hisply;
+    int ply;          //NUMBER OF HALF MOVES PLAYED IN THE CURRENT SEARCH ( resets to 0 in a new search )
+    int hisply;       // total NUMBER OF half HISTORY MOVES PLAYED IN THE WHOLE GAME
     int castleperm;
     
     uint64_t poskey;
