@@ -71,6 +71,41 @@ uint64_t GeneratePosKey(const s_board* pos) {
 
     return finalKey;
 }
+void ResetBoard( s_board* pos)
+{
+    for(int i=0;i<BOARD_SQ_NUM;i++)
+    {
+        pos->pieces[i]=OFFBOARD;
+    }
+    for(int i=0;i<64;i++)
+    { //  8*8 is setted as EMPTY ,LEAVING REMAINING OFFBOARD
+        pos->pieces[smalltobig(i)]=EMPTY;
+    }
+    for(int i=0;i<3;i++)
+    {
+         pos->pawns[i]=0ULL;
+         pos->bigpce[i]=0;
+         pos->majpce[i]=0;
+         pos->minpce[i]=0;
+    }
+    for(int i=0;i<13;i++)
+    {//piecelist[13][10]
+        for(int j = 0; j < 10; j++) {
+            piecelist[i][j]=0;
+        }
+    }
+    pos->king[WHITE]=pos->king[BLACK]= NO_SQ ; //int king[3];
+
+     pos->side=BOTH;    //int side;
+     pos->enpas=NO_SQ;   //int enpas;
+     pos->fifty=0;  //int fifty;
+
+     pos->ply=0;          //NUMBER OF HALF MOVES PLAYED IN THE CURRENT SEARCH ( resets to 0 in a new search )
+     pos->hisply=0;       // total NUMBER OF half HISTORY MOVES PLAYED IN THE WHOLE GAME
+     pos->castleperm=0;
+    
+     pos->poskey=0ULL;        //uint64_t poskey;
+}
 
 void allinit()
 {
