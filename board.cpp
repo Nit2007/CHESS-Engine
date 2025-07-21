@@ -106,6 +106,82 @@ void ResetBoard( s_board* pos)
     
      pos->poskey=0ULL;        //uint64_t poskey;
 }
+void Parse_FEN(char* fen,s_board*pos)
+{
+    ASSERT(fen!=NULL);
+    ASSERT(pos!=NULL);
+    int piece =0; int count=1;int sq120=0;    int rank=RANK_8;    int file=FILE_A;
+    ResetBoard(pos);
+    while(rank>=RANK_1 && *fen)
+    {
+      count=1;
+       if (*fen >= '1' && *fen <= '8') 
+       {
+           count = *fen - '0';
+           piece = EMPTY;
+        } else {
+            switch (*fen) {
+                case 'p': piece = BP; break;
+                case 'r': piece = BR; break;
+                case 'n': piece = BN; break;
+                case 'b': piece = BB; break;
+                case 'k': piece = BK; break;
+                case 'q': piece = BQ; break;
+                case 'P': piece = WP; break;
+                case 'R': piece = WR; break;
+                case 'N': piece = WN; break;
+                case 'B': piece = WB; break;
+                case 'K': piece = WK; break;
+                case 'Q': piece = WQ; break;
+                case '/':
+                case ' ':
+                    rank--;
+                    file = FILE_A;
+                    fen++;
+                    continue;
+                default:
+                    cerr << "FEN error at: " << *fen << endl;
+                    return;
+            }
+        }
+
+        for (int j = 0; j < count; j++) {
+            if (piece != EMPTY) {
+                sq120 = smalltobig(file, rank);
+                pos->pieces[sq120] = piece;
+            }
+            file++;
+        }
+        fen++;
+    }
+
+    // ========== Side to Move ========== //
+    while (*fen == ' ') fen++;
+    pos->side = (*fen == 'w') ? WHITE : BLACK;
+    fen++;
+
+    // ========== Castling Rights ========== //
+    while (*fen == ' ') fen++;
+    while (*fen != ' ') {
+        switch (*fen) {
+            case 'K': pos->castleperm |= WKCA; break;
+            case 'Q': pos->castleperm |= WQCA; break;
+            case 'k': pos->castleperm |= BKCA; break;
+            case 'q': pos->castleperm |= BQCA; break;
+            case '-': break;
+        }
+        fen++;
+    }
+    
+      // ========== En Passant Square ========== //
+    while (*fen == ' ') fen++;
+    if (*fen != '-') {
+        file = fen[0] - 'a';
+        rank = fen[1] - '1';
+        pos->enpas = smalltobig(file, rank);
+    }
+    pos->poskey = GeneratePosKey(pos);
+}
 
 void allinit()
 {
