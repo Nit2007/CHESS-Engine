@@ -3,6 +3,7 @@
 using namespace std;
 #include <cstdlib> //FOR EXIT()
 #include <cstdint> //FOR uint64_t
+#include "struct.h"
 
 #define MAXGAMEMOVES 2048
 #define BOARD_SQ_NUM 120
