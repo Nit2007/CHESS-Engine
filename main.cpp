@@ -6,37 +6,15 @@ int main()
 {
     allinit();
     
-    uint64_t bb=0ULL;
-    PrintBitBoard(bb);   //print12064();
-    //bb=8ULL;
+    s_board B;
+    Parse_FEN(START_FEN,B);
+    PrintBoard(B);
+    Parse_FEN(FEN_1,B);
+    PrintBoard(B);
+    Parse_FEN(FEN_2,B);
+    PrintBoard(B);
+    Parse_FEN(FEN_3,B);
+    PrintBoard(B);
     
-    int sq120=getSquareFromString("d2");
-    bb|=(1ULL<<SQ64(sq120));
-    cout<<"COUNT : "<<countBitBoard(bb)<<endl;
-    PrintBitBoard(bb);  
-
-    sq120=getSquareFromString("d3");
-    bb|=(1ULL<<SQ64(sq120));
-    cout<<"COUNT : "<<countBitBoard(bb)<<endl;
-    PrintBitBoard(bb);
-
-    sq120=getSquareFromString("d4");
-    bb|=(1ULL<<SQ64(sq120));
-    cout<<"COUNT : "<<countBitBoard(bb)<<endl;
-    PrintBitBoard(bb);
-
-    sq120=getSquareFromString("d7");
-    bb|=(1ULL<<SQ64(sq120));
-    cout<<"COUNT : "<<countBitBoard(bb)<<endl;
-    PrintBitBoard(bb);
-
-    cout<<"POPPED : "<<popBitBoard(&bb)<<endl; PrintBitBoard(bb);
-    cout<<"POPPED : "<<popBitBoard(&bb)<<endl; PrintBitBoard(bb);
-    cout<<"POPPED : "<<popBitBoard(&bb)<<endl; PrintBitBoard(bb);
-    uint64_t bp=0ULL;
-    initBitMask();
-   setBit(bp,60);PrintBitBoard(bp);
-   clearBit(bp,60); PrintBitBoard(bp);
-    //ASSERT(5==4);
     cout<<"*************end*************"<<endl<<endl<<endl;
 }
