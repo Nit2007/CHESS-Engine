@@ -91,7 +91,7 @@ void ResetBoard( s_board* pos)
     for(int i=0;i<13;i++)
     {//piecelist[13][10]
         for(int j = 0; j < 10; j++) {
-            piecelist[i][j]=0;
+            pos->piecelist[i][j]=0;
         }
     }
     pos->king[WHITE]=pos->king[BLACK]= NO_SQ ; //int king[3];
