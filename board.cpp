@@ -182,7 +182,35 @@ void Parse_FEN(char* fen,s_board*pos)
     }
     pos->poskey = GeneratePosKey(pos);
 }
-
+string pce=".PNBRQKpnbrqk";   //piece list
+string r="12345678";        //rank
+stirng f="abcdefgh";        //file
+string side="wb-";
+void PrintBoard(s_board *pos)
+{
+    int sq,file,rank,piece;
+    for(rank=RANK_8;rank>=RANK_1;i--)
+    {
+        cout<<rank+1<<" ";
+        for(file=FILE_A;file<=FILE_H;file++)
+        {
+            sq=smalltobig(file,rank);
+            piece=pos->pieces[sq];
+            cout<<" "<<pce[piece];
+        }
+        cout<<endl;
+    }
+    for(file=FILE_A;file<=FILE_H;file++)
+    {
+        cout<<'a'+file;
+    }
+    cout<<endl;
+    cout<<"side to play : "<<side[pos->side]<<endl;
+    cout<<"enpas square : "<<pos->enpas<<endl;
+    cout<<"castle permission : "<<(pos->castleperm & WKCA)?'K':'-'<<(pos->castleperm & WQCA)?'Q':'-'
+        <<(pos->castleperm & BKCA)?'k':'-'<<(pos->castleperm & BQCA)?'q':'-'<<endl;
+    cout<<"POSITION's Zobrist HashKey : "<<pos->poskey<<endl;
+}
 void allinit()
 {
     init120to64();
