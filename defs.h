@@ -72,5 +72,6 @@ extern void InitHashKeys();
 extern uint64_t GeneratePosKey(const s_board* pos) ;
 extern void ResetBoard( s_board* pos);
 extern void Parse_FEN(char* fen,s_board*pos);
+extern void PrintBoard(s_board *pos);
 extern void allinit();
 
