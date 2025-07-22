@@ -189,7 +189,7 @@ string side="wb-";
 void PrintBoard(s_board *pos)
 {
     int sq,file,rank,piece;
-    for(rank=RANK_8;rank>=RANK_1;i--)
+    for(rank=RANK_8;rank>=RANK_1;rank--)
     {
         cout<<rank+1<<" ";
         for(file=FILE_A;file<=FILE_H;file++)
