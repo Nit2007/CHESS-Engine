@@ -55,7 +55,7 @@ enum Castle{WKCA =1,WQCA=2,BKCA=4,BQKA=8};
 extern int sq64tosq120[64];        //8 * 8
 extern int sq120tosq64[BOARD_SQ_NUM];// 10 * 12
 extern void init120to64();
-extern void void print12064();
+extern void print12064();
 extern void PrintBitBoard(uint64_t bb);
 extern int SQ64(int sq120);
 extern int countBitBoard(uint64_t bb);
