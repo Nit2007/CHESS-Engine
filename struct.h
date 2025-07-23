@@ -12,7 +12,7 @@ struct s_undo
 
 struct s_board
 {
-    int pieces[BOARD_SQ_NUM];
+    int pieces[120];//BOARD_SQ_NUM
     
     uint64_t pawns[3];
     int king[3];
@@ -31,5 +31,5 @@ struct s_board
     uint64_t poskey;
 
     int piecelist[13][10];
-    s_undo history[MAXGAMEMOVES];//vector<s_undo>history(MAXGAMEMOVES);
+    s_undo history[2048];//MAXGAMEMOVES//vector<s_undo>history(MAXGAMEMOVES);
 };
