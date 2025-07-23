@@ -77,10 +77,12 @@ void ResetBoard( s_board* pos)
     {
         pos->pieces[i]=OFFBOARD;
     }
-    for(int i=0;i<64;i++)
-    { //  8*8 is setted as EMPTY ,LEAVING REMAINING OFFBOARD
-        pos->pieces[smalltobig(i)]=EMPTY;
+    for(int rank = 0; rank < 8; rank++) {
+        for(int file = 0; file < 8; file++) {
+            pos->pieces[smalltobig(file, rank)] = EMPTY;
+        }
     }
+
     for(int i=0;i<3;i++)
     {
          pos->pawns[i]=0ULL;
@@ -184,7 +186,7 @@ void Parse_FEN(char* fen,s_board*pos)
 }
 string pce=".PNBRQKpnbrqk";   //piece list
 string r="12345678";        //rank
-stirng f="abcdefgh";        //file
+string f="abcdefgh";        //file
 string side="wb-";
 void PrintBoard(s_board *pos)
 {
@@ -207,8 +209,11 @@ void PrintBoard(s_board *pos)
     cout<<endl;
     cout<<"side to play : "<<side[pos->side]<<endl;
     cout<<"enpas square : "<<pos->enpas<<endl;
-    cout<<"castle permission : "<<(pos->castleperm & WKCA)?'K':'-'<<(pos->castleperm & WQCA)?'Q':'-'
-        <<(pos->castleperm & BKCA)?'k':'-'<<(pos->castleperm & BQCA)?'q':'-'<<endl;
+   cout << "castle permission : "
+     << ((pos->castleperm & WKCA) ? 'K' : '-')
+     << ((pos->castleperm & WQCA) ? 'Q' : '-')
+     << ((pos->castleperm & BKCA) ? 'k' : '-')
+     << ((pos->castleperm & BQKA) ? 'q' : '-') << endl;
     cout<<"POSITION's Zobrist HashKey : "<<pos->poskey<<endl;
 }
 void allinit()
