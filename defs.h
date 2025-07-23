@@ -30,7 +30,9 @@ using namespace std;
         }
 #endif
 
-enum Piece {EMPTY, WP, WN, WB, WR, WQ, WK,BP, BN, BB, BR, BQ, BK};// Piece types
+//enum Piece {EMPTY, WP, WN, WB, WR, WQ, WK,BP, BN, BB, BR, BQ, BK};// Piece types
+enum Piece {EMPTY, WP, WN, WB, WR, WQ, WK, BP, BN, BB, BR, BQ, BK, INVALID, OFFBOARD};
+
 enum File {FILE_A, FILE_B, FILE_C, FILE_D,FILE_E, FILE_F, FILE_G, FILE_H,FILE_NONE};// File (column) indices
 enum Rank {RANK_1, RANK_2, RANK_3, RANK_4,RANK_5, RANK_6, RANK_7, RANK_8,RANK_NONE};// Rank (row) indices
 enum Side {WHITE, BLACK, BOTH};// Side to move
@@ -43,7 +45,7 @@ enum Square {
     A6 = 71, B6, C6, D6, E6, F6, G6, H6,
     A7 = 81, B7, C7, D7, E7, F7, G7, H7,
     A8 = 91, B8, C8, D8, E8, F8, G8, H8,
-    NO_SQ, OFFBOARD};// Board squares (in 120-square representation)
+    NO_SQ};// Board squares (in 120-square representation)
 enum Bool {FALSE, TRUE};
 enum Castle{WKCA =1,WQCA=2,BKCA=4,BQCA=8};  
 
