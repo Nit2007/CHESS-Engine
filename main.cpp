@@ -5,15 +5,15 @@
 int main()
 {
     allinit();
-    
+     
     s_board B;
-    Parse_FEN(START_FEN,B);
+    Parse_FEN((char*)START_FEN, &B); // cast and address-of for pointer
     PrintBoard(B);
-    Parse_FEN(FEN_1,B);
+    Parse_FEN((char*)FEN_1, &B);
     PrintBoard(B);
-    Parse_FEN(FEN_2,B);
+    Parse_FEN((char*)FEN_2, &B);
     PrintBoard(B);
-    Parse_FEN(FEN_3,B);
+    ;Parse_FEN((char*)FEN_3, &B);
     PrintBoard(B);
     
     cout<<"*************end*************"<<endl<<endl<<endl;
