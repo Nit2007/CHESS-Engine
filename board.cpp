@@ -51,11 +51,13 @@ uint64_t GeneratePosKey(const s_board* pos) {
 
     for (sq = 0; sq < BOARD_SQ_NUM; ++sq) {
         piece = pos->pieces[sq];
-        if (piece != NO_SQ && piece != EMPTY) {
-            ASSERT(piece >= WP && piece <= BK);
-            finalKey ^= PieceKeys[piece][sq];
-        }
-    }
+        if (piece == OFFBOARD || piece == EMPTY) continue;
+        if (piece < WP || piece > BK) 
+            printf("BAD PIECE: %d at square %d\n", piece, sq);
+        ASSERT(piece >= WP && piece <= BK);
+        finalKey ^= PieceKeys[piece][sq];
+    }   
+
 
     if (pos->side == WHITE) {
         finalKey ^= SideKey;
@@ -202,10 +204,13 @@ void PrintBoard(s_board *pos)
         }
         cout<<endl;
     }
-    for(file=FILE_A;file<=FILE_H;file++)
+    cout<<"   ";
+    for(int file = 0; file < 8; file++) 
     {
-        cout<<'a'+file;
+        char FILE=file+97;
+        cout<<FILE<<' '; // or some sq120 index
     }
+
     cout<<endl;
     cout<<"side to play : "<<side[pos->side]<<endl;
     cout<<"enpas square : "<<pos->enpas<<endl;
@@ -213,7 +218,7 @@ void PrintBoard(s_board *pos)
      << ((pos->castleperm & WKCA) ? 'K' : '-')
      << ((pos->castleperm & WQCA) ? 'Q' : '-')
      << ((pos->castleperm & BKCA) ? 'k' : '-')
-     << ((pos->castleperm & BQKA) ? 'q' : '-') << endl;
+     << ((pos->castleperm & BQCA) ? 'q' : '-') << endl;
     cout<<"POSITION's Zobrist HashKey : "<<pos->poskey<<endl;
 }
 void allinit()
