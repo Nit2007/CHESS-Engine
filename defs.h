@@ -45,7 +45,8 @@ enum Square {
     A8 = 91, B8, C8, D8, E8, F8, G8, H8,
     NO_SQ, OFFBOARD};// Board squares (in 120-square representation)
 enum Bool {FALSE, TRUE};
-enum Castle{WKCA =1,WQCA=2,BKCA=4,BQKA=8};
+enum Castle{WKCA =1,WQCA=2,BKCA=4,BQCA=8};  
+
 
 #define RAND_64 ((uint64_t)rand() | \
                 ((uint64_t)rand() << 15) | \
