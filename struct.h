@@ -32,5 +32,6 @@ struct s_board
     uint64_t poskey;
 
     int piecelist[13][10];
+    int piecenum[13];
     s_undo history[2048];//MAXGAMEMOVES//vector<s_undo>history(MAXGAMEMOVES);
 };
