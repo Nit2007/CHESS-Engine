@@ -221,6 +221,31 @@ void PrintBoard(s_board *pos)
      << ((pos->castleperm & BQCA) ? 'q' : '-') << endl;
     cout<<"POSITION's Zobrist HashKey : "<<pos->poskey<<endl;
 }
+//string pce=".PNBRQKpnbrqk";   //piece list
+int pieceBig[13]={false,false,true,true,true,true,true,false,true,true,true,true,true};//excluding pawns
+int pieceMaj[13]={false,false,false,false,true,true,true,false,false,false,true,true,true};// R , Q , K
+int pieceMin[13]={false,false,true,true,false,false,false,false,true,true,false,false,false};// N , B
+int pieceVal[13]={0,100,325,325,500,1000,50000,100,325,325,500,1000,50000};
+int pieceCol[13]={BOTH,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK};
+void UpdatePieceList(s_board*pos)
+{
+    int piece,colour;
+    for(int i=0;i<BOARD_SQ_NUM ;i++)
+        {
+            piece=pos->pieces[i];
+            if(piece!=OFF_BOARD && piece!=INVALID)
+            {
+                colour=pieceCol[piece];
+                if(pieceBig[colour]==TRUE)pos->bigpce[colour]++;
+                if(pieceMaj[colour]==TRUE)pos->majpce[colour]++;
+                if(pieceMin[colour]==TRUE)pos->minpce[colour]++;
+                pos->material[colour]+=pieceVal[piece];
+
+                if(piece==WK)pos->king[colour]=i;
+                if(piece==BK)pos->king[colour]=i;
+            }
+        }
+}
 void allinit()
 {
     init120to64();
