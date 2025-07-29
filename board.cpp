@@ -233,16 +233,19 @@ void UpdatePieceList(s_board*pos)
     for(int i=0;i<BOARD_SQ_NUM ;i++)
         {
             piece=pos->pieces[i];
-            if(piece!=OFF_BOARD && piece!=INVALID)
+            if(piece!=OFFBOARD && piece!=INVALID)
             {
                 colour=pieceCol[piece];
-                if(pieceBig[colour]==TRUE)pos->bigpce[colour]++;
-                if(pieceMaj[colour]==TRUE)pos->majpce[colour]++;
-                if(pieceMin[colour]==TRUE)pos->minpce[colour]++;
+                if(pieceBig[piece]==TRUE)pos->bigpce[colour]++;
+                if(pieceMaj[piece]==TRUE)pos->majpce[colour]++;
+                if(pieceMin[piece]==TRUE)pos->minpce[colour]++;
                 pos->material[colour]+=pieceVal[piece];
 
-                if(piece==WK)pos->king[colour]=i;
-                if(piece==BK)pos->king[colour]=i;
+                pos->piecelist[piece][pos->piecenum[piece]]=i;
+                pos->piecenum[piece]++;
+                
+                if(piece==WK)pos->king[WHITE]=i;
+                if(piece==BK)pos->king[BLACK]=i;
             }
         }
 }
