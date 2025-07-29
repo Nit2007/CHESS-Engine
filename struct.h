@@ -19,6 +19,7 @@ struct s_board
     int bigpce[3];
     int majpce[3];
     int minpce[3];
+    int material[3];
 
     int side;
     int enpas;
