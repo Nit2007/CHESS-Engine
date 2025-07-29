@@ -31,7 +31,9 @@ using namespace std;
 #endif
 
 //enum Piece {EMPTY, WP, WN, WB, WR, WQ, WK,BP, BN, BB, BR, BQ, BK};// Piece types
-enum Piece {EMPTY, WP, WN, WB, WR, WQ, WK, BP, BN, BB, BR, BQ, BK, INVALID, OFFBOARD};
+#define INVALID -1
+#define OFFBOARD -2
+enum Piece {EMPTY, WP, WN, WB, WR, WQ, WK, BP, BN, BB, BR, BQ, BK};
 
 enum File {FILE_A, FILE_B, FILE_C, FILE_D,FILE_E, FILE_F, FILE_G, FILE_H,FILE_NONE};// File (column) indices
 enum Rank {RANK_1, RANK_2, RANK_3, RANK_4,RANK_5, RANK_6, RANK_7, RANK_8,RANK_NONE};// Rank (row) indices
