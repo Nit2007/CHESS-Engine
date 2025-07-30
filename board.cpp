@@ -1,7 +1,7 @@
 #include "defs.h"
 #include "struct.h"
 
-int square120[8][8];
+
 
 int fileCharToIndex(char c) {
     return tolower(c) - 'a'; // 'a' = 0
@@ -19,9 +19,7 @@ int getSquareFromString(const string& sq) {
     return square120[rank][file];
 }
 
-uint64_t PieceKeys[13][120];
-uint64_t SideKey;
-uint64_t CastleKeys[16];
+
 
 uint64_t GeneratePosKey(const s_board* pos) {
     int sq = 0;
