@@ -73,16 +73,17 @@ extern void setBit(uint64_t &bb , int sq);
 extern void clearBit(uint64_t &bb , int sq);
 extern int smalltobig(int file,int rank);
 // board.cpp
-extern void initsquare120();
 extern int fileCharToIndex(char c);
 extern int rankCharToIndex(char c) ;
 extern int getSquareFromString(const string& sq);
-extern void InitHashKeys();
 extern uint64_t GeneratePosKey(const s_board* pos) ;
 extern void ResetBoard( s_board* pos);
 extern void Parse_FEN(char* fen,s_board*pos);
 extern void PrintBoard(s_board *pos);
 extern void UpdatePieceList(s_board*pos);
+//init.cpp
+extern void InitHashKeys();
+extern void initsquare120();
 extern void  InitFilesRanksBrd();
 extern void allinit();
 
