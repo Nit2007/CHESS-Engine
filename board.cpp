@@ -261,7 +261,7 @@ void InitFilesRanksBrd()
     }
     for( rank=RANK_1;rank<=RANK_8;rank++)
     {
-        for( file=FILE_A;file<FILE_A;file++)
+        for( file=FILE_A;file<=FILE_H;file++)
         {
             sq=smalltobig(file,rank);
             FilesBrd[sq]=file;
