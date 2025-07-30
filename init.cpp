@@ -1,8 +1,14 @@
 #include "defs.h"
 #include "struct.h"
 
+
 int FilesBrd[BOARD_SQ_NUM];
 int RanksBrd[BOARD_SQ_NUM];
+
+int square120[8][8];
+uint64_t PieceKeys[13][120];
+uint64_t SideKey;
+uint64_t CastleKeys[16]; 
 
 void InitFilesRanksBrd()
 {
@@ -34,6 +40,7 @@ void InitFilesRanksBrd()
         cout<<RanksBrd[i]<<" ";
     }
 }
+
 
 void initsquare120(){
     for(int rank=0;rank<8;rank++)
