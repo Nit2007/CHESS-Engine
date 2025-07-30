@@ -86,4 +86,7 @@ extern void InitHashKeys();
 extern void initsquare120();
 extern void  InitFilesRanksBrd();
 extern void allinit();
-
+extern int square120[8][8];
+extern uint64_t PieceKeys[13][120];
+extern uint64_t SideKey;
+extern uint64_t CastleKeys[16];
