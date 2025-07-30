@@ -2,16 +2,7 @@
 #include "struct.h"
 
 int square120[8][8];
-//FOR CONVERTING CHESS SQUARE NAME TO (FILE,RANK)
-void initsquare120(){
-for(int rank=0;rank<8;rank++)
-    {
-        for(int file=0;file<8;file++)
-            {
-                square120[rank][file]=smalltobig(file,rank);
-            }
-    }
-}
+
 int fileCharToIndex(char c) {
     return tolower(c) - 'a'; // 'a' = 0
 }
@@ -32,18 +23,6 @@ uint64_t PieceKeys[13][120];
 uint64_t SideKey;
 uint64_t CastleKeys[16];
 
-void InitHashKeys() {
-   for (int index = 0; index < 13; ++index) {
-        for (int index2 = 0; index2 < 120; ++index2) {
-            PieceKeys[index][index2] = RAND_64;
-        }
-    }
-SideKey = RAND_64;
-    for (int index = 0; index < 16; ++index) {
-        CastleKeys[index] = RAND_64;
-    }
-}
-
 uint64_t GeneratePosKey(const s_board* pos) {
     int sq = 0;
     int piece = EMPTY;
@@ -57,7 +36,6 @@ uint64_t GeneratePosKey(const s_board* pos) {
         ASSERT(piece >= WP && piece <= BK);
         finalKey ^= PieceKeys[piece][sq];
     }   
-
 
     if (pos->side == WHITE) {
         finalKey ^= SideKey;
@@ -73,7 +51,8 @@ uint64_t GeneratePosKey(const s_board* pos) {
 
     return finalKey;
 }
-void ResetBoard( s_board* pos)
+
+void ResetBoard(s_board* pos)
 {
     for(int i=0;i<BOARD_SQ_NUM;i++)
     {
@@ -100,16 +79,17 @@ void ResetBoard( s_board* pos)
     }
     pos->king[WHITE]=pos->king[BLACK]= NO_SQ ; //int king[3];
 
-     pos->side=BOTH;    //int side;
-     pos->enpas=NO_SQ;   //int enpas;
-     pos->fifty=0;  //int fifty;
+    pos->side=BOTH;    //int side;
+    pos->enpas=NO_SQ;   //int enpas;
+    pos->fifty=0;  //int fifty;
 
-     pos->ply=0;          //NUMBER OF HALF MOVES PLAYED IN THE CURRENT SEARCH ( resets to 0 in a new search )
-     pos->hisply=0;       // total NUMBER OF half HISTORY MOVES PLAYED IN THE WHOLE GAME
-     pos->castleperm=0;
-    
-     pos->poskey=0ULL;        //uint64_t poskey;
+    pos->ply=0;          //NUMBER OF HALF MOVES PLAYED IN THE CURRENT SEARCH ( resets to 0 in a new search )
+    pos->hisply=0;       // total NUMBER OF half HISTORY MOVES PLAYED IN THE WHOLE GAME
+    pos->castleperm=0;
+
+    pos->poskey=0ULL;        //uint64_t poskey;
 }
+
 void Parse_FEN(char* fen,s_board*pos)
 {
     ASSERT(fen!=NULL);
@@ -118,11 +98,11 @@ void Parse_FEN(char* fen,s_board*pos)
     ResetBoard(pos);
     while(rank>=RANK_1 && *fen)
     {
-      count=1;
-       if (*fen >= '1' && *fen <= '8') 
-       {
-           count = *fen - '0';
-           piece = EMPTY;
+        count=1;
+        if (*fen >= '1' && *fen <= '8') 
+        {
+            count = *fen - '0';
+            piece = EMPTY;
         } else {
             switch (*fen) {
                 case 'p': piece = BP; break;
@@ -159,12 +139,10 @@ void Parse_FEN(char* fen,s_board*pos)
         fen++;
     }
 
-    // ========== Side to Move ========== //
     while (*fen == ' ') fen++;
     pos->side = (*fen == 'w') ? WHITE : BLACK;
     fen++;
 
-    // ========== Castling Rights ========== //
     while (*fen == ' ') fen++;
     while (*fen != ' ') {
         switch (*fen) {
@@ -176,8 +154,7 @@ void Parse_FEN(char* fen,s_board*pos)
         }
         fen++;
     }
-    
-      // ========== En Passant Square ========== //
+
     while (*fen == ' ') fen++;
     if (*fen != '-') {
         file = fen[0] - 'a';
@@ -186,10 +163,12 @@ void Parse_FEN(char* fen,s_board*pos)
     }
     pos->poskey = GeneratePosKey(pos);
 }
+
 string pce=".PNBRQKpnbrqk";   //piece list
 string r="12345678";        //rank
 string f="abcdefgh";        //file
 string side="wb-";
+
 void PrintBoard(s_board *pos)
 {
     int sq,file,rank,piece;
@@ -214,77 +193,40 @@ void PrintBoard(s_board *pos)
     cout<<endl;
     cout<<"side to play : "<<side[pos->side]<<endl;
     cout<<"enpas square : "<<pos->enpas<<endl;
-   cout << "castle permission : "
-     << ((pos->castleperm & WKCA) ? 'K' : '-')
-     << ((pos->castleperm & WQCA) ? 'Q' : '-')
-     << ((pos->castleperm & BKCA) ? 'k' : '-')
-     << ((pos->castleperm & BQCA) ? 'q' : '-') << endl;
+    cout << "castle permission : "
+         << ((pos->castleperm & WKCA) ? 'K' : '-')
+         << ((pos->castleperm & WQCA) ? 'Q' : '-')
+         << ((pos->castleperm & BKCA) ? 'k' : '-')
+         << ((pos->castleperm & BQCA) ? 'q' : '-') << endl;
     cout<<"POSITION's Zobrist HashKey : "<<pos->poskey<<endl;
 }
-//string pce=".PNBRQKpnbrqk";   //piece list
+
 int pieceBig[13]={false,false,true,true,true,true,true,false,true,true,true,true,true};//excluding pawns
 int pieceMaj[13]={false,false,false,false,true,true,true,false,false,false,true,true,true};// R , Q , K
 int pieceMin[13]={false,false,true,true,false,false,false,false,true,true,false,false,false};// N , B
 int pieceVal[13]={0,100,325,325,500,1000,50000,100,325,325,500,1000,50000};
 int pieceCol[13]={BOTH,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK};
+
 void UpdatePieceList(s_board*pos)
 {
     int piece,colour;
     for(int i=0;i<BOARD_SQ_NUM ;i++)
+    {
+        piece=pos->pieces[i];
+        if(piece!=OFFBOARD && piece!=INVALID)
         {
-            piece=pos->pieces[i];
-            if(piece!=OFFBOARD && piece!=INVALID)
-            {
-                colour=pieceCol[piece];
-                if(pieceBig[piece]==TRUE)pos->bigpce[colour]++;
-                if(pieceMaj[piece]==TRUE)pos->majpce[colour]++;
-                if(pieceMin[piece]==TRUE)pos->minpce[colour]++;
-                pos->material[colour]+=pieceVal[piece];
+            colour=pieceCol[piece];
+            if(pieceBig[piece]==TRUE)pos->bigpce[colour]++;
+            if(pieceMaj[piece]==TRUE)pos->majpce[colour]++;
+            if(pieceMin[piece]==TRUE)pos->minpce[colour]++;
+            pos->material[colour]+=pieceVal[piece];
 
-                pos->piecelist[piece][pos->piecenum[piece]]=i;
-                pos->piecenum[piece]++;
-                
-                if(piece==WK)pos->king[WHITE]=i;
-                if(piece==BK)pos->king[BLACK]=i;
-            }
-        }
-}
-int FilesBrd[BOARD_SQ_NUM];
-int RanksBrd[BOARD_SQ_NUM];
-void InitFilesRanksBrd()
-{
-    int i,sq,file,rank; 
-    for( i=0;i<BOARD_SQ_NUM;i++)
-    {
-        FilesBrd[i]=OFFBOARD;
-        RanksBrd[i]=OFFBOARD;
-    }
-    for( rank=RANK_1;rank<=RANK_8;rank++)
-    {
-        for( file=FILE_A;file<=FILE_H;file++)
-        {
-            sq=smalltobig(file,rank);
-            FilesBrd[sq]=file;
-            RanksBrd[sq]=rank;
+            pos->piecelist[piece][pos->piecenum[piece]]=i;
+            pos->piecenum[piece]++;
+            
+            if(piece==WK)pos->king[WHITE]=i;
+            if(piece==BK)pos->king[BLACK]=i;
         }
     }
-    cout<<"FILES ARRAY "<<endl;
-    for( i=0;i<BOARD_SQ_NUM;i++)
-    {
-        if(i%10==0)cout<<endl;
-        cout<<FilesBrd[i]<<" ";
-    }
-    cout<<"RANK ARRAY "<<endl;
-    for( i=0;i<BOARD_SQ_NUM;i++)
-    {
-        if(i%10==0)cout<<endl;
-        cout<<RanksBrd[i]<<" ";
-    }
 }
-void allinit()
-{
-    init120to64();
-    initsquare120();
-    InitHashKeys();
-    InitFilesRanksBrd();
-}
+
