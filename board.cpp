@@ -249,9 +249,42 @@ void UpdatePieceList(s_board*pos)
             }
         }
 }
+int FilesBrd[BOARD_SQ_NUM];
+int RanksBrd[BOARD_SQ_NUM];
+void InitFilesRanksBrd()
+{
+    int i,sq,file,rank; 
+    for( i=0;i<BOARD_SQ_NUM;i++)
+    {
+        FilesBrd[i]=OFFBOARD;
+        RanksBrd[i]=OFFBOARD;
+    }
+    for( rank=RANK_1;rank<=RANK_8;rank++)
+    {
+        for( file=FILE_A;file<FILE_A;file++)
+        {
+            sq=smalltobig(file,rank);
+            FilesBrd[sq]=file;
+            RanksBrd[sq]=rank;
+        }
+    }
+    cout<<"FILES ARRAY "<<endl;
+    for( i=0;i<BOARD_SQ_NUM;i++)
+    {
+        if(i%10==0)cout<<endl;
+        cout<<FilesBrd[i]<<" ";
+    }
+    cout<<"RANK ARRAY "<<endl;
+    for( i=0;i<BOARD_SQ_NUM;i++)
+    {
+        if(i%10==0)cout<<endl;
+        cout<<RanksBrd[i]<<" ";
+    }
+}
 void allinit()
 {
     init120to64();
     initsquare120();
     InitHashKeys();
+    InitFilesRanksBrd();
 }
