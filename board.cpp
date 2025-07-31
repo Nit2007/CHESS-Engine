@@ -224,6 +224,17 @@ void UpdatePieceList(s_board*pos)
             
             if(piece==WK)pos->king[WHITE]=i;
             if(piece==BK)pos->king[BLACK]=i;
+
+            if(piece==WP)
+            {
+                setBit(pos->pawns[WHITE],SQ64(i));
+                setBit(pos->pawns[BOTH],SQ64(i));
+            }
+            if(piece==BP)
+            {
+                setBit(pos->pawns[BLACK],SQ64(i));
+                setBit(pos->pawns[BOTH],SQ64(i));
+            }
         }
     }
 }
