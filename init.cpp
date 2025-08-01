@@ -70,4 +70,5 @@ void allinit()
     initsquare120();
     InitHashKeys();
     InitFilesRanksBrd();
+    initBitMask();
 }
