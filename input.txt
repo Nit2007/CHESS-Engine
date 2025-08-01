@@ -56,4 +56,13 @@ allinit();
     PrintBitBoard(B.pawns[WHITE]);  
     PrintBitBoard(B.pawns[BLACK]); cout << endl;
     PrintBitBoard(B.pawns[BOTH]);  cout << endl;
+/*allinit();  //BY USING POINTER (MORE READABILITY)
+    s_board *B=new s_board;
+    Parse_FEN((char*)START_FEN, B); 
+    UpdatePieceList(B);          
+    PrintBoard(B);               
+    cout << endl << "Pawns" << endl;
+    PrintBitBoard(B->pawns[WHITE]);  
+    PrintBitBoard(B->pawns[BLACK]); cout << endl;
+    PrintBitBoard(B->pawns[BOTH]);  cout << endl;*/
     
