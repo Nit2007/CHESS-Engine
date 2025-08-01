@@ -239,3 +239,16 @@ void UpdatePieceList(s_board*pos)
     }
 }
 
+int CheckBoard(const s_board *pos)
+{
+    //int king[3];
+    int t_bigpce[3];//int bigpce[3];
+    int t_majpce[3]//int majpce[3];
+    int t_minpce[3]//int minpce[3];
+    int t_material[3]//int material[3];
+    uint64_t pawns[3]//uint64_t pawns[3];
+    int t_piecenum[13];// int piecenum[13];
+    
+    return true;
+}
+
