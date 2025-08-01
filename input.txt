@@ -33,8 +33,8 @@ allinit();
    clearBit(bp,60); PrintBitBoard(bp);
     //ASSERT(5==4);
 
-
-
+//PARSE FEN 
+allinit();
 s_board B;
     Parse_FEN((char*)START_FEN, &B); // cast and address-of for pointer
     PrintBoard(&B);
@@ -44,3 +44,16 @@ s_board B;
     PrintBoard(&B);
     Parse_FEN((char*)FEN_3, &B);
     PrintBoard(&B);
+
+
+//TO PRINT PAWNS OF FEN POSITION
+allinit();
+    s_board B;
+    Parse_FEN((char*)START_FEN, &B); 
+    UpdatePieceList(&B);          
+    PrintBoard(&B);               
+    cout << endl << "Pawns" << endl;
+    PrintBitBoard(B.pawns[WHITE]);  
+    PrintBitBoard(B.pawns[BLACK]); cout << endl;
+    PrintBitBoard(B.pawns[BOTH]);  cout << endl;
+    
