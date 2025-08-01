@@ -14,11 +14,11 @@ struct s_board
 {
     int pieces[120];//BOARD_SQ_NUM
     
-    uint64_t pawns[3];
+    uint64_t pawns[3];// [3] represents WHITE , BLACK and BOTH
     int king[3];
-    int bigpce[3];
-    int majpce[3];
-    int minpce[3];
+    int bigpce[3];//excluding pawns
+    int majpce[3];// R , Q , K
+    int minpce[3];// N , B
     int material[3];
 
     int side;
