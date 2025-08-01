@@ -81,6 +81,7 @@ extern void ResetBoard( s_board* pos);
 extern void Parse_FEN(char* fen,s_board*pos);
 extern void PrintBoard(s_board *pos);
 extern void UpdatePieceList(s_board*pos);
+extern int CheckBoard(const s_board *pos);
 //init.cpp
 extern void InitHashKeys();
 extern void initsquare120();
