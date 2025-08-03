@@ -208,10 +208,20 @@ int pieceCol[13]={BOTH,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,BLACK,BLACK,BLACK,BLA
 void UpdatePieceList(s_board*pos)
 {
     int piece,colour;
+    // RESET ALL COUNTERS FIRST
+    for(int i = 0; i < 3; i++) {
+        pos->bigpce[i] = 0;
+        pos->majpce[i] = 0; 
+        pos->minpce[i] = 0;
+        pos->material[i] = 0;
+    }
+    for(int i = 0; i < 13; i++) {
+        pos->piecenum[i] = 0;
+    }
     for(int i=0;i<BOARD_SQ_NUM ;i++)
     {
         piece=pos->pieces[i];
-        if(piece!=OFFBOARD && piece!=INVALID)
+        if(piece!=OFFBOARD && piece!=EMPTY)
         {
             colour=pieceCol[piece];
             if(pieceBig[piece]==TRUE)pos->bigpce[colour]++;
@@ -294,17 +304,17 @@ int CheckBoard(const s_board *pos)
     // CHECK BITBOARD SQUARES
     while(t_pawns[WHITE])
     {
-        int sq64 = popBitBoard(t_pawns[WHITE]);
+        int sq64 = popBitBoard(&t_pawns[WHITE]);
         ASSERT(pos->pieces[SQ120(sq64)]==WP);
     }
     while(t_pawns[BLACK])
     {
-        int sq64 = popBitBoard(t_pawns[BLACK]);
+        int sq64 = popBitBoard(&t_pawns[BLACK]);
         ASSERT(pos->pieces[SQ120(sq64)]==BP);
     }
     while(t_pawns[BOTH])
     {
-        int sq64 = popBitBoard(t_pawns[BOTH]);
+        int sq64 = popBitBoard(&t_pawns[BOTH]);
         ASSERT(  (pos->pieces[SQ120(sq64)]==WP)  || (pos->pieces[SQ120(sq64)]==BP)  );
     }
 
@@ -322,4 +332,3 @@ int CheckBoard(const s_board *pos)
     ASSERT( pos->pieces[pos->king[BLACK] ] == BK);
     return true;
 }
-
