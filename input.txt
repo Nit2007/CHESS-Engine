@@ -65,4 +65,18 @@ allinit();
     PrintBitBoard(B->pawns[WHITE]);  
     PrintBitBoard(B->pawns[BLACK]); cout << endl;
     PrintBitBoard(B->pawns[BOTH]);  cout << endl;*/
+
+//to verify CheckBoard(const s_board* pos) 
+s_board pos;
+     printf("Testing CheckBoard function...\n\n");
+    
+    // TEST 1: Valid starting position (should PASS)
+    printf("Test 1: Valid starting position\n");
+    Parse_FEN((char*)START_FEN, &pos);
+    UpdatePieceList(&pos);
+    if(CheckBoard(&pos)) {
+        printf("✓ PASSED: Starting position is valid\n");
+    } else {
+        printf("✗ FAILED: Starting position should be valid\n");
+    }
     
