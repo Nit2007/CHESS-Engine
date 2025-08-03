@@ -11,15 +11,15 @@ struct s_undo
 };
 
 struct s_board
-{
-    int pieces[120];//BOARD_SQ_NUM
-    
-    uint64_t pawns[3];// [3] represents WHITE , BLACK and BOTH
+{// Board representation using 120-square "mailbox" format (10x12 board)
+    int pieces[120];//BOARD_SQ_NUM   // Stores the piece type on each square. Indexed using 120-square layout.
+
+    uint64_t pawns[3];//  Bitboards for pawns:[3] represents WHITE , BLACK and BOTH, Used for fast pawn-specific operations.
     int king[3];
     int bigpce[3];//excluding pawns
     int majpce[3];// R , Q , K
     int minpce[3];// N , B
-    int material[3];
+    int material[3]; // Material score in centipawns for each side
 
     int side;
     int enpas;
@@ -31,7 +31,8 @@ struct s_board
     
     uint64_t poskey;
 
-    int piecelist[13][10];
-    int piecenum[13];
+    int piecelist[13][10]; // [piece][count] => square. Example: piecelist[WN][0] = E4
+    int piecenum[13]; // Total count of each piece type
     s_undo history[2048];//MAXGAMEMOVES//vector<s_undo>history(MAXGAMEMOVES);
 };
+
