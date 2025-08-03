@@ -84,6 +84,8 @@ extern void PrintBoard(s_board *pos);
 extern void UpdatePieceList(s_board*pos);
 extern int CheckBoard(const s_board *pos);
 //init.cpp
+extern int FilesBrd[BOARD_SQ_NUM];
+extern int RanksBrd[BOARD_SQ_NUM];
 extern void InitHashKeys();
 extern void initsquare120();
 extern void  InitFilesRanksBrd();
