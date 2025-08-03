@@ -64,6 +64,7 @@ extern void init120to64();
 extern void print12064();
 extern void PrintBitBoard(uint64_t bb);
 extern int SQ64(int sq120);
+extern int SQ120(int sq64);
 extern int countBitBoard(uint64_t bb);
 extern int popBitBoard(uint64_t *bb);
 extern uint64_t setBitMask[64];
