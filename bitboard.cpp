@@ -47,6 +47,9 @@ void print12064()
 int SQ64(int sq120) {
     return sq120tosq64[sq120];
 }
+int SQ120(int sq64) {
+    return sq64tosq120[sq64];
+}
 void PrintBitBoard(uint64_t bb)    //PARAMETER(BITBOARD)
 {
     uint64_t shiftme=1ULL;
