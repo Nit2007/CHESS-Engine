@@ -94,3 +94,10 @@ extern int square120[8][8];
 extern uint64_t PieceKeys[13][120];
 extern uint64_t SideKey;
 extern uint64_t CastleKeys[16];
+
+//attack.cpp
+extern const int KnDir[8];
+extern const int RkDir[4];
+extern const int BiDir[4];
+extern const int KiDir[8];
+extern int SqAttacked(const int sq, const int side, const s_board *pos);
