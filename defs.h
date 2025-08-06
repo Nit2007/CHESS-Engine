@@ -101,6 +101,7 @@ extern const int RkDir[4];
 extern const int BiDir[4];
 extern const int KiDir[8];
 extern int SqAttacked(const int sq, const int side, const s_board *pos);
+extern void showSqAttackBySide(const int side, const s_board*pos);
 
 //data.cpp
 extern int pieceBig[13];//excluding pawns
