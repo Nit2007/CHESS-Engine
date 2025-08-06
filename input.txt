@@ -79,4 +79,11 @@ s_board pos;
     } else {
         printf("✗ FAILED: Starting position should be valid\n");
     }
-    
+
+//for checking the attack.cpp functions
+allinit();
+    s_board  pos;
+     Parse_FEN((char*)FEN_4,&pos);
+     UpdatePieceList(&pos);   
+     PrintBoard(&pos);
+     showSqAttackBySide(WHITE,&pos);
