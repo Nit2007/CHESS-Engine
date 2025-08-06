@@ -11,6 +11,7 @@ using namespace std;
 #define FEN_1 "6k1/5p2/6p1/8/7p/8/6PP/6K1 b - - 0 0"
 #define FEN_2 "3k4/2n2B2/1KP5/2B2p2/5b1p/7P/8/8 b - - 0 0"
 #define FEN_3 "rnbqkbnr/pppppppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 1"
+#define FEN_4 "8/8/8/8/8/8/8/Q7 w - - 0 1"
 // You define this only in debugging
 #define DEBUG       
 
@@ -100,6 +101,10 @@ extern const int KnDir[8];
 extern const int RkDir[4];
 extern const int BiDir[4];
 extern const int KiDir[8];
+#define IsBQ(p) (PieceBishopQueen[(p)])
+#define IsRQ(p) (PieceRookQueen[(p)])
+#define IsKn(p) (PieceKnight[(p)])
+#define IsKi(p) (PieceKing[(p)])
 extern int SqAttacked(const int sq, const int side, const s_board *pos);
 extern void showSqAttackBySide(const int side, const s_board*pos);
 
