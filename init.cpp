@@ -27,7 +27,7 @@ void InitFilesRanksBrd()
             RanksBrd[sq]=rank;
         }
     }
-    cout<<"FILES ARRAY "<<endl;
+    /*cout<<"FILES ARRAY "<<endl;
     for( i=0;i<BOARD_SQ_NUM;i++)
     {
         if(i%10==0)cout<<endl;
@@ -38,7 +38,7 @@ void InitFilesRanksBrd()
     {
         if(i%10==0)cout<<endl;
         cout<<RanksBrd[i]<<" ";
-    }
+    }*/
 }
 
 
