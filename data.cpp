@@ -13,7 +13,4 @@ int PieceRookQueen[13]   = { FALSE, FALSE, FALSE, FALSE, TRUE , TRUE , FALSE, FA
 int PieceBishopQueen[13] = { FALSE, FALSE, FALSE, TRUE , FALSE, TRUE , FALSE, FALSE, FALSE, TRUE , FALSE, TRUE , FALSE };
 int PieceSlides[13]      = { FALSE, FALSE, FALSE, TRUE , TRUE, TRUE , FALSE, FALSE, FALSE, TRUE , TRUE , TRUE , FALSE };
 
-#define IsBQ(p) (PieceBishopQueen[(p)])
-#define IsRQ(p) (PieceRookQueen[(p)])
-#define IsKn(p) (PieceKnight[(p)])
-#define IsKi(p) (PieceKing[(p)])
+
