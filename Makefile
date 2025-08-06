@@ -4,7 +4,7 @@ CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra
 
 # List all source files
-SRC = main.cpp board.cpp bitboard.cpp init.cpp attack.cpp
+SRC = main.cpp board.cpp bitboard.cpp init.cpp attack.cpp data.cpp
 
 # Output executable name
 TARGET = chess
