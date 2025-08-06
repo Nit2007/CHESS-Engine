@@ -68,13 +68,13 @@ int SqAttacked(const int sq, const int side, const s_board *pos) {// sq - 120 ba
 void showSqAttackBySide(const int side, const s_board*pos)
 {
     int rank=0,file=0,sq=0;
-    cout<<"SQUARE ATTACKED BY : "<< (side==0) ? "WHITE":"BLACK"<<endl;
+    cout<<"SQUARE ATTACKED BY : "<< ((side==0) ? "WHITE":"BLACK")<<endl;
     for(rank=RANK_8;rank>=RANK_1;rank--)
       {
          for(file=FILE_A;file<=FILE_H;file++)
            {
                sq=smalltobig(file,rank);
-               if(SqAttacked(sq,side,*pos))cout<<"X  ";
+               if(SqAttacked(sq,side,pos))cout<<"X ";
              else cout<<"- ";
            }
         cout<<endl;
