@@ -101,3 +101,16 @@ extern const int RkDir[4];
 extern const int BiDir[4];
 extern const int KiDir[8];
 extern int SqAttacked(const int sq, const int side, const s_board *pos);
+
+//data.cpp
+extern int pieceBig[13];//excluding pawns
+extern int pieceMaj[13];// R , Q , K
+extern int pieceMin[13];// N , B
+extern int pieceVal[13];
+extern int pieceCol[13];
+extern int PiecePawn[13];        
+extern int PieceKnight[13] ;  
+extern int PieceKing[13];       
+extern int PieceRookQueen[13] ;
+extern int PieceBishopQueen[13];
+extern int PieceSlides[13] ;    
