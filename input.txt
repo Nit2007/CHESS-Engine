@@ -100,3 +100,4 @@ int from = 26;
     move |= MFLAGCA;
     PrintBin(move);
     printf("\nDecimal : %d \n Hexadecimal : %x",move ,move);
+cout<< endl<<((move & MFLAGCA) ? "Castled" :"Not castled");
