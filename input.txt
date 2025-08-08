@@ -101,3 +101,7 @@ int from = 26;
     PrintBin(move);
     printf("\nDecimal : %d \n Hexadecimal : %x",move ,move);
 cout<< endl<<((move & MFLAGCA) ? "Castled" :"Not castled");
+//to print square ,promotion in int move
+   cout<<PrSq(A2)<<"->";
+    cout<<PrSq(G7)<<endl;
+    cout<<PrMove(move);
