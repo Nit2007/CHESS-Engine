@@ -94,6 +94,7 @@ extern void initBitMask();
 extern void setBit(uint64_t &bb , int sq);
 extern void clearBit(uint64_t &bb , int sq);
 extern int smalltobig(int file,int rank);
+extern void PrintBin(int move);
 // board.cpp
 extern int fileCharToIndex(char c);
 extern int rankCharToIndex(char c) ;
