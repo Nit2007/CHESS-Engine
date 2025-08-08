@@ -121,3 +121,15 @@ void clearBit(uint64_t &bb , int sq)
 {
      bb&=clearBitMask[sq];
 }
+
+void PrintBin(int move)
+{
+    for(int i=27;i>=0;i--)
+    {
+        if( (1 << i) & move)cout<<"1";
+        else cout<<"0";
+        if(i%4==0)cout<<' ';
+    }
+
+}
+
