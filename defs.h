@@ -141,3 +141,8 @@ extern int PieceKing[13];
 extern int PieceRookQueen[13] ;
 extern int PieceBishopQueen[13];
 extern int PieceSlides[13] ;    
+
+//io.cpp
+extern char *PrSq(const int sq);
+extern char *PrMove(const int move);
+
