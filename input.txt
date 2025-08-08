@@ -87,3 +87,16 @@ allinit();
      UpdatePieceList(&pos);   
      PrintBoard(&pos);
      showSqAttackBySide(WHITE,&pos);
+
+//Printing Move in different format
+int from = 26;
+    int to = 28;
+    int cap=WR;int prom=BQ;
+    int move=0;
+    move= ( from | (to << 7) | (cap <<14) | (prom << 20)) ; 
+    cout<<"Integer : "<< move<<endl;
+    cout<<"Binary : ";
+    PrintBin(move);cout<<endl<<"Castled Binary : ";
+    move |= MFLAGCA;
+    PrintBin(move);
+    printf("\nDecimal : %d \n Hexadecimal : %x",move ,move);
