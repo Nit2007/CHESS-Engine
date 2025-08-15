@@ -146,3 +146,19 @@ extern int PieceSlides[13] ;
 extern char *PrSq(const int sq);
 extern char *PrMove(const int move);
 
+//movegen.cpp
+extern void AddQuietMove(const s_board *pos,int move , const s_movelist *list);
+extern void AddCaptureMove(const s_board *pos,int move , const s_movelist *list);
+extern void AddEnpasMove(const s_board *pos,int move , const s_movelist *list);
+extern void GenerateAllMoves(const s_board *pos);
+
+//validate.cpp
+extern int SqOnBoard(const int sq);
+extern int SideValid(const int side);
+extern int FileRankValid(const int fr);
+extern int PieceValidEmpty(const int pce);
+extern int PieceValid(const int pce);
+
+
+
+
