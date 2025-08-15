@@ -14,9 +14,9 @@ int FileRankValid(const int fr) {
 }
 
 int PieceValidEmpty(const int pce) {
-	return (pce >= EMPTY && pce <= bK) ? 1 : 0;
+	return (pce >= EMPTY && pce <= BK) ? 1 : 0;
 }
 
 int PieceValid(const int pce) {
-	return (pce >= wP && pce <= bK) ? 1 : 0;
+	return (pce >= WP && pce <= BK) ? 1 : 0;
 }
