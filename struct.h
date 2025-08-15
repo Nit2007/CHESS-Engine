@@ -1,6 +1,18 @@
 #pragma once
 #include "defs.h"
 
+struct s_move
+{
+    int move;
+    int score;
+};
+
+struct s_movelist
+{
+    s_move moves[256];
+    int count;
+};
+
 struct s_undo
 {
     int move;
