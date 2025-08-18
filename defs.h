@@ -145,6 +145,7 @@ extern int PieceSlides[13] ;
 //io.cpp
 extern char *PrSq(const int sq);
 extern char *PrMove(const int move);
+extern void PrintMoveList(const s_movelist *list);
 
 //movegen.cpp
 extern void AddQuietMove(const s_board *pos,int move , const s_movelist *list);
