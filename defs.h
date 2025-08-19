@@ -151,7 +151,9 @@ extern void PrintMoveList(const s_movelist *list);
 extern void AddQuietMove(const s_board *pos,int move , const s_movelist *list);
 extern void AddCaptureMove(const s_board *pos,int move , const s_movelist *list);
 extern void AddEnpasMove(const s_board *pos,int move , const s_movelist *list);
-extern void GenerateAllMoves(const s_board *pos);
+extern void AddWhitePawnCapMove(const s_board *pos , const int from , const int to ,const int cap ,  const s_movelist *list);
+extern void AddWhitePawnMove(const s_board *pos , const int from , const int to ,  const s_movelist *list);
+extern void GenerateAllMoves(const s_board *pos , const s_movelist *list);
 
 //validate.cpp
 extern int SqOnBoard(const int sq);
