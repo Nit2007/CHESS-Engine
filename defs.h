@@ -13,6 +13,7 @@ using namespace std;
 #define FEN_3 "rnbqkbnr/pppppppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 1"
 #define FEN_4 "8/8/8/8/8/8/8/Q7 w - - 0 1"
 #define PAWNMOVES_FEN "rnbqkb1r/pp1p1pPp/8/2p1pP2/1P1P4/3P3P/P1P1P3/RNBQKBNR w KQkq e6 0 1"
+#define PAWNMOVES_B_FEN "rnbqkbnr/p1p1p3/3p3p/1p1p4/2P1Pp2/8/PP1P1PpP/RNBQKB1R b KQkq e3 0 1"
 // You define this only in debugging
 #define DEBUG       
 
