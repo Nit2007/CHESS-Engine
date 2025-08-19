@@ -40,12 +40,12 @@ char *PrMove(const int move)
 void PrintMoveList(const s_movelist *list)
 {
     int score=0;    int move=0;
-    cout<<"MoveList"<<endl<<list->count;
+    cout<<"MoveList:"<<endl;
     for(int index=0;index<list->count;index++)
     {
         move=list->moves[index].move;
         score=list->moves[index].score;
-        cout<<"Move "<<index+1<<" > "<<PrMove(move)<<"("<<score<<")"<<endl;
+        cout<<"Move "<<index+1<<" > "<<PrMove(move)<<" ("<<score<<")"<<endl;
     }
     cout<<"The Total Number of Moves : "<<list->count<<endl;
 }
