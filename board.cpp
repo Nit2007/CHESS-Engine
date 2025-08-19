@@ -158,8 +158,18 @@ void Parse_FEN(char* fen,s_board*pos)
         file = fen[0] - 'a';
         rank = fen[1] - '1';
         pos->enpas = smalltobig(file, rank);
+        fen += 2;      
     }
-    pos->poskey = GeneratePosKey(pos);
+    else {
+    // be explicit
+    pos->enpas = NO_SQ;
+    fen++;                    // advance past '-'
+}
+    UpdatePieceList(pos);
+
+
+pos->poskey = GeneratePosKey(pos);
+
 }
 
 string pce=".PNBRQKpnbrqk";   //piece list
