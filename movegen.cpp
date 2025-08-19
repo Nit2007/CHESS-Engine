@@ -47,6 +47,29 @@ void AddWhitePawnMove(const s_board *pos , const int from , const int to ,   s_m
     else  AddQuietMove(pos, MOVE(from,to,EMPTY,EMPTY,0) , list);
 }
 
+void AddBlackPawnCapMove(const s_board *pos , const int from , const int to ,const int cap ,   s_movelist *list)
+{
+    if(RanksBrd[from]==RANK_2)
+    {
+         AddCaptureMove(pos, MOVE(from,to,cap,BQ,0) , list);
+         AddCaptureMove(pos, MOVE(from,to,cap,BR,0) , list);
+         AddCaptureMove(pos, MOVE(from,to,cap,BB,0) , list);
+         AddCaptureMove(pos, MOVE(from,to,cap,BN,0) , list);
+    }
+    else  AddCaptureMove(pos, MOVE(from,to,cap,EMPTY,0) , list);
+}
+void AddBlackPawnMove(const s_board *pos , const int from , const int to ,   s_movelist *list)
+{
+    if(RanksBrd[from]==RANK_2)
+    {
+         AddQuietMove(pos, MOVE(from,to,EMPTY,BQ,0) , list);
+         AddQuietMove(pos, MOVE(from,to,EMPTY,BR,0) , list);
+         AddQuietMove(pos, MOVE(from,to,EMPTY,BB,0) , list);
+         AddQuietMove(pos, MOVE(from,to,EMPTY,BN,0) , list);
+    }
+    else  AddQuietMove(pos, MOVE(from,to,EMPTY,EMPTY,0) , list);
+}
+
 void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
 {
     ASSERT(CheckBoard(pos));
@@ -78,6 +101,28 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
                 AddCaptureMove(pos,MOVE(sq,(sq+11),EMPTY,EMPTY,MFLAGEP) ,list);
         }
     }
-    else{}
+    else{
+        for(int pcenum=0;pcenum<pos->piecenum[BP]; pcenum++)
+        {
+            sq=pos->piecelist[BP][pcenum];
+            ASSERT(SqOnBoard(sq));
+
+            if(pos->pieces[sq-10]==EMPTY)
+            {
+                AddBlackPawnMove(pos,sq,sq-10,list);
+                if(RanksBrd[sq]==RANK_7 && pos->pieces[sq-20]==EMPTY)
+                    AddQuietMove(pos, MOVE(sq,(sq-20),EMPTY,EMPTY,MFLAGPS) , list);
+            }
+            if(!SQOFFBOARD(sq-9) && pieceCol[pos->pieces[sq-9]]==WHITE)
+                AddBlackPawnCapMove(pos,sq,sq-9,pos->pieces[sq-9],list);
+            if(!SQOFFBOARD(sq-11) && pieceCol[pos->pieces[sq-11]]==WHITE)
+                AddBlackPawnCapMove(pos,sq,sq-11,pos->pieces[sq-11],list);
+
+            if(sq-9 == pos->enpas)
+                AddCaptureMove(pos,MOVE(sq,(sq-9),EMPTY,EMPTY,MFLAGEP) ,list);
+            if(sq-11 == pos->enpas)
+                AddCaptureMove(pos,MOVE(sq,(sq-11),EMPTY,EMPTY,MFLAGEP) ,list);
+        }
+    }
     
 }
