@@ -105,3 +105,14 @@ cout<< endl<<((move & MFLAGCA) ? "Castled" :"Not castled");
    cout<<PrSq(A2)<<"->";
     cout<<PrSq(G7)<<endl;
     cout<<PrMove(move);
+
+
+//TO CHECK GENERATE ALL PAWN MOVES FOR wHITE
+    allinit();
+    s_board board;
+    Parse_FEN((char*)PAWNMOVES_FEN,&board);
+    PrintBoard(&board);
+    s_movelist list;
+    GenerateAllMoves(&board,&list);
+    PrintMoveList(&list);
+    
