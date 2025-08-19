@@ -12,7 +12,7 @@ using namespace std;
 #define FEN_2 "3k4/2n2B2/1KP5/2B2p2/5b1p/7P/8/8 b - - 0 0"
 #define FEN_3 "rnbqkbnr/pppppppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 1"
 #define FEN_4 "8/8/8/8/8/8/8/Q7 w - - 0 1"
-#define PAWNMOVES_FEN "rnbqkbir/pp1p1pPp/8/2p1pP2/1P1P4/3P3P/P1P1P3/RNBQKBNR w KQkq e6 0 1"
+#define PAWNMOVES_FEN "rnbqkb1r/pp1p1pPp/8/2p1pP2/1P1P4/3P3P/P1P1P3/RNBQKBNR w KQkq e6 0 1"
 // You define this only in debugging
 #define DEBUG       
 
@@ -149,12 +149,12 @@ extern char *PrMove(const int move);
 extern void PrintMoveList(const s_movelist *list);
 
 //movegen.cpp
-extern void AddQuietMove(const s_board *pos,int move , const s_movelist *list);
-extern void AddCaptureMove(const s_board *pos,int move , const s_movelist *list);
-extern void AddEnpasMove(const s_board *pos,int move , const s_movelist *list);
-extern void AddWhitePawnCapMove(const s_board *pos , const int from , const int to ,const int cap ,  const s_movelist *list);
-extern void AddWhitePawnMove(const s_board *pos , const int from , const int to ,  const s_movelist *list);
-extern void GenerateAllMoves(const s_board *pos , const s_movelist *list);
+extern void AddQuietMove(const s_board *pos,int move ,  s_movelist *list);
+extern void AddCaptureMove(const s_board *pos,int move ,  s_movelist *list);
+extern void AddEnpasMove(const s_board *pos,int move ,  s_movelist *list);
+extern void AddWhitePawnCapMove(const s_board *pos , const int from , const int to ,const int cap ,   s_movelist *list);
+extern void AddWhitePawnMove(const s_board *pos , const int from , const int to ,   s_movelist *list);
+extern void GenerateAllMoves(const s_board *pos ,  s_movelist *list);
 
 //validate.cpp
 extern int SqOnBoard(const int sq);
@@ -162,6 +162,11 @@ extern int SideValid(const int side);
 extern int FileRankValid(const int fr);
 extern int PieceValidEmpty(const int pce);
 extern int PieceValid(const int pce);
+
+
+
+
+
 
 
 
