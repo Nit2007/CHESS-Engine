@@ -110,7 +110,7 @@ cout<< endl<<((move & MFLAGCA) ? "Castled" :"Not castled");
 //TO CHECK GENERATE ALL PAWN MOVES FOR wHITE
     allinit();
     s_board board;
-    Parse_FEN((char*)PAWNMOVES_FEN,&board);
+    Parse_FEN((char*)PAWNMOVES_FEN,&board);//Parse_FEN((char*)PAWNMOVES_B_FEN,&board);
     PrintBoard(&board);
     s_movelist list;
     GenerateAllMoves(&board,&list);
