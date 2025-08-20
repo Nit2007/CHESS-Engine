@@ -4,6 +4,11 @@
 #define MOVE(from,to,captured,promoted,flag) ( (from) | (to<<7) | (captured<<14) | (promoted<<20) | (flag) )
 #define SQOFFBOARD(sq) (FilesBrd[sq]==OFFBOARD)
 
+int LoopSlidePce[8] = {WB,WR,WQ,0,BB,BR,BQ,0};
+int LoopNonSlidePce[8] = {WN,WK,0,BN,BK,0};
+int LoopSlideIndex[2] = {0,4};
+int LoopNonSlideIndex[2] = {0,3};
+
 void AddQuietMove(const s_board *pos,int move ,  s_movelist *list)
 {(void)pos;
     list->moves[list->count].move=move;
@@ -26,6 +31,9 @@ void AddEnpasMove(const s_board *pos,int move ,  s_movelist *list)
 
 void AddWhitePawnCapMove(const s_board *pos , const int from , const int to ,const int cap ,   s_movelist *list)
 {
+    ASSERT(SqOnBoard(from));
+    ASSERT(SqOnBoard(to));
+    ASSERT(PieceValidEmpty(cap));
     if(RanksBrd[from]==RANK_7)
     {
          AddCaptureMove(pos, MOVE(from,to,cap,WQ,0) , list);
@@ -37,6 +45,9 @@ void AddWhitePawnCapMove(const s_board *pos , const int from , const int to ,con
 }
 void AddWhitePawnMove(const s_board *pos , const int from , const int to ,   s_movelist *list)
 {
+    
+    ASSERT(SqOnBoard(from));
+    ASSERT(SqOnBoard(to));
     if(RanksBrd[from]==RANK_7)
     {
          AddQuietMove(pos, MOVE(from,to,EMPTY,WQ,0) , list);
@@ -49,6 +60,10 @@ void AddWhitePawnMove(const s_board *pos , const int from , const int to ,   s_m
 
 void AddBlackPawnCapMove(const s_board *pos , const int from , const int to ,const int cap ,   s_movelist *list)
 {
+    
+    ASSERT(SqOnBoard(from));
+    ASSERT(SqOnBoard(to));
+    ASSERT(PieceValidEmpty(cap));
     if(RanksBrd[from]==RANK_2)
     {
          AddCaptureMove(pos, MOVE(from,to,cap,BQ,0) , list);
@@ -60,6 +75,9 @@ void AddBlackPawnCapMove(const s_board *pos , const int from , const int to ,con
 }
 void AddBlackPawnMove(const s_board *pos , const int from , const int to ,   s_movelist *list)
 {
+    
+    ASSERT(SqOnBoard(from));
+    ASSERT(SqOnBoard(to));
     if(RanksBrd[from]==RANK_2)
     {
          AddQuietMove(pos, MOVE(from,to,EMPTY,BQ,0) , list);
@@ -76,7 +94,10 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
     int sq=0;
     //int t_sq=0;
     //int pce = EMPTY;
-
+    int dir=0;
+    int index=0;
+    int pceIndex=0;
+    cout<<"Side to MOVE : "<<pos->side<<endl;
     if(pos->side == WHITE)
     {
         for(int pcenum=0;pcenum<pos->piecenum[WP]; pcenum++)
@@ -124,5 +145,15 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
                 AddCaptureMove(pos,MOVE(sq,(sq-11),EMPTY,EMPTY,MFLAGEP) ,list);
         }
     }
+                                        /*int LoopSlidePce[8] = {WB,WR,WQ,0,BB,BR,BQ,0};//defined above in movegen.cpp
+                                          int LoopNonSlidePce[8] = {WN,WK,0,BN,BK,0};
+                                          int LoopSlideIndex[2] = {0,4};
+                                          int LoopNonSlideIndex[2] = {0,3};*/
+    //SLIDERS { B,R,Q }
+    pceIndex=LoopSlideIndex[pos->side];
+    pce=LoopSlidePce[pceIndex++];
+    // NON - SLIDERS  { N , K }
+    pceIndex=LoopNonSlideIndex[pos->side];
+    pce=LoopNonSlidePce[pceIndex++];
     
 }
