@@ -110,8 +110,8 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
 {
     ASSERT(CheckBoard(pos));
     int sq=0;
-    //int t_sq=0;
-    //int pce = EMPTY;
+    int t_sq=0;
+    int pce = EMPTY;
     int dir=0;
     int index=0;
     int pceIndex=0;
@@ -167,11 +167,45 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
                                           int LoopNonSlidePce[8] = {WN,WK,0,BN,BK,0};
                                           int LoopSlideIndex[2] = {0,4};
                                           int LoopNonSlideIndex[2] = {0,3};*/
+	string pceChar=".PNBRQKpnbrqk";  
     //SLIDERS { B,R,Q }
     pceIndex=LoopSlideIndex[pos->side];
     pce=LoopSlidePce[pceIndex++];
+	while(pce!=0)
+	{
+		ASSERT(PieceValid(pce));
+		cout<<"SLIDERS PIECE:"<<pce<<"  PIECEINDEX: "<<pceIndex<<endl;
+		
+	}
     // NON - SLIDERS  { N , K }
     pceIndex=LoopNonSlideIndex[pos->side];
     pce=LoopNonSlidePce[pceIndex++];
+	while(pce!=0)
+	{
+		ASSERT(PieceValid(pce));
+		cout<<"Non-SLIDERS PIECE:"<<pce<<"  PIECEINDEX: "<<pceIndex<<endl;
+		for(pcenum=0;pcenum<pos->piecenum[pce];pcenum++)
+		{
+			sq = pos->piecelist[pce][pcenum];
+			ASSERT(SqOnBoard(sq));
+			cout<<"Piece "<<pceChar[pce]<<"on "<<PrSq(sq)<<endl;
+			for(index=0;index<NumDir[pce];index++)
+			{
+				dir = PceDir[pce][index];
+				t_sq = sq + dir;
+				if(SQOFFBOARD(t_sq))continue;
+
+				if(pos->pieces[t_sq] !=EMPTY)
+				{
+					if( pieceCol[ pos->pieces[t_sq] ] == (pos->side^1))
+					{
+						cout<<"Capture on "<<PrSq(t_sq)<<endl;
+					}
+					continue;
+				}
+				cout<<"Attack on "<<PrSq(t_sq)<<endl;
+			}
+		}
+	}
     
 }
