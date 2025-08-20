@@ -200,7 +200,7 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
 				}
 			}
 		}
-        pce=LoopNonSlidePce[pceIndex++];
+        pce=LoopSlidePce[pceIndex++];
 	}
     // NON - SLIDERS  { N , K }
     pceIndex=LoopNonSlideIndex[pos->side];
