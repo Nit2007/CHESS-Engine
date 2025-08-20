@@ -184,7 +184,7 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
 	{
 		ASSERT(PieceValid(pce));
 		cout<<"Non-SLIDERS PIECE:"<<pce<<"  PIECEINDEX: "<<pceIndex<<endl;
-		for(pcenum=0;pcenum<pos->piecenum[pce];pcenum++)
+		for(int pcenum=0;pcenum<pos->piecenum[pce];pcenum++)
 		{
 			sq = pos->piecelist[pce][pcenum];
 			ASSERT(SqOnBoard(sq));
