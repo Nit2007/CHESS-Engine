@@ -14,6 +14,8 @@ using namespace std;
 #define FEN_4 "8/8/8/8/8/8/8/Q7 w - - 0 1"
 #define PAWNMOVES_FEN "rnbqkb1r/pp1p1pPp/8/2p1pP2/1P1P4/3P3P/P1P1P3/RNBQKBNR w KQkq e6 0 1"
 #define PAWNMOVES_B_FEN "rnbqkbnr/p1p1p3/3p3p/1p1p4/2P1Pp2/8/PP1P1PpP/RNBQKB1R b KQkq e3 0 1"
+#define KNIGHTKING_FEN "4k3/1n6/3n4/2N5/8/3N4/8/5K2 w - - 0 1"
+#define KNIGHTKING_B_FEN "5k2/8/3n4/8/2n5/3N4/1N6/4K3 b - - 0 1"
 // You define this only in debugging
 #define DEBUG       
 
