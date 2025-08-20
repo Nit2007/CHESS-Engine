@@ -68,6 +68,7 @@ void ResetBoard(s_board* pos)
          pos->bigpce[i]=0;
          pos->majpce[i]=0;
          pos->minpce[i]=0;
+         pos->material[i]=0;
     }
     for(int i=0;i<13;i++)
     {//piecelist[13][10]
