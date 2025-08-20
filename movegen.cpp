@@ -175,6 +175,31 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
 	{
 		ASSERT(PieceValid(pce));
 		cout<<"SLIDERS PIECE: "<<pceChar[pce]<<"  PIECEINDEX: "<<pceIndex<<endl;
+		for(int pcenum=0;pcenum<pos->piecenum[pce];pcenum++)
+		{
+			sq = pos->piecelist[pce][pcenum];
+			ASSERT(SqOnBoard(sq));
+			cout<<"Piece "<<pceChar[pce]<<" on "<<PrSq(sq)<<endl;
+			for(index=0;index<NumDir[pce];index++)
+			{
+				dir = PceDir[pce][index];
+				t_sq = sq + dir;
+				while(!SQOFFBOARD(t_sq))
+				{
+
+					if(pos->pieces[t_sq] !=EMPTY)
+					{
+						if( pieceCol[ pos->pieces[t_sq] ] == (pos->side^1))
+						{
+							cout<<"     Capture on "<<PrSq(t_sq)<<endl;
+						}
+						break;
+					}
+					cout<<"     Attack on "<<PrSq(t_sq)<<endl;
+					t_sq += dir;
+				}
+			}
+		}
         pce=LoopNonSlidePce[pceIndex++];
 	}
     // NON - SLIDERS  { N , K }
