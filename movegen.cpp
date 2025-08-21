@@ -139,6 +139,22 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
             if(sq+11 == pos->enpas)
                 AddCaptureMove(pos,MOVE(sq,(sq+11),EMPTY,EMPTY,MFLAGEP) ,list);
         }
+		if(pos->castleperm & WKCA)
+		{
+			if(pos->pieces[F1]==EMPTY && pos->pieces[G1]==EMPTY)
+			{
+				if(!SqAttacked(E1,BLACK,pos) && !SqAttacked(F1,BLACK,pos) && !SqAttacked(G1,BLACK,pos))
+				cout<<"WKCA Possible\n";
+			}
+		}
+		if(pos->castleperm & WQCA)
+		{
+			if(pos->pieces[D1]==EMPTY && pos->pieces[C1]==EMPTY && pos->pieces[B1]==EMPTY)
+			{
+				if(!SqAttacked(E1,BLACK,pos) && !SqAttacked(D1,BLACK,pos) && !SqAttacked(C1,BLACK,pos))
+				cout<<"WQCA Possible\n";
+			}
+		}
     }
     else{
         for(int pcenum=0;pcenum<pos->piecenum[BP]; pcenum++)
@@ -162,6 +178,22 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
             if(sq-11 == pos->enpas)
                 AddCaptureMove(pos,MOVE(sq,(sq-11),EMPTY,EMPTY,MFLAGEP) ,list);
         }
+		if(pos->castleperm & BKCA)
+		{
+			if(pos->pieces[F8]==EMPTY && pos->pieces[G8]==EMPTY)
+			{
+				if(!SqAttacked(E8,WHITE,pos) && !SqAttacked(F8,WHITE,pos) && !SqAttacked(G8,WHITE,pos))
+				cout<<"BKCA Possible\n";
+			}
+		}
+		if(pos->castleperm & BQCA)
+		{
+			if(pos->pieces[D8]==EMPTY && pos->pieces[C8]==EMPTY && pos->pieces[B8]==EMPTY)
+			{
+				if(!SqAttacked(E8,WHITE,pos) && !SqAttacked(D8,WHITE,pos) && !SqAttacked(C8,WHITE,pos))
+				cout<<"BQCA Possible\n";
+			}
+		}
     }
                                         /*int LoopSlidePce[8] = {WB,WR,WQ,0,BB,BR,BQ,0};//defined above in movegen.cpp
                                           int LoopNonSlidePce[8] = {WN,WK,0,BN,BK,0};
