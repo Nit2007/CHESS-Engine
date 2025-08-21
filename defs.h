@@ -22,6 +22,7 @@ using namespace std;
 #define QUEEN_B_FEN "6k1/1n6/5n2/1Nq5/8/4NQ2/8/6K1 b - - 0 1"
 #define BISHOP_FEN "6k1/1b6/4n3/8/1n4B1/1B3N2/1N6/2b3K1 b - - 0 1"
 #define BISHOP_B_FEN "2B3k1/1n6/1b3n2/1N4b1/8/4N3/1B6/6K1 w - - 0 1"
+#define MOVEGEN_48_FEN "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1"
 
 
 // You define this only in debugging
