@@ -144,7 +144,7 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
 			if(pos->pieces[F1]==EMPTY && pos->pieces[G1]==EMPTY)
 			{
 				if(!SqAttacked(E1,BLACK,pos) && !SqAttacked(F1,BLACK,pos) && !SqAttacked(G1,BLACK,pos))
-				cout<<"WKCA Possible\n";
+				AddQuietMove(pos, MOVE(E1,G1,EMPTY,EMPTY,MFLAGCA), list);//cout<<"WKCA Possible\n";
 			}
 		}
 		if(pos->castleperm & WQCA)
@@ -152,7 +152,7 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
 			if(pos->pieces[D1]==EMPTY && pos->pieces[C1]==EMPTY && pos->pieces[B1]==EMPTY)
 			{
 				if(!SqAttacked(E1,BLACK,pos) && !SqAttacked(D1,BLACK,pos) && !SqAttacked(C1,BLACK,pos))
-				cout<<"WQCA Possible\n";
+				AddQuietMove(pos, MOVE(E1,C1,EMPTY,EMPTY,MFLAGCA), list);//cout<<"WQCA Possible\n";
 			}
 		}
     }
@@ -183,7 +183,7 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
 			if(pos->pieces[F8]==EMPTY && pos->pieces[G8]==EMPTY)
 			{
 				if(!SqAttacked(E8,WHITE,pos) && !SqAttacked(F8,WHITE,pos) && !SqAttacked(G8,WHITE,pos))
-				cout<<"BKCA Possible\n";
+				AddQuietMove(pos, MOVE(E8,G8,EMPTY,EMPTY,MFLAGCA), list);//cout<<"BKCA Possible\n";
 			}
 		}
 		if(pos->castleperm & BQCA)
@@ -191,7 +191,7 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
 			if(pos->pieces[D8]==EMPTY && pos->pieces[C8]==EMPTY && pos->pieces[B8]==EMPTY)
 			{
 				if(!SqAttacked(E8,WHITE,pos) && !SqAttacked(D8,WHITE,pos) && !SqAttacked(C8,WHITE,pos))
-				cout<<"BQCA Possible\n";
+				AddQuietMove(pos, MOVE(E8,C8,EMPTY,EMPTY,MFLAGCA), list);//cout<<"BQCA Possible\n";
 			}
 		}
     }
@@ -223,11 +223,11 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
 					{
 						if( pieceCol[ pos->pieces[t_sq] ] == (pos->side^1))
 						{
-							cout<<"     Capture on "<<PrSq(t_sq)<<endl;
+							AddCaptureMove(pos, MOVE(sq,t_sq,pos->pieces[t_sq],EMPTY,0), list);//cout<<"     Capture on "<<PrSq(t_sq)<<endl;
 						}
 						break;
 					}
-					cout<<"     Attack on "<<PrSq(t_sq)<<endl;
+					AddQuietMove(pos, MOVE(sq,t_sq,EMPTY,EMPTY,0), list);//cout<<"     Attack on "<<PrSq(t_sq)<<endl;
 					t_sq += dir;
 				}
 			}
@@ -256,11 +256,11 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
 				{
 					if( pieceCol[ pos->pieces[t_sq] ] == (pos->side^1))
 					{
-						cout<<"     Capture on "<<PrSq(t_sq)<<endl;
+						AddCaptureMove(pos, MOVE(sq,t_sq,pos->pieces[t_sq],EMPTY,0), list);//cout<<"     Capture on "<<PrSq(t_sq)<<endl;
 					}
 					continue;
 				}
-				cout<<"     Attack on "<<PrSq(t_sq)<<endl;
+				AddQuietMove(pos, MOVE(sq,t_sq,EMPTY,EMPTY,0), list);//cout<<"     Attack on "<<PrSq(t_sq)<<endl;
 			}
 		}
     pce=LoopNonSlidePce[pceIndex++];
