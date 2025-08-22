@@ -4,10 +4,10 @@
 #define MOVE(from,to,captured,promoted,flag) ( (from) | (to<<7) | (captured<<14) | (promoted<<20) | (flag) )
 #define SQOFFBOARD(sq) (FilesBrd[sq]==OFFBOARD)
 
-int LoopSlidePce[8] = {WB,WR,WQ,0,BB,BR,BQ,0};
-int LoopNonSlidePce[8] = {WN,WK,0,BN,BK,0};
-int LoopSlideIndex[2] = {0,4};
-int LoopNonSlideIndex[2] = {0,3};
+const int LoopSlidePce[8] = {WB,WR,WQ,0,BB,BR,BQ,0};
+const int LoopNonSlidePce[8] = {WN,WK,0,BN,BK,0};
+const int LoopSlideIndex[2] = {0,4};
+const int LoopNonSlideIndex[2] = {0,3};
 
 const int PceDir[13][8] = {     //[piecetype][possiblemoves]
 	{ 0, 0, 0, 0, 0, 0, 0 },
