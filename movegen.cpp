@@ -115,7 +115,7 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
     int dir=0;
     int index=0;
     int pceIndex=0;
-    cout<<"Side to MOVE : "<<pos->side<<endl;
+    //cout<<"Side to MOVE : "<<pos->side<<endl;
     if(pos->side == WHITE)
     {
         for(int pcenum=0;pcenum<pos->piecenum[WP]; pcenum++)
