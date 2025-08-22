@@ -62,7 +62,7 @@ void ResetBoard(s_board* pos)
         }
     }
 
-    for(int i=0;i<3;i++)
+    for(int i=0;i<2;i++)
     {
          pos->pawns[i]=0ULL;
          pos->bigpce[i]=0;
