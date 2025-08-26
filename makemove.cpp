@@ -122,3 +122,100 @@ pos->pieces[to]=pce;
   ASSERT(t_piecenum);
 }
 
+int MakeMove(s_board*pos ,int move)
+{
+    ASSERT(CheckBoard(pos));
+    int from = FROMSQ(move);
+    int to   = TOSQ(move);
+  ASSERT(SqOnBoard(from));
+  ASSERT(SqOnBoard(to));
+  ASSERT(SideValid(side));
+  ASSERT(PieceValid(pos->pieces[from]));
+    int side=pos->side;
+    pos->history[pos->hisply].poskey=pos->poskey;
+    if(move & MFLAGEP )
+    {
+        if(side==WHITE)
+        {
+            ClearPiece( (to-10),pos);
+        }
+        else
+        {
+            ClearPiece((to+10),pos);
+        }
+    }
+    else if(move & MFLAGCA  )
+    {
+        switch(to) {
+            case C1:
+                MovePiece(A1, D1, pos);
+			break;
+            case C8:
+                MovePiece(A8, D8, pos);
+			break;
+            case G1:
+                MovePiece(H1, F1, pos);
+			break;
+            case G8:
+                MovePiece(H8, F8, pos);
+			break;
+            default: ASSERT(FALSE); break;
+        }
+    }HASH_CA;
+    if(pos->enPas != NO_SQ) HASH_EP;
+    pos->history[pos->hisPly].move = move;
+    pos->history[pos->hisPly].fiftyMove = pos->fiftyMove;
+    pos->history[pos->hisPly].enPas = pos->enPas;
+    pos->history[pos->hisPly].castlePerm = pos->castlePerm;
+
+    pos->castlePerm &= CastlePerm[from];
+    pos->castlePerm &= CastlePerm[to];
+    pos->enPas = NO_SQ;
+
+	HASH_CA;
+
+    int cap=CAPTURED(move);
+    pos->fifty++;
+    if(cap!=EMPTY)
+    {
+        ASSERT(PieceValid(cap));
+        pos->fifty=0;
+        ClearPiece(to,pos);
+    }
+    pos->ply++;
+    pos->hisply++;
+    if(PiecePawn[pos->pieces[from] ])
+    {pos->fifty=0;
+        if(move & MFLAGPS) {
+            if(side==WHITE) {
+                pos->enPas=from+10;
+                ASSERT(RanksBrd[pos->enPas]==RANK_3);
+            } else {
+                pos->enPas=from-10;
+                ASSERT(RanksBrd[pos->enPas]==RANK_6);
+            }
+            HASH_EP;
+    }
+     MovePiece(from,to,pos);
+
+     int prom=PROMOTED(move);
+     if(move & MFLAGPROM)
+     {
+         ASSERT(PieceValid(prom) && !PiecePawn[prom] && !PieceKing[prom]);
+         ClearPiece(to,pos);
+         AddPiece(to,pos,prom);
+     }
+     if(PieceKing[pos->pieces[to]]) {
+        pos->king[pos->side] = to;
+    }
+	pos->side ^= 1;
+    HASH_SIDE;
+ASSERT(CheckBoard(pos));
+	if(SqAttacked(pos->king[side],pos->side,pos))  {
+        TakeMove(pos);
+        return FALSE;
+    }
+	return TRUE;
+}
+
+
