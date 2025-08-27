@@ -185,7 +185,8 @@ extern void MovePiece(const int from, const int to, s_board* pos);
 extern int MakeMove(s_board*pos ,int move);
 extern void TakeMove(s_board* pos);
 
-
+//perft.cpp
+extern void Perft(int depth , s_board*pos);
 
 
 
