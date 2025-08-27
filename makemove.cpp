@@ -135,14 +135,8 @@ int MakeMove(s_board*pos ,int move)
     pos->history[pos->hisply].poskey=pos->poskey;
     if(move & MFLAGEP )
     {
-        if(side==WHITE)
-        {
-            ClearPiece( (to-10),pos);
-        }
-        else
-        {
-            ClearPiece((to+10),pos);
-        }
+        if(side==WHITE)ClearPiece( (to-10),pos);
+        else ClearPiece((to+10),pos);
     }
     else if(move & MFLAGCA  )
     {
@@ -217,5 +211,69 @@ ASSERT(CheckBoard(pos));
     }
 	return TRUE;
 }
+
+void TakeMove(s_board* pos)
+{
+	ASSERT(CheckBoard(pos));
+	pos->ply--;
+	pos->hisply--;
+	int move = pos->history[pos->hisply].move;
+	int from = FROMSQ(move);
+    int to   = TOSQ(move);
+	ASSERT(SqOnBoard(from));
+    ASSERT(SqOnBoard(to));
+
+	if(pos->enpas!=NO_SQ) HASH_EP;
+	HASH_CA;
+	pos->castleperm=pos->history[pos->hisply].castleperm;
+	pos->fifty=pos->history[pos->hisply].fifty;
+	pos->enpas=pos->history[pos->hisply].enpas;
+	if(pos->enpas!=NO_SQ) HASH_EP;
+	HASH_CA;
+	pos->side ^=1;
+	HASH_SIDE;
+
+	if(move & MFLAGEP )
+    {
+        if(side==WHITE)AddPiece( (to-10),pos,BP);
+        else AddPiece((to+10),pos,WP);
+    }
+	else if(move & MFLAGCA  )
+    { //PLACING ROOK AT ITS INITIAL SQUARE
+        switch(to) {
+            case C1:
+                MovePiece(D1, A1, pos);
+			break;
+            case C8:
+                MovePiece(D8, A8, pos);
+			break;
+            case G1:
+                MovePiece(F1,H1, pos);
+			break;
+            case G8:
+                MovePiece(F8, H8, pos);
+			break;
+            default: ASSERT(FALSE); break;
+        }
+    }
+	MovePiece(to, from, pos);
+	if(PieceKing[pos->pieces[from]]) pos->king[pos->side]=from;
+
+	int cap= CAPTURED(move);
+	if(cap!=EMPTY)
+	{
+		ASSERT(PieceValid(cap));
+		AddPiece(to,pos,cap);
+	}
+	int prom= PROMOTED(move);
+	if(prom!=EMPTY)
+	{
+		ASSERT(PieceValid(prom) && !PiecePawn[prom]);
+		ClearPiece(from,pos); //IF WE HAVE CALLED TakeMove THEN WE WOULD HAVE A PROMOTED PIECE(Q) AT RANK_7
+		AddPiece(from,pos, (PieceCol[cap]) == WHITE ? WP : BP);
+	}
+	ASSERT(CheckBoard(pos));
+}
+
 
 
