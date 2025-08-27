@@ -115,4 +115,25 @@ cout<< endl<<((move & MFLAGCA) ? "Castled" :"Not castled");
     s_movelist list;
     GenerateAllMoves(&board,&list);
     PrintMoveList(&list);
-    
+
+
+//INPUT TO CHECK makemove AND movegen for START_FEN
+    allinit();
+    s_board board;
+    Parse_FEN((char*)START_FEN,&board);
+    PrintBoard(&board);
+    s_movelist list;
+    GenerateAllMoves(&board,&list);
+    PrintMoveList(&list);
+    getchar();
+    for(int movenum=0;movenum<list.count;movenum++)
+    {
+        int move=list.moves[movenum].move;
+        if(!MakeMove(&board,move))continue;
+        cout<<"Made : "<<PrMove(move)<<endl;
+        PrintBoard(&board);
+        TakeMove(&board);
+        cout<<"Taken : "<<PrMove(move)<<endl;
+        PrintBoard(&board);
+        getchar();
+    }
