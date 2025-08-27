@@ -26,13 +26,12 @@ void ClearPiece(const int sq,s_board* pos)
    ASSERT(SqOnBoard(sq));
    int pce=pos->pieces[sq];
    ASSERT(PieceValid(pce));
-  int col=PieceCol[pce];
-  int index=0;
+  int col=pieceCol[pce];
   int t_piecenum=-1;
   HASH_PCE(pce,sq);
 
   pos->pieces[sq]=EMPTY;
-  pos->material[col]-=PieceVal[pce];
+  pos->material[col]-=pieceVal[pce];
 
   if(pieceBig[pce])
   {
@@ -66,12 +65,12 @@ void AddPiece(const int sq,s_board* pos,const int pce)
 {
   ASSERT(SqOnBoard(sq));
    ASSERT(PieceValid(pce));
-  int col=PieceCol[pce];
+  int col=pieceCol[pce];
   
   HASH_PCE(pce,sq);
 
   pos->pieces[sq]=pce;
-  pos->material[col]+=PieceVal[pce];
+  pos->material[col]+=pieceVal[pce];
   if(pieceBig[pce])
   {
     pos->bigpce[col]++;
@@ -94,7 +93,7 @@ void MovePiece(const int from,const int to,s_board* pos)
     ASSERT(SqOnBoard(from));
   ASSERT(SqOnBoard(to));
   int pce=pos->pieces[from];
-  int col=PieceCol[pce];
+  int col=pieceCol[pce];
 #ifdef DEBUG
   int t_piecenum=FALSE;
 #endif
@@ -127,11 +126,12 @@ int MakeMove(s_board*pos ,int move)
     ASSERT(CheckBoard(pos));
     int from = FROMSQ(move);
     int to   = TOSQ(move);
+    int side=pos->side;
   ASSERT(SqOnBoard(from));
   ASSERT(SqOnBoard(to));
   ASSERT(SideValid(side));
   ASSERT(PieceValid(pos->pieces[from]));
-    int side=pos->side;
+    
     pos->history[pos->hisply].poskey=pos->poskey;
     if(move & MFLAGEP )
     {
@@ -156,15 +156,15 @@ int MakeMove(s_board*pos ,int move)
             default: ASSERT(FALSE); break;
         }
     }HASH_CA;
-    if(pos->enPas != NO_SQ) HASH_EP;
-    pos->history[pos->hisPly].move = move;
-    pos->history[pos->hisPly].fiftyMove = pos->fiftyMove;
-    pos->history[pos->hisPly].enPas = pos->enPas;
-    pos->history[pos->hisPly].castlePerm = pos->castlePerm;
+    if(pos->enpas != NO_SQ) HASH_EP;
+    pos->history[pos->hisply].move = move;
+    pos->history[pos->hisply].fifty = pos->fifty;
+    pos->history[pos->hisply].enpas = pos->enpas;
+    pos->history[pos->hisply].castleperm = pos->castleperm;
 
-    pos->castlePerm &= CastlePerm[from];
-    pos->castlePerm &= CastlePerm[to];
-    pos->enPas = NO_SQ;
+    pos->castleperm &= CastlePerm[from];
+    pos->castleperm &= CastlePerm[to];
+    pos->enpas = NO_SQ;
 
 	HASH_CA;
 
@@ -182,13 +182,14 @@ int MakeMove(s_board*pos ,int move)
     {pos->fifty=0;
         if(move & MFLAGPS) {
             if(side==WHITE) {
-                pos->enPas=from+10;
-                ASSERT(RanksBrd[pos->enPas]==RANK_3);
+                pos->enpas=from+10;
+                ASSERT(RanksBrd[pos->enpas]==RANK_3);
             } else {
-                pos->enPas=from-10;
-                ASSERT(RanksBrd[pos->enPas]==RANK_6);
+                pos->enpas=from-10;
+                ASSERT(RanksBrd[pos->enpas]==RANK_6);
             }
             HASH_EP;
+        }
     }
      MovePiece(from,to,pos);
 
@@ -235,7 +236,7 @@ void TakeMove(s_board* pos)
 
 	if(move & MFLAGEP )
     {
-        if(side==WHITE)AddPiece( (to-10),pos,BP);
+        if(pos->side==WHITE)AddPiece( (to-10),pos,BP);
         else AddPiece((to+10),pos,WP);
     }
 	else if(move & MFLAGCA  )
@@ -270,7 +271,7 @@ void TakeMove(s_board* pos)
 	{
 		ASSERT(PieceValid(prom) && !PiecePawn[prom]);
 		ClearPiece(from,pos); //IF WE HAVE CALLED TakeMove THEN WE WOULD HAVE A PROMOTED PIECE(Q) AT RANK_7
-		AddPiece(from,pos, (PieceCol[cap]) == WHITE ? WP : BP);
+		AddPiece(from,pos, (pieceCol[cap]) == WHITE ? WP : BP);
 	}
 	ASSERT(CheckBoard(pos));
 }
