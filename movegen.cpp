@@ -206,12 +206,12 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
 	while(pce!=0)
 	{
 		ASSERT(PieceValid(pce));
-		cout<<"SLIDERS PIECE: "<<pceChar[pce]<<"  PIECEINDEX: "<<pceIndex<<endl;
+		//cout<<"SLIDERS PIECE: "<<pceChar[pce]<<"  PIECEINDEX: "<<pceIndex<<endl;
 		for(int pcenum=0;pcenum<pos->piecenum[pce];pcenum++)
 		{
 			sq = pos->piecelist[pce][pcenum];
 			ASSERT(SqOnBoard(sq));
-			cout<<"Piece "<<pceChar[pce]<<" on "<<PrSq(sq)<<endl;
+			//cout<<"Piece "<<pceChar[pce]<<" on "<<PrSq(sq)<<endl;
 			for(index=0;index<NumDir[pce];index++)
 			{
 				dir = PceDir[pce][index];
@@ -240,12 +240,12 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
 	while(pce!=0)
 	{
 		ASSERT(PieceValid(pce));
-		cout<<"Non-SLIDERS PIECE: "<<pceChar[pce]<<"  PIECEINDEX: "<<pceIndex<<endl;
+		//cout<<"Non-SLIDERS PIECE: "<<pceChar[pce]<<"  PIECEINDEX: "<<pceIndex<<endl;
 		for(int pcenum=0;pcenum<pos->piecenum[pce];pcenum++)
 		{
 			sq = pos->piecelist[pce][pcenum];
 			ASSERT(SqOnBoard(sq));
-			cout<<"Piece "<<pceChar[pce]<<" on "<<PrSq(sq)<<endl;
+			//cout<<"Piece "<<pceChar[pce]<<" on "<<PrSq(sq)<<endl;
 			for(index=0;index<NumDir[pce];index++)
 			{
 				dir = PceDir[pce][index];
