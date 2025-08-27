@@ -187,7 +187,7 @@ extern void TakeMove(s_board* pos);
 
 //perft.cpp
 extern void Perft(int depth , s_board*pos);
-
+extern void PerftTest(int depth,s_board*pos);
 
 
 
