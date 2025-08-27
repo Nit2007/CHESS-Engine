@@ -1,5 +1,5 @@
-#include <defs.h>
-#include <struct.h>
+#include "defs.h"
+#include "struct.h"
 
 #define HASH_PCE(pce,sq) (pos->poskey^=(PieceKeys[pce][sq]))
 #define HASH_CA (pos->poskey^=(CastleKeys[pos->castleperm]))
