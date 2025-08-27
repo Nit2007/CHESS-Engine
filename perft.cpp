@@ -12,9 +12,10 @@ void Perft(int depth , s_board*pos)
    }
    s_movelist list;
     GenerateAllMoves(pos,&list);
+   int move=0;
   for(int movenum=0;movenum<list.count;movenum++)
-  {//int move=list.moves[movenum].move;
-     if(!MakeMove(pos,list.moves[movenum].move))continue;
+  {move=list.moves[movenum].move;
+     if(!MakeMove(pos,move))continue;
      Perft(depth - 1,pos);
      TakeMove(pos);
   }
@@ -29,9 +30,11 @@ void PerftTest(int depth,s_board*pos)
    leafNode=0;
    s_movelist list;
     GenerateAllMoves(pos,&list);
+   int move=0;
   for(int movenum=0;movenum<list.count;movenum++)
   {
-     if(!MakeMove(pos,list.moves[movenum].move))continue;
+     move=list.moves[movenum].move;
+     if(!MakeMove(pos,move))continue;
      // Snapshot total nodes visited so far (before exploring this move)
      long long int culmulativeNode=leafNode;   //cumulativeNode = leaf count before move
      Perft(depth - 1,pos);
