@@ -182,7 +182,7 @@ extern void ClearPiece(const int sq, s_board* pos);
 extern void AddPiece(const int sq, s_board* pos, const int pce);
 extern void MovePiece(const int from, const int to, s_board* pos);
 extern int MakeMove(s_board*pos ,int move);
-
+extern void TakeMove(s_board* pos);
 
 
 
