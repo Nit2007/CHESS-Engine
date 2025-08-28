@@ -109,6 +109,7 @@ void AddBlackPawnMove(const s_board *pos , const int from , const int to ,   s_m
 void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
 {
     ASSERT(CheckBoard(pos));
+	list->count=0;
     int sq=0;
     int t_sq=0;
     int pce = EMPTY;
