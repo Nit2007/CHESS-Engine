@@ -50,4 +50,21 @@ void PrintMoveList(const s_movelist *list)
     cout<<"The Total Number of Moves : "<<list->count<<endl;
 }
 
-
+int ParseMove(char* ptchar,s_board*pos)
+{
+    ASSERT(CheckBoard(pos));
+    if(ptchar[0] <'a' && ptchar[0]>'h')return FALSE;
+    if(ptchar[1] <'1' && ptchar[1]>'8')return FALSE;
+    if(ptchar[2] <'a' && ptchar[2]>'h')return FALSE;
+    if(ptchar[3] <'1' && ptchar[3]>'8')return FALSE;
+    s_movelist *list;
+    GenerateAllMoves(pos,list);
+    int move=0;
+  for(int movenum=0;movenum<list.count;movenum++)
+  {
+      move=list.moves[movenum].move;
+      int from=FROMSQ(move);
+      int to=TOSQ(move);
+      ASSERT(SqOnBoard(from) && SqOnBoard(to));
+  }
+}
