@@ -4,7 +4,19 @@ CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra
 
 # List all source files
-SRC = main.cpp board.cpp bitboard.cpp init.cpp attack.cpp data.cpp io.cpp movegen.cpp validate.cpp makemove.cpp perft.cpp
+# SRC = $(wildcard *.cpp)
+SRC = main.cpp \
+      board.cpp \
+      bitboard.cpp \
+      init.cpp \
+      attack.cpp \
+      data.cpp \
+      io.cpp \
+      movegen.cpp \
+      validate.cpp \
+      makemove.cpp \
+      perft.cpp \
+      test.cpp
 
 # Output executable name
 TARGET = chess
@@ -25,3 +37,11 @@ $(TARGET): $(OBJ)
 
 clean:
 	rm -f $(OBJ) $(TARGET)
+	@echo "🧹 Cleaned up object files and executable"
+
+# Show compiler and source info
+info:
+	@echo "Compiler: $(CXX)"
+	@echo "Flags: $(CXXFLAGS)"
+	@echo "Sources: $(SRC)"
+	@echo "Objects: $(OBJ)"
