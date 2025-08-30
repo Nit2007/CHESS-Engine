@@ -160,6 +160,7 @@ extern int PieceSlides[13] ;
 extern char *PrSq(const int sq);
 extern char *PrMove(const int move);
 extern void PrintMoveList(const s_movelist *list);
+extern int ParseMove(char* ptchar,s_board*pos);
 
 //movegen.cpp
 extern void AddQuietMove(const s_board *pos,int move ,  s_movelist *list);
@@ -189,5 +190,7 @@ extern void TakeMove(s_board* pos);
 extern void Perft(int depth , s_board*pos);
 extern void PerftTest(int depth,s_board*pos);
 
+//test.cpp
+extern void SimpleTestLoop();
 
 
