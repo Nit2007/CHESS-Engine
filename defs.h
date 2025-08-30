@@ -4,6 +4,7 @@ using namespace std;
 #include <cstdlib> //FOR EXIT()
 #include <cstdint> //FOR uint64_t
 #include <cstdio>  //FOR getchar()
+#include <string.h> //FOR strlen()
 #include "struct.h"
 
 #define MAXGAMEMOVES 2048
