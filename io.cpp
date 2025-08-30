@@ -53,18 +53,38 @@ void PrintMoveList(const s_movelist *list)
 int ParseMove(char* ptchar,s_board*pos)
 {
     ASSERT(CheckBoard(pos));
-    if(ptchar[0] <'a' && ptchar[0]>'h')return FALSE;
-    if(ptchar[1] <'1' && ptchar[1]>'8')return FALSE;
-    if(ptchar[2] <'a' && ptchar[2]>'h')return FALSE;
-    if(ptchar[3] <'1' && ptchar[3]>'8')return FALSE;
-    s_movelist *list;
-    GenerateAllMoves(pos,list);
+    if (strlen(ptchar) < 4) return FALSE;
+    if(ptchar[0] <'a'  ||  ptchar[0]>'h')return FALSE;
+    if(ptchar[1] <'1'  ||  ptchar[1]>'8')return FALSE;
+    if(ptchar[2] <'a'  ||  ptchar[2]>'h')return FALSE;
+    if(ptchar[3] <'1'  ||  ptchar[3]>'8')return FALSE;
+    int From = getSquareFromString (string(1, ptchar[0]) + string(1, ptchar[1]) );
+    int To = getSquareFromString(string(1, ptchar[2]) + string(1, ptchar[3]));
+    ASSERT(SqOnBoard(From) && SqOnBoard(To));
+    cout<<"Ptchar : "<<ptchar<<" Fromsq : "<<From<<" Tosq : "<<To<<endl;
+    s_movelist list;
+    GenerateAllMoves(pos,&list);
     int move=0;
+    int prompce=EMPTY;
   for(int movenum=0;movenum<list.count;movenum++)
   {
       move=list.moves[movenum].move;
       int from=FROMSQ(move);
       int to=TOSQ(move);
       ASSERT(SqOnBoard(from) && SqOnBoard(to));
-  }
+      if(From == from && To== to)
+      {
+          prompce=PROMOTED(move);
+          if (prompce != EMPTY) {
+          if (strlen(ptchar) < 5) continue; // No promotion piece given
+          if(IsRQ(prompce) && !IsBQ(prompce) && ptchar[4]=='r')return move;
+          else if(!IsRQ(prompce) && IsBQ(prompce) && ptchar[4]=='b')return move;
+          else if(IsRQ(prompce) && IsBQ(prompce) && ptchar[4]=='q')return move;
+          else if(IsKn(prompce) && ptchar[4]=='n')return move;
+          continue;// If promotion piece doesn't match, continue to next move
+        }
+          return move; // If not Promotion then we have found out the UnIQUE Move
+      }
+   }
+    return false;
 }
