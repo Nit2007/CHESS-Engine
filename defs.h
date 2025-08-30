@@ -193,6 +193,6 @@ extern void Perft(int depth , s_board*pos);
 extern void PerftTest(int depth,s_board*pos);
 
 //test.cpp
-extern void SimpleTestLoop();
-
+extern void SimpleTestLoop(s_board* pos);
+extern void ComplexTestLoop(s_board* pos);
 
