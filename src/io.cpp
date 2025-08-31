@@ -61,7 +61,7 @@ int ParseMove(char* ptchar,s_board*pos)
     int From = getSquareFromString (string(1, ptchar[0]) + string(1, ptchar[1]) );
     int To = getSquareFromString(string(1, ptchar[2]) + string(1, ptchar[3]));
     ASSERT(SqOnBoard(From) && SqOnBoard(To));
-    cout<<"Ptchar : "<<ptchar<<" Fromsq : "<<From<<" Tosq : "<<To<<endl;
+    //cout<<"Ptchar : "<<ptchar<<" Fromsq : "<<From<<" Tosq : "<<To<<endl;
     s_movelist list;
     GenerateAllMoves(pos,&list);
     int move=0;
