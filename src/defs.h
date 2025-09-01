@@ -196,3 +196,5 @@ extern void PerftTest(int depth,s_board*pos);
 extern void SimpleTestLoop(s_board* pos);
 extern void ComplexTestLoop(s_board* pos);
 
+//search.cpp
+extern int IsRepetition(s_board* pos);
