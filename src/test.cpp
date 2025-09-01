@@ -51,6 +51,7 @@ void SimpleTestLoop() {
             if (MakeMove(&board, move)) {
                 moveHistory.push_back(move);
                 cout << "Move made: " << PrMove(move) << endl;
+                 if (IsRepetition(&board)) cout << "*** REPETITION DETECTED! This position has occurred before. ***" << endl;
                 PrintBoard(&board);
                 
                 // Check for game over
@@ -431,6 +432,7 @@ void ComplexTestLoop() {
                 if (MakeMove(&board, move)) {
                     gameState.addPosition(board, move);
                     cout << "Move made: " << PrMove(move) << endl;
+                    if (IsRepetition(&board)) cout << "*** REPETITION DETECTED! This position has occurred before. ***" << endl;
                     PrintBoard(&board);
                     
                     // Auto-analyze game state after each move
