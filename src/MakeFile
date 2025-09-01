@@ -16,7 +16,8 @@ SRC = main.cpp \
       validate.cpp \
       makemove.cpp \
       perft.cpp \
-      test.cpp
+      test.cpp \
+	  search.cpp
 
 # Output executable name
 TARGET = chess
