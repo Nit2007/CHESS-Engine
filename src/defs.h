@@ -198,3 +198,6 @@ extern void ComplexTestLoop(s_board* pos);
 
 //search.cpp
 extern int IsRepetition(s_board* pos);
+
+//misc.cpp
+extern int GetTimeMs();
