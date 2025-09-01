@@ -28,6 +28,7 @@ void PerftTest(int depth,s_board*pos)
    cout<<"Starting to Depth : "<<depth<<endl;
    PrintBoard(pos);
    leafNode=0;
+   int start = GetTimeMs();
    s_movelist list;
     GenerateAllMoves(pos,&list);
    int move=0;
@@ -43,7 +44,7 @@ void PerftTest(int depth,s_board*pos)
      long long int oldNode=leafNode-culmulativeNode;   //oldNode = (new total) − (old total) = nodes from this move
      cout<<"Move "<<movenum+1<<" : "<<PrMove(move)<<" : "<<oldNode<<endl;
   }
-   cout<<"\nTest Completed , "<<leafNode<<" NODES visited\n";   // Print grand total after all moves explored
+   cout<<"\nTest Completed , "<<leafNode<<" NODES visited in "<< GetTimeMs()-start<<" ms"<<endl;   // Print grand total after all moves explored
 
 
 }
