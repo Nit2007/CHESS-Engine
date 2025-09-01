@@ -17,7 +17,8 @@ SRC = main.cpp \
       makemove.cpp \
       perft.cpp \
       test.cpp \
-	  search.cpp
+	  search.cpp \
+	  misc.cpp
 
 # Output executable name
 TARGET = chess
