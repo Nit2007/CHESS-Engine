@@ -5,6 +5,7 @@ using namespace std;
 #include <cstdint> //FOR uint64_t
 #include <cstdio>  //FOR getchar()
 #include <string.h> //FOR strlen()
+#include <cstring> // For memset
 #include <vector>
 #include "struct.h"
 
