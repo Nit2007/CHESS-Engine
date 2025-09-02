@@ -18,7 +18,8 @@ SRC = main.cpp \
       perft.cpp \
       test.cpp \
 	  search.cpp \
-	  misc.cpp
+	  misc.cpp \
+	  pvtable.cpp
 
 # Output executable name
 TARGET = chess
