@@ -22,6 +22,22 @@ struct s_undo
     uint64_t poskey;
 };
 
+struct s_hashentry{
+	U64 posKey;
+	int move;
+	/*int score;
+	int depth;
+	int flags;*/
+};
+ struct s_hashtable{
+	s_hashentry *pTable;
+	int numEntries;
+	/*int newWrite;
+	int overWrite;
+	int hit;
+	int cut;*/
+};
+
 struct s_board
 {// Board representation using 120-square "mailbox" format (10x12 board)
     int pieces[120];//BOARD_SQ_NUM   // Stores the piece type on each square. Indexed using 120-square layout.
@@ -46,5 +62,7 @@ struct s_board
     int piecelist[13][10]; // [piece][count] => square. Example: piecelist[WN][0] = E4
     int piecenum[13]; // Total count of each piece type
     s_undo history[2048];//MAXGAMEMOVES//vector<s_undo>history(MAXGAMEMOVES);
+
+    s_hashtable hashtable[1];
 };
 
