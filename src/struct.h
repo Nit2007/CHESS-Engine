@@ -22,20 +22,21 @@ struct s_undo
     uint64_t poskey;
 };
 
-struct s_hashentry{
-	uint64_t posKey;
-	int move;
-	/*int score;
-	int depth;
-	int flags;*/
+struct s_hashentry {
+    uint64_t posKey;  // Position key for this entry
+    int move;         // Best move for this position  
+    int score;        // Evaluation score
+    int depth;        // Search depth
+    int flags;        // Entry type flags
 };
- struct s_hashtable{
-	s_hashentry *pTable;
-	int numEntries;
-	/*int newWrite;
-	int overWrite;
-	int hit;
-	int cut;*/
+
+struct s_hashtable {
+    s_hashentry *pTable;  // Pointer to hash table entries
+    int numEntries;       // Number of entries in table
+    int newWrite;         // Counter for new writes
+    int overWrite;        // Counter for overwrites
+    int hit;              // Counter for hash hits
+    int cut;              // Counter for hash cuts
 };
 
 struct s_board
