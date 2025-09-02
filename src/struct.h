@@ -31,7 +31,7 @@ struct s_hashentry {
 };
 
 struct s_hashtable {
-    s_hashentry *pTable;  // Pointer to hash table entries
+    s_hashentry *pTable;  // Pointer to hash table entries { Array of hash entries }
     int numEntries;       // Number of entries in table
     int newWrite;         // Counter for new writes
     int overWrite;        // Counter for overwrites
