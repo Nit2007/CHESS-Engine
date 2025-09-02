@@ -202,3 +202,7 @@ extern int IsRepetition(s_board* pos);
 
 //misc.cpp
 extern int GetTimeMs();
+
+//pvtable.cpp
+extern void ClearHashTable(s_hashtable *table) ;
+extern void InitHashTable(s_hashtable *table, const int MB) ;
