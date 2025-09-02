@@ -23,7 +23,7 @@ struct s_undo
 };
 
 struct s_hashentry{
-	U64 posKey;
+	uint64_t posKey;
 	int move;
 	/*int score;
 	int depth;
