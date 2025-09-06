@@ -206,3 +206,5 @@ extern int GetTimeMs();
 //pvtable.cpp
 extern void ClearHashTable(s_hashtable *table) ;
 extern void InitHashTable(s_hashtable *table, const int MB) ;
+extern void StoreHashMove(const s_board* pos, const int move);
+extern int ProbeHashMove(const s_board* pos);
