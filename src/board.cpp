@@ -87,6 +87,8 @@ void ResetBoard(s_board* pos)
     pos->castleperm=0;
 
     pos->poskey=0ULL;        //uint64_t poskey;
+
+    InitHashTable(pos->hashtable, 64) ;
 }
 
 void Parse_FEN(char* fen,s_board*pos)
