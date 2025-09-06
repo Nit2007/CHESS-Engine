@@ -38,4 +38,20 @@ void InitHashTable(s_hashtable *table, const int MB) {
     }
 }
 
+void StoreHashMove(const s_board* pos, const int move)
+{
+    int index = (pos->poskey) % (pos->hashtable->numEntries);
+    ASSERT(index>=0 && index<=(pos->hashtable->numEntries-1));
+    pos->hashtable->pTable[index].move=move;
+    pos->hashtable->pTable[index].poskey=pos->poskey;
+}
+
+int ProbeHashMove(const s_board* pos)
+{
+    int index = (pos->poskey) % (pos->hashtable->numEntries);
+    ASSERT(index>=0 && index<=(pos->hashtable->numEntries-1));
+    if(pos->hashtable->pTable[index].poskey==pos->poskey)    return pos->hashtable->pTable[index].move=move;
+    return FALSE;//No Move Found
+}
+
 
