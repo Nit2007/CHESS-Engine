@@ -27,6 +27,19 @@ const int PceDir[13][8] = {     //[piecetype][possiblemoves]
 
 const int NumDir[13] = { 0, 0, 8, 4, 4, 8, 8, 0, 8, 4, 4, 8, 8};
 
+int MoveExists(s_board*pos,const int move)
+{
+	s_movelist *list;
+	GenerateAllMoves(pos , list);
+	for(int movenum=0;movenum<list->count;movenum++)
+	{
+		if(!MakeMove(pos,move))continue;
+		TakeMove(pos);
+		if(list->moves[movenum].move == move) return TRUE;
+	}
+	return FALSE;
+}
+
 void AddQuietMove(const s_board *pos,int move ,  s_movelist *list)
 {(void)pos;
     list->moves[list->count].move=move;
