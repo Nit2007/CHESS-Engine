@@ -166,6 +166,7 @@ extern void PrintMoveList(const s_movelist *list);
 extern int ParseMove(char* ptchar,s_board*pos);
 
 //movegen.cpp
+extern int MoveExists(s_board*pos,const int move);
 extern void AddQuietMove(const s_board *pos,int move ,  s_movelist *list);
 extern void AddCaptureMove(const s_board *pos,int move ,  s_movelist *list);
 extern void AddEnpasMove(const s_board *pos,int move ,  s_movelist *list);
