@@ -65,5 +65,6 @@ struct s_board
     s_undo history[2048];//MAXGAMEMOVES//vector<s_undo>history(MAXGAMEMOVES);
 
     s_hashtable hashtable[1];
+    int pvarray[64]; //MAXDEPTH
 };
 
