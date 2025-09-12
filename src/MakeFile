@@ -19,7 +19,8 @@ SRC = main.cpp \
       test.cpp \
 	  search.cpp \
 	  misc.cpp \
-	  pvtable.cpp
+	  pvtable.cpp \
+	  evaluate.cpp
 
 # Output executable name
 TARGET = chess
