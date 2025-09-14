@@ -206,6 +206,7 @@ extern int IsRepetition(s_board* pos);
 extern int GetTimeMs();
 
 //pvtable.cpp
+extern int GetHashLine(const int depth, S_BOARD *pos);
 extern void ClearHashTable(s_hashtable *table) ;
 extern void InitHashTable(s_hashtable *table, const int MB) ;
 extern void StoreHashMove(const s_board* pos, const int move);
