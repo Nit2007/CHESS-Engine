@@ -1,6 +1,27 @@
 #include "defs.h"
 #include "struct.h"
 
+int GetHashLine(const int depth, S_BOARD *pos) {
+    ASSERT(depth < 64 && depth >= 1);
+
+	int move = ProbeHashMove(pos);
+	int count = 0;
+	
+	while(move != false && count < depth) {
+	    ASSERT(count < 64);
+	    if( MoveExists(pos, move) ) {
+			MakeMove(pos, move);
+			pos->pvarray[count++] = move;
+		} else break;
+		move = ProbeHashMove(pos);	
+	}
+	
+	while(pos->ply > 0) {
+		TakeMove(pos);
+	}
+	return count;
+}
+
 void ClearHashTable(s_hashtable *table) {
     s_hashentry *tableEntry;
     
