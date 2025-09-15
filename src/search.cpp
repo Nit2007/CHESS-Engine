@@ -45,18 +45,37 @@ static void ClearForSearch(s_board* pos, s_searchinfo* info)
 }
 
 
-static int AlphaBeta(int alpha,int beta,s_board* pos, s_searchinfo* info)
+static int AlphaBeta(int alpha,int beta,s_board* pos, s_searchinfo* info,,int DoNULL)
 {
     return 0;
 }
 
-static int Quiescence(int alpha,int beta,int depth ,s_board* pos, s_searchinfo* info,int DoNULL)
+static int Quiescence(int alpha,int beta,int depth ,s_board* pos, s_searchinfo* info)
 {//To avoid Horizon affect of AlphaBeta (due to depth constraints)
     return 0;
 }
 
 void SearchPosition(s_board* pos, s_searchinfo* info)
-{
-    
+{//Iterative Deepening
+	int bestmove = 0;
+	int bestscore= -INFINITE;
+	int pvmove=0;
+	
+	ClearForSearch(pos,  info);
+	
+	for(int depth=1; depth<=info->depth ;depth++)
+	{
+		bestscore = AlphaBeta( -INFINITE , INFINITE , pos, info, true);
+		pvmove = GetHashLine( depth, pos);
+		bestmove = pos->pvarray[0]; 
+		cout<<"At Depth : "<<depth<<"With BestScore : "<<bestscore<<" BestMove : "<<PrMove(bestmove)<<" Nodes Visited : "<<info->nodes<<endl;
+		
+		pvmove = GetHashLine( depth, pos);
+		out<<" Principal Variation (Hash-Table) ";
+		for(int pvnum=0;pvnum<pvmove;pvnum++)
+		{
+			cout<<" "<<PrMove(bestmove);
+		}cout<<endl;
+	}
 }
 
