@@ -12,6 +12,7 @@ using namespace std;
 #define MAXGAMEMOVES 2048
 #define BOARD_SQ_NUM 120
 #define MAXDEPTH 64
+#define INFINITE 30000
 #define START_FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 #define FEN_1 "6k1/5p2/6p1/8/7p/8/6PP/6K1 b - - 0 0"
 #define FEN_2 "3k4/2n2B2/1KP5/2B2p2/5b1p/7P/8/8 b - - 0 0"
