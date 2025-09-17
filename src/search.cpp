@@ -71,6 +71,8 @@ static int AlphaBeta(int alpha,int beta,int depth , s_board* pos, s_searchinfo* 
 		{
 			if(score >= beta)
 			{
+				if(legal == 1) info->fhf++;
+				info->fh++;
 				return beta;
 			}
 			alpha = score;
@@ -116,6 +118,7 @@ void SearchPosition(s_board* pos, s_searchinfo* info)
 		{
 			cout<<" "<<PrMove(bestmove);
 		}cout<<endl;
+		cout<<"Ordering : "<<fixed<<setprecision(2)<<info->fhf/info->fh;
 	}
 }
 
