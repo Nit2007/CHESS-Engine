@@ -45,9 +45,49 @@ static void ClearForSearch(s_board* pos, s_searchinfo* info)
 }
 
 
-static int AlphaBeta(int alpha,int beta,s_board* pos, s_searchinfo* info,,int DoNULL)
+static int AlphaBeta(int alpha,int beta,int depth , s_board* pos, s_searchinfo* info,int DoNULL)
 {
-    return 0;
+	ASSERT(CheckBoard(pos));
+	if(depth == 0)
+	{
+		info->nodes++;
+		return EvalPosition(pos);
+	}
+		info->nodes++;
+	if(IsRepetition(pos) || pos->fifty == 100)return 0;
+    if(pos->ply > MAXDEPTH-1)return EvalPosition(pos);
+	int oldalpha = alpha;
+	int bestmove = 0;
+	int score= -INFINITE,legal= 0;
+	s_movelist *list;
+	GenerateAllMoves(pos , list);
+	for(int movenum=0;movenum<list->count;movenum++)
+	{
+		if(!MakeMove(pos, list->moves[movenum].move))continue;
+		legal++;
+		score = -AlphaBeta( -beta, -alpha , depth - 1,pos,info, true);
+		TakeMove(pos);
+		if(score > alpha)
+		{
+			if(score >= beta)
+			{
+				return beta;
+			}
+			alpha = score;
+			bestmove = list->moves[movenum].move;
+		}
+	}
+	
+	if(legal == 0) 
+	{
+		if( SqAttacked(pos->king[pos->side],pos->side^1, pos)return -ISMATE + pos->ply;
+		else return 0;
+	}
+	if(oldalpha != alpha)
+	{
+		StoreHashMove(pos, bestmove);
+	}
+	return alpha;
 }
 
 static int Quiescence(int alpha,int beta,int depth ,s_board* pos, s_searchinfo* info)
