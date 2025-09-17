@@ -6,6 +6,7 @@ using namespace std;
 #include <cstdio>  //FOR getchar()
 #include <string.h> //FOR strlen()
 #include <cstring> // For memset
+#include <iomanip> //For fixed<<setprecision()
 #include <vector>
 #include "struct.h"
 
