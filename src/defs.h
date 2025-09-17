@@ -31,7 +31,7 @@ using namespace std;
 #define BISHOP_FEN "6k1/1b6/4n3/8/1n4B1/1B3N2/1N6/2b3K1 b - - 0 1"
 #define BISHOP_B_FEN "2B3k1/1n6/1b3n2/1N4b1/8/4N3/1B6/6K1 w - - 0 1"
 #define MOVEGEN_48_FEN "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1"
-
+#define WAC1_FEN "2rr3k/pp3pp1/1nnqbN1p/3pN3/2pP4/2P3Q1/PPB4P/R4RK1 w - - 0 1"
 
 // You define this only in debugging
 #define DEBUG       
