@@ -12,11 +12,11 @@ void init120to64()
     int sq64=0;
     for(int i=0;i<BOARD_SQ_NUM;i++)
     {
-        sq120tosq64[i]=65;
+        sq120tosq64[i]=64; // Initialize to 64 (invalid) instead of 65
     }
     for(int i=0;i<64;i++)
     {
-        sq64tosq120[i]=120;
+        sq64tosq120[i]=120; // Initialize to 120 (invalid)
     }
 
     for(int i=0;i<8;i++)

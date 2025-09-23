@@ -8,7 +8,7 @@
     #include <windows.h>    // Windows-specific timing functions { GetTickCount(), Sleep()}
 #else// Unix/Linux/Mac
     #include <sys/time.h>   // Unix/Linux timing functions {gettimeofday(), struct timeval}
-    #include <sys/select.h> // For input checking on Unix/Linux {select() function for checking if input is ready}
+  //  #include <sys/select.h> // For input checking on Unix/Linux {select() function for checking if input is ready}
     #include <unistd.h>     // Unix standard definitions {Contains constants like STDIN_FILENO, basic Unix functions}
     #include <string.h>     // String manipulation functions {strlen(), strcpy(), strcmp()}
 #endif

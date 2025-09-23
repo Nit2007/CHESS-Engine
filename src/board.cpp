@@ -283,10 +283,12 @@ int CheckBoard(const s_board *pos)
     int t_piece,colour;
     for(int i=0;i<64 ;i++)
     {
-        sq120=SQ120(i);
+        int sq120=SQ120(i);
+        // Only check if the square is valid (not offboard)
+        if (sq120 == 120) continue; // 120 is the invalid marker
         t_piece=pos->pieces[sq120];
-        if(t_piece != EMPTY) 
-        { 
+        if(t_piece != EMPTY)
+        {
             colour=pieceCol[t_piece];
             t_piecenum[t_piece]++;
             if(pieceBig[t_piece]==TRUE)t_bigpce[colour]++;
@@ -341,7 +343,13 @@ int CheckBoard(const s_board *pos)
     ASSERT(pos->enpas == NO_SQ || 
        (pos->side == WHITE && RanksBrd[pos->enpas] == RANK_6) ||
        (pos->side == BLACK && RanksBrd[pos->enpas] == RANK_3));
-    ASSERT( pos->pieces[pos->king[WHITE] ] == WK);
-    ASSERT( pos->pieces[pos->king[BLACK] ] == BK);
+
+    // Only check king positions if they are set (not NO_SQ)
+    if (pos->king[WHITE] != NO_SQ) {
+        ASSERT( pos->pieces[pos->king[WHITE] ] == WK);
+    }
+    if (pos->king[BLACK] != NO_SQ) {
+        ASSERT( pos->pieces[pos->king[BLACK] ] == BK);
+    }
     return true;
 }
