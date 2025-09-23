@@ -71,4 +71,5 @@ void allinit()
     InitHashKeys();
     InitFilesRanksBrd();
     initBitMask();
+    InitMvvLva(); 
 }

@@ -27,7 +27,7 @@ struct s_undo
 
 // Represents a single entry in the transposition table (hash table).
 struct s_hashentry {
-    uint64_t posKey;  // Position key for this entry. It's the Zobrist hash of the board position.
+    uint64_t poskey;  // Position key for this entry. It's the Zobrist hash of the board position.
     int move;         // Best move for this position, found from a previous search.
     int score;        // Evaluation score for this position.
     int depth;        // The search depth at which this entry was recorded.

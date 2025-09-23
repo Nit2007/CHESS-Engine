@@ -1,7 +1,7 @@
 #include "defs.h"
 #include "struct.h"
 
-int GetHashLine(const int depth, S_BOARD *pos) {
+int GetHashLine(const int depth, s_board *pos) {
     ASSERT(depth < 64 && depth >= 1);
 
 	int move = ProbeHashMove(pos);
@@ -27,7 +27,7 @@ void ClearHashTable(s_hashtable *table) {
     
     // Loop through each entry in the hash table
     for ( tableEntry = table->pTable; tableEntry < table->pTable + table->numEntries; tableEntry++) {
-        tableEntry->posKey = 0ULL;    // Clear position key
+        tableEntry->poskey = 0ULL;    // Clear position key
         tableEntry->move = FALSE;    // Set to no move
         tableEntry->depth = 0;        // Clear search depth
         tableEntry->score = 0;        // Clear evaluation score
@@ -71,7 +71,8 @@ int ProbeHashMove(const s_board* pos)
 {
     int index = (pos->poskey) % (pos->hashtable->numEntries);
     ASSERT(index>=0 && index<=(pos->hashtable->numEntries-1));
-    if(pos->hashtable->pTable[index].poskey==pos->poskey)    return pos->hashtable->pTable[index].move=move;
+    if(pos->hashtable->pTable[index].poskey==pos->poskey)   
+     return pos->hashtable->pTable[index].move;
     return FALSE;//No Move Found
 }
 

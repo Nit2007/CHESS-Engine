@@ -14,3 +14,6 @@ int PieceBishopQueen[13] = { FALSE, FALSE, FALSE, TRUE , FALSE, TRUE , FALSE, FA
 int PieceSlides[13]      = { FALSE, FALSE, FALSE, TRUE , TRUE, TRUE , FALSE, FALSE, FALSE, TRUE , TRUE , TRUE , FALSE };
 
 
+int MvvLvaScores[13][13];
+// Piece values for MVV-LVA (using  existing piece values but reorganized)
+int MvvLvaValues[13] = {0, 100, 325, 325, 500, 1000, 50000, 100, 325, 325, 500, 1000, 50000};

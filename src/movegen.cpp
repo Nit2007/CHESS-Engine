@@ -29,36 +29,41 @@ const int NumDir[13] = { 0, 0, 8, 4, 4, 8, 8, 0, 8, 4, 4, 8, 8};
 
 int MoveExists(s_board*pos,const int move)
 {
-	s_movelist *list;
-	GenerateAllMoves(pos , list);
-	for(int movenum=0;movenum<list->count;movenum++)
+	s_movelist list;
+    GenerateAllMoves(pos, &list);
+	for(int movenum=0;movenum<list.count;movenum++)
 	{
 		if(!MakeMove(pos,move))continue;
 		TakeMove(pos);
-		if(list->moves[movenum].move == move) return TRUE;
+		if(list.moves[movenum].move == move) return TRUE;
 	}
 	return FALSE;
 }
 
-void AddQuietMove(const s_board *pos,int move ,  s_movelist *list)
-{(void)pos;
-    list->moves[list->count].move=move;
-    list->moves[list->count].score=0;
-    list->count++;
-}
-void AddCaptureMove(const s_board *pos,int move ,  s_movelist *list)
-{(void)pos;
-    list->moves[list->count].move=move;
-    list->moves[list->count].score=0;
+
+void AddQuietMove(const s_board *pos, int move, s_movelist *list) {
+    ASSERT(list->count < MAX_POSITION_MOVES);
+    list->moves[list->count].move = move;
+    list->moves[list->count].score = ScoreMove(move, pos);
     list->count++;
 }
 
-void AddEnpasMove(const s_board *pos,int move ,  s_movelist *list)
-{(void)pos;
-    list->moves[list->count].move=move;
-    list->moves[list->count].score=0;
+// Replace your existing AddCaptureMove function with this:
+void AddCaptureMove(const s_board *pos, int move, s_movelist *list) {
+    ASSERT(list->count < MAX_POSITION_MOVES);
+    list->moves[list->count].move = move;
+    list->moves[list->count].score = ScoreMove(move, pos);
     list->count++;
 }
+
+// Replace your existing AddEnpasMove function with this:
+void AddEnpasMove(const s_board *pos, int move, s_movelist *list) {
+    ASSERT(list->count < MAX_POSITION_MOVES);
+    list->moves[list->count].move = move;
+    list->moves[list->count].score = ScoreMove(move, pos);
+    list->count++;
+}
+
 
 void AddWhitePawnCapMove(const s_board *pos , const int from , const int to ,const int cap ,   s_movelist *list)
 {

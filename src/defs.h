@@ -99,6 +99,15 @@ enum Castle{WKCA =1,WQCA=2,BKCA=4,BQCA=8};
 #define MFLAGCAP 0x7C000
 #define MFLAGPROM 0xF00000
 
+// Move ordering values
+#define MVVLVA_SIZE 15      // Most Valuable Victim - Least Valuable Attacker table size
+#define MAX_POSITION_MOVES 256
+
+// Move ordering scores
+#define PV_MOVE_SCORE 2000000      // Principal Variation move (from hash table)
+#define KILLER_ONE_SCORE 900000    // First killer move
+#define KILLER_TWO_SCORE 800000    // Second killer move
+
 // bitboard.cpp
 extern int sq64tosq120[64];        //8 * 8
 extern int sq120tosq64[BOARD_SQ_NUM];// 10 * 12
@@ -210,7 +219,7 @@ extern void SearchPosition(s_board* pos, s_searchinfo* info);
 extern int GetTimeMs();
 
 //pvtable.cpp
-extern int GetHashLine(const int depth, S_BOARD *pos);
+extern int GetHashLine(const int depth, s_board *pos);
 extern void ClearHashTable(s_hashtable *table) ;
 extern void InitHashTable(s_hashtable *table, const int MB) ;
 extern void StoreHashMove(const s_board* pos, const int move);
@@ -218,3 +227,10 @@ extern int ProbeHashMove(const s_board* pos);
 
 //evaluate.cpp
 extern int EvalPosition(s_board* pos);
+
+//moveorder.cpp
+extern int MvvLvaScores[13][13];
+extern int MvvLvaValues[13] ;
+extern void InitMvvLva();
+extern int ScoreMove(const int move, const s_board* pos);
+extern void PickNextMove(int moveNum, s_movelist* list);
