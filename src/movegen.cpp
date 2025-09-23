@@ -286,3 +286,108 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
 	}
     
 }
+
+void GenerateAllCaptures(const s_board *pos, s_movelist *list) {
+    ASSERT(CheckBoard(pos));
+    list->count = 0;
+    
+    int sq = 0, t_sq = 0, pce = EMPTY, dir = 0, index = 0, pceIndex = 0;
+    
+    if (pos->side == WHITE) {
+        // White pawn captures
+        for (int pcenum = 0; pcenum < pos->piecenum[WP]; pcenum++) {
+            sq = pos->piecelist[WP][pcenum];
+            ASSERT(SqOnBoard(sq));
+            
+            // Diagonal captures
+            if (!SQOFFBOARD(sq+9) && pieceCol[pos->pieces[sq+9]] == BLACK) {
+                AddWhitePawnCapMove(pos, sq, sq+9, pos->pieces[sq+9], list);
+            }
+            if (!SQOFFBOARD(sq+11) && pieceCol[pos->pieces[sq+11]] == BLACK) {
+                AddWhitePawnCapMove(pos, sq, sq+11, pos->pieces[sq+11], list);
+            }
+            
+            // En passant
+            if (sq+9 == pos->enpas) {
+                AddEnpasMove(pos, MOVE(sq, (sq+9), EMPTY, EMPTY, MFLAGEP), list);
+            }
+            if (sq+11 == pos->enpas) {
+                AddEnpasMove(pos, MOVE(sq, (sq+11), EMPTY, EMPTY, MFLAGEP), list);
+            }
+        }
+    } else {
+        // Black pawn captures
+        for (int pcenum = 0; pcenum < pos->piecenum[BP]; pcenum++) {
+            sq = pos->piecelist[BP][pcenum];
+            ASSERT(SqOnBoard(sq));
+            
+            // Diagonal captures
+            if (!SQOFFBOARD(sq-9) && pieceCol[pos->pieces[sq-9]] == WHITE) {
+                AddBlackPawnCapMove(pos, sq, sq-9, pos->pieces[sq-9], list);
+            }
+            if (!SQOFFBOARD(sq-11) && pieceCol[pos->pieces[sq-11]] == WHITE) {
+                AddBlackPawnCapMove(pos, sq, sq-11, pos->pieces[sq-11], list);
+            }
+            
+            // En passant
+            if (sq-9 == pos->enpas) {
+                AddEnpasMove(pos, MOVE(sq, (sq-9), EMPTY, EMPTY, MFLAGEP), list);
+            }
+            if (sq-11 == pos->enpas) {
+                AddEnpasMove(pos, MOVE(sq, (sq-11), EMPTY, EMPTY, MFLAGEP), list);
+            }
+        }
+    }
+    
+    // Sliding pieces (Bishop, Rook, Queen) - only captures
+    pceIndex = LoopSlideIndex[pos->side];
+    pce = LoopSlidePce[pceIndex++];
+    while (pce != 0) {
+        ASSERT(PieceValid(pce));
+        for (int pcenum = 0; pcenum < pos->piecenum[pce]; pcenum++) {
+            sq = pos->piecelist[pce][pcenum];
+            ASSERT(SqOnBoard(sq));
+            
+            for (index = 0; index < NumDir[pce]; index++) {
+                dir = PceDir[pce][index];
+                t_sq = sq + dir;
+                
+                while (!SQOFFBOARD(t_sq)) {
+                    if (pos->pieces[t_sq] != EMPTY) {
+                        if (pieceCol[pos->pieces[t_sq]] == (pos->side^1)) {
+                            AddCaptureMove(pos, MOVE(sq, t_sq, pos->pieces[t_sq], EMPTY, 0), list);
+                        }
+                        break;
+                    }
+                    t_sq += dir;
+                }
+            }
+        }
+        pce = LoopSlidePce[pceIndex++];
+    }
+    
+    // Non-sliding pieces (Knight, King) - only captures
+    pceIndex = LoopNonSlideIndex[pos->side];
+    pce = LoopNonSlidePce[pceIndex++];
+    while (pce != 0) {
+        ASSERT(PieceValid(pce));
+        for (int pcenum = 0; pcenum < pos->piecenum[pce]; pcenum++) {
+            sq = pos->piecelist[pce][pcenum];
+            ASSERT(SqOnBoard(sq));
+            
+            for (index = 0; index < NumDir[pce]; index++) {
+                dir = PceDir[pce][index];
+                t_sq = sq + dir;
+                
+                if (SQOFFBOARD(t_sq)) continue;
+                
+                if (pos->pieces[t_sq] != EMPTY) {
+                    if (pieceCol[pos->pieces[t_sq]] == (pos->side^1)) {
+                        AddCaptureMove(pos, MOVE(sq, t_sq, pos->pieces[t_sq], EMPTY, 0), list);
+                    }
+                }
+            }
+        }
+        pce = LoopNonSlidePce[pceIndex++];
+    }
+}
