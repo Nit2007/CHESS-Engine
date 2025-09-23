@@ -14,7 +14,7 @@ int IsRepetition(s_board* pos)
   return FALSE;
 }
 
-static void ClearForSearch(s_board* pos, s_searchinfo* info) {
+ void ClearForSearch(s_board* pos, s_searchinfo* info) {
     // Clear history heuristic table
     for (int i = 0; i < 13; i++) {
         for (int j = 0; j < 120; j++) {
@@ -44,7 +44,7 @@ static void ClearForSearch(s_board* pos, s_searchinfo* info) {
 }
 
 
-static int AlphaBeta(int alpha, int beta, int depth, s_board* pos, s_searchinfo* info, int DoNULL) {
+ int AlphaBeta(int alpha, int beta, int depth, s_board* pos, s_searchinfo* info, int DoNULL) {
     ASSERT(CheckBoard(pos));
     
     if (depth == 0) {
@@ -121,9 +121,70 @@ static int AlphaBeta(int alpha, int beta, int depth, s_board* pos, s_searchinfo*
     return alpha;
 }
 
-static int Quiescence(int alpha,int beta,int depth ,s_board* pos, s_searchinfo* info)
-{//To avoid Horizon affect of AlphaBeta (due to depth constraints)
-    return 0;
+int Quiescence(int alpha, int beta, s_board* pos, s_searchinfo* info)
+ {//To avoid Horizon affect of AlphaBeta (due to depth constraints)
+    ASSERT(CheckBoard(pos));
+    
+    info->nodes++;
+    
+    // Check for repetition or fifty-move rule
+    if (IsRepetition(pos) || pos->fifty >= 100) return 0;
+    
+    // Prevent search explosion at extreme depths
+    if (pos->ply > MAXDEPTH - 1) return EvalPosition(pos);
+    
+    // Stand pat: evaluate current position
+    // In quiescence, we assume the current position is "good enough"
+    int standPat = EvalPosition(pos);
+    
+    // Beta cutoff on stand pat score
+    if (standPat >= beta) {
+        return beta;
+    }
+    
+    // Alpha improvement
+    if (standPat > alpha) {
+        alpha = standPat;
+    }
+    
+    // Generate only capture moves in quiescence search
+    s_movelist list;
+    list.count = 0;
+    
+    // Generate captures only (modify GenerateAllMoves or create a capture-only version)
+    GenerateAllCaptures(pos, &list);  // You'll need to implement this
+    
+    // If no captures available, return stand pat score
+    if (list.count == 0) {
+        return standPat;
+    }
+    
+    int legal = 0;
+    int bestscore = standPat;
+    
+    // Try all capture moves
+    for (int movenum = 0; movenum < list.count; movenum++) {
+        PickNextMove(movenum, &list);
+        
+        if (!MakeMove(pos, list.moves[movenum].move)) continue;
+        
+        legal++;
+        int score = -Quiescence(-beta, -alpha, pos, info);
+        TakeMove(pos);
+        
+        if (score > bestscore) {
+            bestscore = score;
+            
+            if (score > alpha) {
+                if (score >= beta) {
+                    return beta;  // Beta cutoff
+                }
+                alpha = score;
+            }
+        }
+    }
+    
+    return bestscore;
 }
 
 void SearchPosition(s_board* pos, s_searchinfo* info)
