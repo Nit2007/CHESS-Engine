@@ -188,6 +188,7 @@ extern void AddWhitePawnMove(const s_board *pos , const int from , const int to 
 extern void AddBlackPawnCapMove(const s_board *pos , const int from , const int to ,const int cap ,   s_movelist *list);
 extern void AddBlackPawnMove(const s_board *pos , const int from , const int to ,   s_movelist *list);
 extern void GenerateAllMoves(const s_board *pos ,  s_movelist *list);
+extern void GenerateAllCaptures(const s_board *pos, s_movelist *list) ;
 
 //validate.cpp
 extern int SqOnBoard(const int sq);
