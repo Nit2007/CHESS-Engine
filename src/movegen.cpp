@@ -44,7 +44,18 @@ int MoveExists(s_board*pos,const int move)
 void AddQuietMove(const s_board *pos, int move, s_movelist *list) {
     ASSERT(list->count < MAX_POSITION_MOVES);
     list->moves[list->count].move = move;
-    list->moves[list->count].score = ScoreMove(move, pos);
+    if(pos->searchKillers[0][pos->ply] == move){list->moves[list->count].score = 900000;}
+    else if(pos->searchKillers[1][pos->ply] == move ){list->moves[list->count].score =800000;}
+    //else{list->moves[list->count].score = ScoreMove(move, pos);}
+    else{// Add search history scoring
+        int from = FROMSQ(move);     int to = TOSQ(move);    int piece = pos->pieces[from];
+        if (piece >= WP && piece <= BK) {
+            int history_score = pos->searchHistory[piece][to];
+            list->moves[list->count].score = ScoreMove(move, pos) + history_score;
+        } else {
+            list->moves[list->count].score = ScoreMove(move, pos);
+        }
+    }
     list->count++;
 }
 
@@ -154,9 +165,9 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
                 AddWhitePawnCapMove(pos,sq,sq+11,pos->pieces[sq+11],list);
 
             if(sq+9 == pos->enpas)
-                AddCaptureMove(pos,MOVE(sq,(sq+9),EMPTY,EMPTY,MFLAGEP) ,list);
+                AddEnpasMove(pos,MOVE(sq,(sq+9),EMPTY,EMPTY,MFLAGEP) ,list);
             if(sq+11 == pos->enpas)
-                AddCaptureMove(pos,MOVE(sq,(sq+11),EMPTY,EMPTY,MFLAGEP) ,list);
+                AddEnpasMove(pos,MOVE(sq,(sq+11),EMPTY,EMPTY,MFLAGEP) ,list);
         }
 		if(pos->castleperm & WKCA)
 		{
@@ -193,9 +204,9 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
                 AddBlackPawnCapMove(pos,sq,sq-11,pos->pieces[sq-11],list);
 
             if(sq-9 == pos->enpas)
-                AddCaptureMove(pos,MOVE(sq,(sq-9),EMPTY,EMPTY,MFLAGEP) ,list);
+                AddEnpasMove(pos,MOVE(sq,(sq-9),EMPTY,EMPTY,MFLAGEP) ,list);
             if(sq-11 == pos->enpas)
-                AddCaptureMove(pos,MOVE(sq,(sq-11),EMPTY,EMPTY,MFLAGEP) ,list);
+                AddEnpasMove(pos,MOVE(sq,(sq-11),EMPTY,EMPTY,MFLAGEP) ,list);
         }
 		if(pos->castleperm & BKCA)
 		{

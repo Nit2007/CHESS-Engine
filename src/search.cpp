@@ -64,7 +64,23 @@ int IsRepetition(s_board* pos)
     
     s_movelist list;
     GenerateAllMoves(pos, &list);
-    
+    // Probe hash table for best move
+int hashMove = ProbeHashMove(pos);
+if (hashMove != 0) {
+    // Move hash move to front of list for better ordering
+    for (int i = 0; i < list.count; i++) {
+        if (list.moves[i].move == hashMove) {
+            // Swap with first move
+            int tempMove = list.moves[0].move;
+            int tempScore = list.moves[0].score;
+            list.moves[0].move = list.moves[i].move;
+            list.moves[0].score = list.moves[i].score;
+            list.moves[i].move = tempMove;
+            list.moves[i].score = tempScore;
+            break;
+        }
+    }
+}
     // Sort moves for better ordering
     for (int movenum = 0; movenum < list.count; movenum++) {
         PickNextMove(movenum, &list);
@@ -99,9 +115,11 @@ int IsRepetition(s_board* pos)
                 int piece = pos->pieces[from];
                 
                 ASSERT(SqOnBoard(from) && SqOnBoard(to));
-                ASSERT(PieceValid(piece));
-                
-                pos->searchHistory[piece][to] += depth * depth; // Depth squared bonus
+                if (piece >= WP && piece <= BK) {
+                    ASSERT(PieceValid(piece));
+                    
+                    pos->searchHistory[piece][to] += depth * depth; // Depth squared bonus
+                }
             }
         }
     }
@@ -161,7 +179,23 @@ int Quiescence(int alpha, int beta, s_board* pos, s_searchinfo* info)
     
     int legal = 0;
     int bestscore = standPat;
-    
+    // Probe hash table for best move
+int hashMove = ProbeHashMove(pos);
+if (hashMove != 0) {
+    // Move hash move to front of list for better ordering
+    for (int i = 0; i < list.count; i++) {
+        if (list.moves[i].move == hashMove) {
+            // Swap with first move
+            int tempMove = list.moves[0].move;
+            int tempScore = list.moves[0].score;
+            list.moves[0].move = list.moves[i].move;
+            list.moves[0].score = list.moves[i].score;
+            list.moves[i].move = tempMove;
+            list.moves[i].score = tempScore;
+            break;
+        }
+    }
+}
     // Try all capture moves
     for (int movenum = 0; movenum < list.count; movenum++) {
         PickNextMove(movenum, &list);
@@ -200,15 +234,15 @@ void SearchPosition(s_board* pos, s_searchinfo* info)
 		bestscore = AlphaBeta( -INFINITE , INFINITE , depth, pos, info, true);
 		pvmove = GetHashLine( depth, pos);
 		bestmove = pos->pvarray[0]; 
-		cout<<"At Depth : "<<depth<<"With BestScore : "<<bestscore<<" BestMove : "<<PrMove(bestmove)<<" Nodes Visited : "<<info->nodes<<endl;
+		cout<<"At Depth : "<<depth<<"  With BestScore : "<<bestscore<<" BestMove : "<<PrMove(bestmove)<<" Nodes Visited : "<<info->nodes<<endl;
 		
 		pvmove = GetHashLine( depth, pos);
 		cout<<" Principal Variation (Hash-Table) ";
 		for(int pvnum=0;pvnum<pvmove;pvnum++)
 		{
-			cout<<" "<<PrMove(bestmove);
+			cout<<" "<<PrMove(pos->pvarray[pvnum]);
 		}cout<<endl;
-		cout<<"Ordering : "<<fixed<<setprecision(2)<<(info->fh > 0 ? info->fhf/info->fh : 0.0);
+		cout<<"Ordering : "<<fixed<<setprecision(2)<<(info->fh > 0 ? info->fhf/info->fh : 0.0)<<" ";
 	}
 }
 

@@ -7,7 +7,7 @@ int GetHashLine(const int depth, s_board *pos) {
 	int move = ProbeHashMove(pos);
 	int count = 0;
 	
-	while(move != false && count < depth) {
+	while(move != FALSE && count < depth) {
 	    ASSERT(count < 64);
 	    if( MoveExists(pos, move) ) {
 			MakeMove(pos, move);

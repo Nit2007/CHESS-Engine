@@ -217,6 +217,7 @@ extern int IsRepetition(s_board* pos);
 extern void SearchPosition(s_board* pos, s_searchinfo* info);
 extern int AlphaBeta(int alpha, int beta, int depth, s_board* pos, s_searchinfo* info, int DoNULL);
 extern int Quiescence(int alpha, int beta, s_board* pos, s_searchinfo* info);
+extern void ClearForSearch(s_board* pos, s_searchinfo* info) ;
 
 //misc.cpp
 extern int GetTimeMs();

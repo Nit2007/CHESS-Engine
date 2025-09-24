@@ -27,10 +27,12 @@ int ScoreMove(const int move, const s_board* pos) {
     if (captured != EMPTY) {
         // This is a capture move - use MVV-LVA scoring
         int attacker = pos->pieces[FROMSQ(move)];
-        ASSERT(PieceValid(attacker));
-        ASSERT(PieceValid(captured));
-        
-        score = MvvLvaScores[captured][attacker] + 100000; // Base capture score
+        if (attacker >= WP && attacker <= BK) {
+            ASSERT(PieceValid(attacker));
+            ASSERT(PieceValid(captured));
+            
+            score = MvvLvaScores[captured][attacker] + 100000; // Base capture score
+        }
     } else {
         // Non-capture moves
         
@@ -47,9 +49,11 @@ int ScoreMove(const int move, const s_board* pos) {
             
             ASSERT(SqOnBoard(from));
             ASSERT(SqOnBoard(to));
-            ASSERT(PieceValid(piece));
-            
-            score = pos->searchHistory[piece][to];
+            if (piece >= WP && piece <= BK) {
+                ASSERT(PieceValid(piece));
+                
+                score = pos->searchHistory[piece][to];
+            }
         }
     }
     
