@@ -27,6 +27,7 @@ string UCI_GetMoveString(int move);
 void UCI_PrintOptions();
 
 // Initialize UCI mode
+
 void UCI_Init() {
     g_uciMode = true;
     allinit();
@@ -34,15 +35,18 @@ void UCI_Init() {
     g_info.depth = 6;
     g_info.quit = false;
     g_info.stopped = false;
-    cout << g_engineName << " by " << g_engineAuthor << " initialized" << endl;
+    g_info.bestmove = 0;
+    g_info.bestscore = 0;
+    // Move non-UCI info lines to stderr to avoid parser warnings
+    cerr << g_engineName << " by " << g_engineAuthor << " initialized" << endl;
 }
-
 // Main UCI loop
 void UCI_Loop() {
     string input;
     string token;
 
-    cout << g_engineName << " UCI mode activated" << endl;
+    // Avoid emitting non-UCI lines on stdout before commands arrive
+    cerr << g_engineName << " UCI mode activated" << endl;
 
     while (!g_info.quit) {
         getline(cin, input);
@@ -141,10 +145,12 @@ void UCI_ParseGo(const string& command) {
     g_info.starttime = GetTimeMs();
     g_info.depth = MAXDEPTH;
     g_info.timeset = false;
-    g_info.movestogo = 30;
+    g_info.movestogo = 40; // assume faster time controls by default
     g_info.infinite = false;
     g_info.stopped = false;
     g_searching = true;
+
+    int movetime = -1, wtime = -1, btime = -1, winc = 0, binc = 0;
 
     // Parse go parameters
     while (ss >> token) {
@@ -152,40 +158,53 @@ void UCI_ParseGo(const string& command) {
             ss >> g_info.depth;
         }
         else if (token == "movetime") {
-            int movetime;
             ss >> movetime;
-            g_info.stoptime = g_info.starttime + movetime;
-            g_info.timeset = true;
         }
         else if (token == "wtime") {
-            int wtime;
             ss >> wtime;
-            if (g_board.side == WHITE) {
-                g_info.stoptime = g_info.starttime + wtime / 30; // Simple time management
-                g_info.timeset = true;
-            }
         }
         else if (token == "btime") {
-            int btime;
             ss >> btime;
-            if (g_board.side == BLACK) {
-                g_info.stoptime = g_info.starttime + btime / 30; // Simple time management
-                g_info.timeset = true;
-            }
         }
         else if (token == "winc") {
-            // White increment (not used in simple implementation)
-            ss >> token;
+            ss >> winc;
         }
         else if (token == "binc") {
-            // Black increment (not used in simple implementation)
-            ss >> token;
+            ss >> binc;
         }
         else if (token == "movestogo") {
             ss >> g_info.movestogo;
         }
         else if (token == "infinite") {
             g_info.infinite = true;
+        }
+    }
+
+    // Compute a safe think time budget if not using explicit depth
+    if (movetime > 0) {
+        int alloc = movetime - 30; // safety margin
+        if (alloc < 50) alloc = 50;
+        if (alloc > 2000) alloc = 2000; // hard cap to avoid inactivity
+        g_info.stoptime = g_info.starttime + alloc;
+        g_info.timeset = true;
+    } else if (!g_info.infinite && (wtime >= 0 || btime >= 0)) {
+        int remain = (g_board.side == WHITE ? wtime : btime);
+        if (remain < 0) remain = 0;
+        int inc = (g_board.side == WHITE ? winc : binc);
+        int mtg = g_info.movestogo > 0 ? g_info.movestogo : 40;
+        // Allocate roughly 1/(mtg+6) of remaining time plus a portion of increment
+        int alloc = remain / (mtg + 6);
+        alloc += (inc * 3) / 5; // use ~60% of increment
+        if (alloc < 50) alloc = 50;
+        if (alloc > 2000) alloc = 2000; // hard cap to avoid inactivity
+        if (alloc > remain - 50) alloc = remain - 50; // leave a small safety buffer
+        if (alloc < 50) alloc = 50; // clamp again if remain was tiny
+        g_info.stoptime = g_info.starttime + alloc;
+        g_info.timeset = true;
+    } else {
+        // No time controls: cap depth to something reasonable
+        if (!g_info.infinite && g_info.depth == MAXDEPTH) {
+            g_info.depth = 8; // safe default depth
         }
     }
 
@@ -201,20 +220,19 @@ void UCI_ParseGo(const string& command) {
 
 // Send best move to UCI interface
 void UCI_SendBestMove() {
-    // Get the best move from the search (this is a simplified implementation)
-    // In a real implementation, you would get the best move from the search results
-    s_movelist list;
-    GenerateAllMoves(&g_board, &list);
-
-    if (list.count > 0) {
-        // For now, just pick the first move (in a real engine, you'd get the best move from search)
-        int bestMove = list.moves[0].move;
-        string moveStr = UCI_GetMoveString(bestMove);
-
+    if (g_info.bestmove != 0) {
+        string moveStr = UCI_GetMoveString(g_info.bestmove);
         cout << "bestmove " << moveStr << endl;
-    }
-    else {
-        cout << "bestmove 0000" << endl; // No legal moves
+    } else {
+        s_movelist list;
+        GenerateAllMoves(&g_board, &list);
+        if (list.count > 0) {
+            int bestMove = list.moves[0].move;
+            string moveStr = UCI_GetMoveString(bestMove);
+            cout << "bestmove " << moveStr << endl;
+        } else {
+            cout << "bestmove 0000" << endl;
+        }
     }
 }
 

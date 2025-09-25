@@ -50,12 +50,16 @@ void InitHashTable(s_hashtable *table, const int MB) {
     // Allocate memory for new hash table
     table->pTable = (s_hashentry *) malloc(table->numEntries * sizeof(s_hashentry));
     
-    if (table->pTable == NULL) {// Allocation failed, try with half the memory
-        printf("Hash Allocation Failed, trying %dMB...\n", MB/2);
+    if (table->pTable == NULL) { // Allocation failed, try with half the memory
+        #ifdef DEBUG
+        fprintf(stderr, "Hash Allocation Failed, trying %dMB...\n", MB/2);
+        #endif
         InitHashTable(table, MB/2);
-    } else {// Success - clear the table and report
+    } else { // Success - clear the table and report
         ClearHashTable(table);
-        printf("HashTable init complete with %d entries\n", table->numEntries);
+        #ifdef DEBUG
+        fprintf(stderr, "HashTable init complete with %d entries\n", table->numEntries);
+        #endif
     }
 }
 

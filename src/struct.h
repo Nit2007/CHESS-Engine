@@ -60,11 +60,13 @@ struct s_searchinfo{
 
     float fh;           // Fail-high counter (move was better than expected). Used for move ordering heuristics.
     float fhf;          // Fail-high first counter (the first move failed high). Used for move ordering heuristics.
-    int nullCut;        // A counter for cutoffs caused by the null move pruning heuristic.
+    int bestmove;       // The best move found by the search, for UCI output.
+    int bestscore;      // The score of the best move found by the search.
 
     int GAME_MODE;      // The current mode of the game (e.g., Human vs Engine, Engine vs Engine).
     int POST_THINKING;  // A flag to enable or disable "pondering" or "post-thinking".
 } ;
+
 
 // The main board structure, containing all information about the current state of the game.
 struct s_board

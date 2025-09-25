@@ -1,0 +1,5 @@
+uci
+isready
+position startpos
+go depth 3
+quit

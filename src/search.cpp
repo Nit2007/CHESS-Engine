@@ -1,52 +1,88 @@
 #include "defs.h"
 #include "struct.h"
 
-static void CheckUp()
-{//to check if time is up to interupt GUI
-    
+ 
+// Time/stop checker used during search
+static inline void CheckUp(s_searchinfo* info) {
+    // Stop if the GUI asked to quit or stop
+    if (info->quit) {
+        info->stopped = TRUE;
+        return;
+    }
+    // Stop if we are time-limited and time is over
+    if (info->timeset) {
+        if (GetTimeMs() > info->stoptime) {
+            info->stopped = TRUE;
+        }
+    }
 }
 int IsRepetition(s_board* pos)
 {
-    for(int index=pos->hisply-pos->fifty;index<pos->hisply-1;index++)
-      {    ASSERT(index>=0 && index <2048);
-          if(pos->poskey == pos->history[index].poskey)return TRUE;
-      }
-  return FALSE;
+    // Ensure valid bounds for history scan
+    int start = pos->hisply - pos->fifty;
+    if (start < 0) start = 0;
+    int end = pos->hisply - 1;
+    if (end < 0) return FALSE;
+
+    for (int index = start; index < end; index++) {
+        if (index >= 0 && index < MAXGAMEMOVES) {
+            if (pos->poskey == pos->history[index].poskey) return TRUE;
+        } else {
+            break;
+        }
+    }
+    return FALSE;
 }
 
- void ClearForSearch(s_board* pos, s_searchinfo* info) {
+void ClearForSearch(s_board* pos, s_searchinfo* info) {
     // Clear history heuristic table
     for (int i = 0; i < 13; i++) {
         for (int j = 0; j < 120; j++) {
             pos->searchHistory[i][j] = 0;
         }
     }
-    
+
     // Clear killer moves
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 64; j++) {
             pos->searchKillers[i][j] = 0;
         }
     }
-    
+
+    // Reset hash table stats
     ClearHashTable(pos->hashtable);
     pos->ply = 0;
-    
     pos->hashtable->overWrite = 0;
     pos->hashtable->hit = 0;
     pos->hashtable->cut = 0;
-    
+
+    // Set timing information
     info->starttime = GetTimeMs();
-    info->stoptime = 0;
+    
+    // ❗ DO NOT reset stoptime — UCI already set the time budget
+    // info->stoptime = 0;  <-- REMOVED to avoid wiping UCI's time budget
+
+    // Reset other search stats
     info->nodes = 0;
     info->fh = 0;
     info->fhf = 0;
+    info->bestmove = 0;
+    info->bestscore = 0;
 }
 
 
  int AlphaBeta(int alpha, int beta, int depth, s_board* pos, s_searchinfo* info, int DoNULL) {
     ASSERT(CheckBoard(pos));
     
+    // Periodically check for time/stop
+    // Periodically check for time/stop
+if ((info->nodes & 2047) == 0) {
+    CheckUp(info);
+}
+if (info->stopped) {
+    return 0;
+}
+
     if (depth == 0) {
         info->nodes++;
         return EvalPosition(pos);
@@ -90,6 +126,10 @@ if (hashMove != 0) {
         legal++;
         score = -AlphaBeta(-beta, -alpha, depth - 1, pos, info, TRUE);
         TakeMove(pos);
+        
+        if (info->stopped) {
+            return 0;
+        }
         
         if (score > alpha) {
             if (score >= beta) {
@@ -144,6 +184,13 @@ int Quiescence(int alpha, int beta, s_board* pos, s_searchinfo* info)
     ASSERT(CheckBoard(pos));
     
     info->nodes++;
+    // Periodically check for time/stop
+    if ((info->nodes & 2047) == 0) {
+        CheckUp(info);
+    }
+    if (info->stopped) {
+        return 0;
+    }
     
     // Check for repetition or fifty-move rule
     if (IsRepetition(pos) || pos->fifty >= 100) return 0;
@@ -223,26 +270,34 @@ if (hashMove != 0) {
 
 void SearchPosition(s_board* pos, s_searchinfo* info)
 {//Iterative Deepening
-	int bestmove = 0;
-	int bestscore= -INFINITE;
-	int pvmove=0;
-	
-	ClearForSearch(pos,  info);
-	
-	for(int depth=1; depth<=info->depth ;depth++)
-	{
-		bestscore = AlphaBeta( -INFINITE , INFINITE , depth, pos, info, true);
-		pvmove = GetHashLine( depth, pos);
-		bestmove = pos->pvarray[0]; 
-		cout<<"At Depth : "<<depth<<"  With BestScore : "<<bestscore<<" BestMove : "<<PrMove(bestmove)<<" Nodes Visited : "<<info->nodes<<endl;
-		
-		pvmove = GetHashLine( depth, pos);
-		cout<<" Principal Variation (Hash-Table) ";
-		for(int pvnum=0;pvnum<pvmove;pvnum++)
-		{
-			cout<<" "<<PrMove(pos->pvarray[pvnum]);
-		}cout<<endl;
-		cout<<"Ordering : "<<fixed<<setprecision(2)<<(info->fh > 0 ? info->fhf/info->fh : 0.0)<<" ";
-	}
+    int bestmove = 0;
+    int bestscore= -INFINITE;
+    int pvmove=0;
+    
+    ClearForSearch(pos,  info);
+    
+    for(int depth=1; depth<=info->depth ;depth++)
+    {
+        if (info->stopped) {
+            break;
+        }
+        bestscore = AlphaBeta( -INFINITE , INFINITE , depth, pos, info, true);
+        pvmove = GetHashLine( depth, pos);
+        bestmove = pos->pvarray[0];
+        
+        // Store best move in search info for UCI
+        info->bestmove = bestmove;
+        info->bestscore = bestscore;
+    }
+
+    // Fallback: ensure we always have a legal move to play
+    if (info->bestmove == 0) {
+        s_movelist list;
+        GenerateAllMoves(pos, &list);
+        if (list.count > 0) {
+            info->bestmove = list.moves[0].move;
+        }
+    }
 }
+
 
