@@ -238,3 +238,29 @@ extern int MvvLvaValues[13] ;
 extern void InitMvvLva();
 extern int ScoreMove(const int move, const s_board* pos);
 extern void PickNextMove(int moveNum, s_movelist* list);
+
+//uci.cpp - UCI Protocol Implementation
+extern void UCI_Init();
+extern void UCI_Loop();
+extern void UCI_ParsePosition(const string& command);
+extern void UCI_ParseGo(const string& command);
+extern void UCI_SendBestMove();
+extern string UCI_GetMoveString(int move);
+extern void UCI_PrintOptions();
+extern string UCI_GetEngineName();
+extern string UCI_GetEngineAuthor();
+extern void UCI_SetEngineInfo(const string& name, const string& author);
+extern bool UCI_IsActive();
+
+//xboard.cpp - xBoard Protocol Implementation
+extern void XBoard_Init();
+extern void XBoard_Loop();
+extern void XBoard_ParseCommand(const string& command);
+extern void XBoard_ParseMove(const string& moveStr);
+extern void XBoard_SendMove(int move);
+extern void XBoard_PrintResult();
+extern string XBoard_GetMoveString(int move);
+extern string XBoard_GetEngineName();
+extern string XBoard_GetEngineAuthor();
+extern void XBoard_SetEngineInfo(const string& name, const string& author);
+extern bool XBoard_IsActive();

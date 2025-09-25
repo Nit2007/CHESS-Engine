@@ -21,7 +21,9 @@ SRC = main.cpp \
 	  misc.cpp \
 	  pvtable.cpp \
 	  evaluate.cpp \
-      moveorder.cpp
+      moveorder.cpp \
+      uci.cpp \
+      xboard.cpp
 
 # Output executable name
 TARGET = chess
