@@ -3,9 +3,12 @@
 token: "{lichess_api_token}"
 url: "https://lichess.org/"
 
+#engine:
+  #dir: "C:/Users/DELL/Desktop/CHESS ENGINE/CodeSpaces/CHESS-Engine/src"
+  #name: "myengine.exe"
 engine:
-  dir: "C:/Users/DELL/Desktop/CHESS ENGINE/CodeSpaces/CHESS-Engine/src"
-  name: "myengine.exe"
+  dir: "./engine"        # relative path to the folder containing the engine
+  name: "myengine"       # name of the executable (no .exe on Linux)
   working_dir: ""
   protocol: "uci"
   ponder: true
