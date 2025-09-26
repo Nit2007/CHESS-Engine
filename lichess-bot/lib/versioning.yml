@@ -1,0 +1,5 @@
+# lib/versioning.yml
+
+bot_name: "BluefeverBot"
+version: "1.0.0"
+release_date: "2025-09-26"
