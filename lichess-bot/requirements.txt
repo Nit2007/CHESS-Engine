@@ -1,10 +1,7 @@
-# Core libraries required for lichess-bot to run
-python-chess==1.999         # Core chess logic + UCI engine support
-requests==2.31.0            # HTTP requests to Lichess API
-websocket-client==1.7.0     # Real-time communication with Lichess
-
-# Optional but common utilities used in many forks
-pyyaml==6.0                 # For reading config.yml
-aiohttp==3.9.5              # Async HTTP (if using async mode)
-schedule==1.2.1             # For scheduled tasks (if used)
-python-dotenv==1.0.1        # For .env support if you want to use environment variables
+python-chess==1.999
+requests==2.31.0
+websocket-client==1.7.0
+PyYAML==6.0.1        # <- use this newer wheel build
+aiohttp==3.9.5
+schedule==1.2.1
+python-dotenv==1.0.1
