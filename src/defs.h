@@ -88,6 +88,7 @@ enum Castle{WKCA =1,WQCA=2,BKCA=4,BQCA=8};
 0000 1111 0000 0000 0000 0000 0000  ~> PROMOTED PIECE >> 20 , 0xF
 0001 0000 0000 0000 0000 0000 0000  ~> CASTLE 0x1000000
 */
+#define MOVE(from,to,captured,promoted,flag) ( (from) | (to<<7) | (captured<<14) | (promoted<<20) | (flag) )
 #define FROMSQ(m) ((m) & (0x7F) )
 #define TOSQ(m) ((m>>7) & (0x7F) )
 #define CAPTURED(m) ((m>>14) & (0xF) )

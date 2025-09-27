@@ -1,14 +1,15 @@
 # Lichess bot configuration for homemade UCI engine
 
-token: "{lichess_api_token}"
+token: "{lichessapitoken}"
 url: "https://lichess.org/"
 
 #engine:
   #dir: "C:/Users/DELL/Desktop/CHESS ENGINE/CodeSpaces/CHESS-Engine/src"
   #name: "myengine.exe"
 engine:
-  dir: "./engine"        # relative path to the folder containing the engine
-  name: "myengine"       # name of the executable (no .exe on Linux)
+  #dir: "./engine"        # relative path to the folder containing the engine
+  dir : "C:\\Users\\DELL\\Desktop\\CHESS ENGINE\\CodeSpaces\\CHESS-Engine\\lichess-bot\\engines"
+  name: "myengine.exe"       # name of the executable (no .exe on Linux)
   working_dir: ""
   protocol: "uci"
   ponder: true
@@ -79,10 +80,10 @@ challenge:
   max_simultaneous_games_per_user: 5
 
 greeting:
-  hello: "Hi! I'm {me}. Good luck! Type !help for a list of commands I can respond to."
-  goodbye: "Good game!"
-  hello_spectators: "Hi! I'm {me}. Type !help for a list of commands I can respond to."
-  goodbye_spectators: "Thanks for watching!"
+  hello: "Hi! I'm {me}. A customised bot made by Nithish2007"
+  goodbye: "Good game! Have a Nice day"
+  hello_spectators: "Hi! I'm {me}. A customised bot made by Nithish2007"
+  goodbye_spectators: "We all are at different paths ,with different goals ,stories,environment.this isn't race ,it's Life ,so now say who won. Just do what u Really Love."
 
 matchmaking:
   allow_matchmaking: false

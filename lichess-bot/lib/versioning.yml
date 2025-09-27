@@ -1,5 +1,4 @@
-# lib/versioning.yml
-
-bot_name: "BluefeverBot"
 lichess_bot_version: "1.0.0"
-release_date: "2025-09-26"
+minimum_python_version: "3.9"
+deprecated_python_version: "3.8"
+deprecation_date: 2024-01-01

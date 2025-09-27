@@ -242,6 +242,15 @@ string UCI_GetMoveString(int move) {
     int from = FROMSQ(move);
     int to = TOSQ(move);
     int promoted = PROMOTED(move);
+    int moveFlags = move & 0xFF0000; // Get the flag bits
+
+    // Handle castling moves
+    if (moveFlags & MFLAGCA) {
+        if (to == G1) return "e1g1";  // White kingside
+        if (to == C1) return "e1c1";  // White queenside
+        if (to == G8) return "e8g8";  // Black kingside
+        if (to == C8) return "e8c8";  // Black queenside
+    }
 
     // Convert squares to UCI notation (e.g., e2e4)
     moveStr[0] = 'a' + FilesBrd[from];

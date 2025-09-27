@@ -86,5 +86,21 @@ int ParseMove(char* ptchar,s_board*pos)
           return move; // If not Promotion then we have found out the UnIQUE Move
       }
    }
+
+   // Handle castling moves (e1g1, e1c1, e8g8, e8c8)
+   if (strlen(ptchar) == 4) {
+       int from = getSquareFromString(string(1, ptchar[0]) + string(1, ptchar[1]));
+       int to = getSquareFromString(string(1, ptchar[2]) + string(1, ptchar[3]));
+
+       if (pos->pieces[from] == WK && from == E1) {
+           if (to == G1 && (pos->castleperm & WKCA)) return MOVE(E1, G1, EMPTY, EMPTY, MFLAGCA);
+           if (to == C1 && (pos->castleperm & WQCA)) return MOVE(E1, C1, EMPTY, EMPTY, MFLAGCA);
+       }
+       else if (pos->pieces[from] == BK && from == E8) {
+           if (to == G8 && (pos->castleperm & BKCA)) return MOVE(E8, G8, EMPTY, EMPTY, MFLAGCA);
+           if (to == C8 && (pos->castleperm & BQCA)) return MOVE(E8, C8, EMPTY, EMPTY, MFLAGCA);
+       }
+   }
+
     return false;
 }
