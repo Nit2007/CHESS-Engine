@@ -76,12 +76,16 @@ void ClearForSearch(s_board* pos, s_searchinfo* info) {
     
     // Periodically check for time/stop
     // Periodically check for time/stop
-if ((info->nodes & 2047) == 0) {
+if ((info->nodes & 8191) == 0) {
     CheckUp(info);
 }
 if (info->stopped) {
     return 0;
 }
+    int Incheck=SqAttacked(pos->king[pos->side], pos->side^1, pos);
+    if(Incheck){
+        depth++;
+    }
 
     if (depth == 0) {
         info->nodes++;
@@ -92,6 +96,22 @@ if (info->stopped) {
     
     if (IsRepetition(pos) || pos->fifty == 100) return 0;
     if (pos->ply > MAXDEPTH - 1) return EvalPosition(pos);
+    
+    // Null move pruning (more conservative to avoid tactical blunders in openings)
+    int totalMat = pos->material[WHITE] + pos->material[BLACK];
+    if (!Incheck && DoNULL && depth > 4 && totalMat > 101600) {
+        int oldEp = pos->enpas;
+        pos->side ^= 1;
+        pos->enpas = NO_SQ; // avoid leaving a bogus EP square during null move
+        pos->poskey ^= SideKey;
+        int nullScore = -AlphaBeta(-beta, -alpha, depth - 1, pos, info, false);
+        pos->side ^= 1;
+        pos->enpas = oldEp;
+        pos->poskey ^= SideKey;
+        if (nullScore >= beta) {
+            return beta;
+        }
+    }
     
     int oldalpha = alpha;
     int bestmove = 0;
@@ -165,7 +185,7 @@ if (hashMove != 0) {
     }
     
     if (legal == 0) {
-        if (SqAttacked(pos->king[pos->side], pos->side^1, pos)) {
+        if (Incheck) {
             return -ISMATE + pos->ply;
         } else {
             return 0;
@@ -185,7 +205,7 @@ int Quiescence(int alpha, int beta, s_board* pos, s_searchinfo* info)
     
     info->nodes++;
     // Periodically check for time/stop
-    if ((info->nodes & 2047) == 0) {
+    if ((info->nodes & 8191) == 0) {
         CheckUp(info);
     }
     if (info->stopped) {

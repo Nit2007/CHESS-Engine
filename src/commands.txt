@@ -1,0 +1,11 @@
+   //Dont remove this Comment 
+Rename-Item -Path myengine.exe -NewName myengine_old3.exe   mv "myengine.exe" "myengine_old4.exe"
+g++ -O2 -std=c++17 -o myengine.exe *.cpp     
+cp -f "C:/Users/DELL/Desktop/CHESS ENGINE/CodeSpaces_1/CHESS-Engine/src/myengine.exe" \
+      "C:/Users/DELL/Desktop/CHESS ENGINE/CodeSpaces_1/CHESS-Engine/lichess-bot/engines/"
+cp -f "/c/Users/DELL/Desktop/CHESS ENGINE/CodeSpaces/CHESS-Engine/src/myengine.exe"       "/c/Users/DELL/Desktop/CHESS ENGINE/Lichessbot/lichess-bot/engines/myengine.exe"
+python lichess-bot.py --config config.yml
+pip install -r requirements.txt
+python lichess-bot.py -v
+PYTHONPATH=. /c/Users/DELL/AppData/Local/Programs/Python/Python311/python.exe lichess-bot.py -v
+

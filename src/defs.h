@@ -172,6 +172,8 @@ extern int PieceKing[13];
 extern int PieceRookQueen[13] ;
 extern int PieceBishopQueen[13];
 extern int PieceSlides[13] ;    
+extern uint64_t IsolatedMask[64];
+extern void InitIsolatedMask();
 
 //io.cpp
 extern char *PrSq(const int sq);

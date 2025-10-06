@@ -22,6 +22,21 @@ int ScoreMove(const int move, const s_board* pos) {
         return PV_MOVE_SCORE;
     }
     
+    // Castling bonus
+    if (move & MFLAGCA) {
+        score += 10000;
+    }
+    // Penalize early queen development for quiet moves in opening to prevent pawn-hunting
+    {
+        int from = FROMSQ(move);
+        int attacker = pos->pieces[from];
+        if ((attacker == WQ || attacker == BQ) && CAPTURED(move) == EMPTY) {
+            if (pos->hisply < 20) {
+                score -= 3000; // reduce priority of quiet queen moves in opening
+            }
+        }
+    }
+
     int captured = CAPTURED(move);
     
     if (captured != EMPTY) {

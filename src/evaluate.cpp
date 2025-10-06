@@ -9,18 +9,25 @@ const int RookSemiOpenFile = 5;
 const int QueenOpenFile = 5;
 const int QueenSemiOpenFile = 3;
 const int BishopPair = 30;
+const int CastleBonus = 50;
+const int UncastledPenalty = 30;     // penalty for staying uncastled in opening (stronger)
+const int EarlyQueenPenalty = 15;     // penalty for early queen development (stronger)
+const int HangingBasePenalty = 20;    // base penalty added to a fraction of piece value when hanging (stronger)   // base penalty added to a fraction of piece value when hanging (stronger)
+const int DevMinorBonus = 12;         // bonus for minor pieces developed in opening
+const int KnightRimPenalty = 15;      // penalty for knights on rim in opening
 
 // Piece-square tables (from white's perspective)
 const int PawnTable[64] = {
-     0,    0,    0,    0,    0,    0,    0,    0,
-    10,   10,    0,  -10,  -10,    0,   10,   10,
-     5,    0,    0,    5,    5,    0,    0,    5,
-     0,    0,   10,   20,   20,   10,    0,    0,
-     5,    5,    5,   10,   10,    5,    5,    5,
-    10,   10,   10,   20,   20,   10,   10,   10,
-    20,   20,   20,   30,   30,   20,   20,   20,
-     0,    0,    0,    0,    0,    0,    0,    0
+    0,   0,   0,   0,   0,   0,   0,   0,  // Rank 8
+  200, 200, 200, 200, 200, 200, 200, 200,  // Rank 7 (passed pawn push is very strong!)
+   90, 100, 100, 120, 120, 100, 100,  90,  // Rank 6
+   40,  50,  50,  80,  80,  50,  50,  40,  // Rank 5
+   10,  20,  20,  50,  50,  20,  20,  10,  // Rank 4
+    5,  10,  10,  20,  20,  10,  10,   5,  // Rank 3
+    0,   0,   0, -10, -10,   0,   0,   0,  // Rank 2 (slight penalty, undeveloped)
+    0,   0,   0,   0,   0,   0,   0,   0   // Rank 1 (start)
 };
+
 
 const int KnightTable[64] = {
      0,  -10,    0,    0,    0,    0,  -10,    0,
@@ -186,15 +193,38 @@ int EvalPosition(s_board* pos) {
         
         score += PawnTable[SQ64(sq)];
         
-        // Check for isolated pawns (requires IsolatedMask implementation)
-        // if ((IsolatedMask[SQ64(sq)] & pos->pawns[WHITE]) == 0) {
-        //     score += PawnIsolated;
-        // }
-        
-        // Check for passed pawns (requires PassedMask implementation)
-        // if ((WhitePassedMask[SQ64(sq)] & pos->pawns[BLACK]) == 0) {
-        //     score += PawnPassed[RanksBrd[sq]];
-        // }
+        if ((IsolatedMask[SQ64(sq)] & pos->pawns[WHITE]) == 0) {
+            score += PawnIsolated;
+        }// Check for isolated pawns (requires IsolatedMask implementation)
+ /* if ((WhitePassedMask[SQ64(sq)] & pos->pawns[BLACK]) == 0) 
+        {     // Check for passed pawns (requires PassedMask implementation)
+    score += PawnPassed[RanksBrd[sq]];
+        }*/
+    }
+
+    // Opening development bonuses and knight-rim penalties
+    if (pos->hisply < 24) {
+        // White development bonuses
+        for (int i = 0; i < pos->piecenum[WN]; ++i) {
+            int sq = pos->piecelist[WN][i];
+            if (sq != B1 && sq != G1) score += DevMinorBonus; // developed
+            if (FilesBrd[sq] == FILE_A || FilesBrd[sq] == FILE_H) score -= KnightRimPenalty;
+        }
+        for (int i = 0; i < pos->piecenum[WB]; ++i) {
+            int sq = pos->piecelist[WB][i];
+            if (sq != C1 && sq != F1) score += DevMinorBonus; // developed
+        }
+
+        // Black development bonuses (good for black -> subtract for white)
+        for (int i = 0; i < pos->piecenum[BN]; ++i) {
+            int sq = pos->piecelist[BN][i];
+            if (sq != B8 && sq != G8) score -= DevMinorBonus; // developed
+            if (FilesBrd[sq] == FILE_A || FilesBrd[sq] == FILE_H) score += KnightRimPenalty;
+        }
+        for (int i = 0; i < pos->piecenum[BB]; ++i) {
+            int sq = pos->piecelist[BB][i];
+            if (sq != C8 && sq != F8) score -= DevMinorBonus; // developed
+        }
     }
 
     // Evaluate black pawns
@@ -205,6 +235,9 @@ int EvalPosition(s_board* pos) {
         ASSERT(Mirror64[SQ64(sq)] >= 0 && Mirror64[SQ64(sq)] <= 63);
         
         score -= PawnTable[Mirror64[SQ64(sq)]];
+        if ((IsolatedMask[Mirror64[SQ64(sq)]] & pos->pawns[BLACK]) == 0) {
+            score -= PawnIsolated;  // Negative for black
+        }
         
         // Isolated and passed pawn evaluation for black would go here
     }
@@ -324,6 +357,54 @@ int EvalPosition(s_board* pos) {
     if (pos->piecenum[WB] >= 2) score += BishopPair;
     if (pos->piecenum[BB] >= 2) score -= BishopPair;
     
+    // Castling bonus
+    if (pos->king[WHITE] == 27 || pos->king[WHITE] == 23) score += CastleBonus;
+    if (pos->king[BLACK] == 97 || pos->king[BLACK] == 93) score -= CastleBonus;
+
+    // Uncastled penalty (opening only): king still on E1/E8 and castling rights exist
+    if (pos->hisply < 30) {
+        if (pos->king[WHITE] == E1 && (pos->castleperm & (WKCA | WQCA))) {
+            score -= UncastledPenalty;
+        }
+        if (pos->king[BLACK] == E8 && (pos->castleperm & (BKCA | BQCA))) {
+            score += UncastledPenalty;
+        }
+        // Early queen development penalty if queen left starting square
+        if (pos->piecenum[WQ] == 1) {
+            int wqSq = pos->piecelist[WQ][0];
+            if (wqSq != D1) score -= EarlyQueenPenalty;
+        }
+        if (pos->piecenum[BQ] == 1) {
+            int bqSq = pos->piecelist[BQ][0];
+            if (bqSq != D8) score += EarlyQueenPenalty;
+        }
+    }
+
+    // Hanging piece penalties: piece is attacked by opponent and not defended by own side
+    // White pieces hanging -> bad for white (subtract). Black hanging -> good for white (add)
+    {
+        // White side
+        for (int pce = WN; pce <= WQ; ++pce) {
+            for (int i = 0; i < pos->piecenum[pce]; ++i) {
+                int sq = pos->piecelist[pce][i];
+                if (SqAttacked(sq, BLACK, pos) && !SqAttacked(sq, WHITE, pos)) {
+                    int pen = HangingBasePenalty + pieceVal[pce] / 3;
+                    score -= pen;
+                }
+            }
+        }
+        // Black side
+        for (int pce = BN; pce <= BQ; ++pce) {
+            for (int i = 0; i < pos->piecenum[pce]; ++i) {
+                int sq = pos->piecelist[pce][i];
+                if (SqAttacked(sq, WHITE, pos) && !SqAttacked(sq, BLACK, pos)) {
+                    int pen = HangingBasePenalty + pieceVal[pce] / 3;
+                    score += pen;
+                }
+            }
+        }
+    }
+
     // Return score from the perspective of the side to move
     if (pos->side == WHITE) {
         return score;
