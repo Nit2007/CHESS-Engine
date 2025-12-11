@@ -96,7 +96,7 @@ enum Castle{WKCA =1,WQCA=2,BKCA=4,BQCA=8};
 //MoveFLAG _ _
 #define MFLAGEP 0x40000
 #define MFLAGPS 0x80000
-#define MFLAGCA 0x1000000
+#define MFLAGCA 0x100000
 #define MFLAGCAP 0x7C000
 #define MFLAGPROM 0xF00000
 

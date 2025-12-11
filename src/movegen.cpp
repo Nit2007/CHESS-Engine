@@ -33,7 +33,7 @@ int MoveExists(s_board*pos,const int move)
     GenerateAllMoves(pos, &list);
 	for(int movenum=0;movenum<list.count;movenum++)
 	{
-		if(!MakeMove(pos,move))continue;
+		if(!MakeMove(pos,list.moves[movenum].move ))continue;
 		TakeMove(pos);
 		if(list.moves[movenum].move == move) return TRUE;
 	}

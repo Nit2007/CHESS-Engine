@@ -72,6 +72,7 @@ void ResetBoard(s_board* pos)
     }
     for(int i=0;i<13;i++)
     {//piecelist[13][10]
+        pos->piecenum[i]=0;
         for(int j = 0; j < 10; j++) {
             pos->piecelist[i][j]=0;
         }
