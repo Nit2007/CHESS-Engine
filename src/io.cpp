@@ -7,7 +7,8 @@ char *PrSq(const int sq)
     int file=FilesBrd[sq];
     int rank=RanksBrd[sq];
     sqstr[0]='a'+file;
-    sqstr[1]='1'+rank;//sqstr[2] = '\0';
+    sqstr[1]='1'+rank;
+    sqstr[2] = '\0';
   return sqstr;
 }
 

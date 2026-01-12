@@ -2,6 +2,7 @@
 #include "struct.h"
 
 int SqOnBoard(const int sq) {
+	if (sq < 0 || sq >= BOARD_SQ_NUM) return 0;
 	return FilesBrd[sq]==OFFBOARD ? 0 : 1;
 }
 

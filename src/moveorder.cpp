@@ -9,7 +9,8 @@ void InitMvvLva() {
         for (int victim = WP; victim <= BK; ++victim) {
             // Score = (victim value * 100) + (100 - attacker value/100)
             // This prioritizes capturing valuable pieces and using less valuable attackers
-            MvvLvaScores[victim][attacker] = MvvLvaValues[victim] + 6 - (MvvLvaValues[attacker] / 100);
+            MvvLvaScores[victim][attacker] =
+                MvvLvaValues[victim] * 10 - MvvLvaValues[attacker];
         }   
     }
 }
@@ -19,12 +20,12 @@ int ScoreMove(const int move, const s_board* pos) {
     // Check if this is the PV move (from hash table)
     int pvMove = ProbeHashMove(pos);
     if (move == pvMove) {
-        return PV_MOVE_SCORE;
+        score += PV_MOVE_SCORE;
     }
     
     // Castling bonus
     if (move & MFLAGCA) {
-        score += 10000;
+        score += 2000;
     }
     // Penalize early queen development for quiet moves in opening to prevent pawn-hunting
     {
@@ -78,7 +79,7 @@ int ScoreMove(const int move, const s_board* pos) {
 void PickNextMove(int moveNum, s_movelist* list) {
     // Find the move with the highest score from moveNum onwards and swap it to position moveNum
     // This implements a simple selection sort for move ordering
-    int bestScore = 0;
+    int bestScore = list->moves[moveNum].score;
     int bestNum = moveNum;
     
     for (int index = moveNum; index < list->count; ++index) {

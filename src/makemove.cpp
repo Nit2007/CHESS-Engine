@@ -8,15 +8,15 @@
 
 const int CastlePerm[120] = {
     15,15,15,15,15,15,15,15,15,15,
-    15,11,15,15,15, 3,15,15,14,15,
+    15,15,15,15,15,15,15,15,15,15,
+    15,13,15,15,15,12,15,15,14,15,
     15,15,15,15,15,15,15,15,15,15,
     15,15,15,15,15,15,15,15,15,15,
     15,15,15,15,15,15,15,15,15,15,
     15,15,15,15,15,15,15,15,15,15,
     15,15,15,15,15,15,15,15,15,15,
     15,15,15,15,15,15,15,15,15,15,
-    15,13,15,15,15,12,15,15, 7,15,
-    15,15,15,15,15,15,15,15,15,15,
+    15, 7,15,15,15, 3,15,15,11,15,
     15,15,15,15,15,15,15,15,15,15,
     15,15,15,15,15,15,15,15,15,15
 };
@@ -125,6 +125,7 @@ int MakeMove(s_board*pos ,int move)
 {
     ASSERT(CheckBoard(pos));
     int from = FROMSQ(move);
+    int pce = pos->pieces[from];
     int to   = TOSQ(move);
     int side=pos->side;
   ASSERT(SqOnBoard(from));
@@ -178,7 +179,7 @@ int MakeMove(s_board*pos ,int move)
     }
     pos->ply++;
     pos->hisply++;
-    if(PiecePawn[pos->pieces[from] ])
+    if(PiecePawn[pce])
     {pos->fifty=0;
         if(move & MFLAGPS) {
             if(side==WHITE) {
@@ -271,7 +272,7 @@ void TakeMove(s_board* pos)
 	{
 		ASSERT(PieceValid(prom) && !PiecePawn[prom]);
 		ClearPiece(from,pos); //IF WE HAVE CALLED TakeMove THEN WE WOULD HAVE A PROMOTED PIECE(Q) AT RANK_7
-		AddPiece(from,pos, (pieceCol[cap]) == WHITE ? WP : BP);
+        AddPiece(from, pos, pos->side == WHITE ? WP : BP);
 	}
 	ASSERT(CheckBoard(pos));
 }

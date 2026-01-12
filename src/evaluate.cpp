@@ -193,9 +193,9 @@ int EvalPosition(s_board* pos) {
         
         score += PawnTable[SQ64(sq)];
         
-        if ((IsolatedMask[SQ64(sq)] & pos->pawns[WHITE]) == 0) {
-            score += PawnIsolated;
-        }// Check for isolated pawns (requires IsolatedMask implementation)
+        // if ((IsolatedMask[SQ64(sq)] & pos->pawns[WHITE]) == 0) {
+        //     score += PawnIsolated;
+        // }// Check for isolated pawns (requires IsolatedMask implementation)
  /* if ((WhitePassedMask[SQ64(sq)] & pos->pawns[BLACK]) == 0) 
         {     // Check for passed pawns (requires PassedMask implementation)
     score += PawnPassed[RanksBrd[sq]];
@@ -235,9 +235,9 @@ int EvalPosition(s_board* pos) {
         ASSERT(Mirror64[SQ64(sq)] >= 0 && Mirror64[SQ64(sq)] <= 63);
         
         score -= PawnTable[Mirror64[SQ64(sq)]];
-        if ((IsolatedMask[Mirror64[SQ64(sq)]] & pos->pawns[BLACK]) == 0) {
-            score -= PawnIsolated;  // Negative for black
-        }
+        // if ((IsolatedMask[Mirror64[SQ64(sq)]] & pos->pawns[BLACK]) == 0) {
+        //     score -= PawnIsolated;  // Negative for black
+        // }
         
         // Isolated and passed pawn evaluation for black would go here
     }
@@ -357,28 +357,39 @@ int EvalPosition(s_board* pos) {
     if (pos->piecenum[WB] >= 2) score += BishopPair;
     if (pos->piecenum[BB] >= 2) score -= BishopPair;
     
-    // Castling bonus
-    if (pos->king[WHITE] == 27 || pos->king[WHITE] == 23) score += CastleBonus;
-    if (pos->king[BLACK] == 97 || pos->king[BLACK] == 93) score -= CastleBonus;
+   // White
+if (!(pos->castleperm & WKCA) && pos->king[WHITE] != E1 && FilesBrd[pos->king[WHITE]] >= FILE_F) {
+    score += CastleBonus;
+}
+if (!(pos->castleperm & WQCA) && pos->king[WHITE] != E1 && FilesBrd[pos->king[WHITE]] <= FILE_C) {
+    score += CastleBonus;
+}
 
-    // Uncastled penalty (opening only): king still on E1/E8 and castling rights exist
-    if (pos->hisply < 30) {
-        if (pos->king[WHITE] == E1 && (pos->castleperm & (WKCA | WQCA))) {
-            score -= UncastledPenalty;
-        }
-        if (pos->king[BLACK] == E8 && (pos->castleperm & (BKCA | BQCA))) {
-            score += UncastledPenalty;
-        }
-        // Early queen development penalty if queen left starting square
-        if (pos->piecenum[WQ] == 1) {
-            int wqSq = pos->piecelist[WQ][0];
-            if (wqSq != D1) score -= EarlyQueenPenalty;
-        }
-        if (pos->piecenum[BQ] == 1) {
-            int bqSq = pos->piecelist[BQ][0];
-            if (bqSq != D8) score += EarlyQueenPenalty;
-        }
-    }
+// Black
+if (!(pos->castleperm & BKCA) && pos->king[BLACK] != E8 && FilesBrd[pos->king[BLACK]] >= FILE_F) {
+    score -= CastleBonus;
+}
+if (!(pos->castleperm & BQCA) && pos->king[BLACK] != E8 && FilesBrd[pos->king[BLACK]] <= FILE_C) {
+    score -= CastleBonus;
+}
+    // // Uncastled penalty (opening only): king still on E1/E8 and castling rights exist
+    // if (pos->hisply < 30) {
+    //     if (pos->king[WHITE] == E1 && (pos->castleperm & (WKCA | WQCA))) {
+    //         score -= UncastledPenalty;
+    //     }
+    //     if (pos->king[BLACK] == E8 && (pos->castleperm & (BKCA | BQCA))) {
+    //         score += UncastledPenalty;
+    //     }
+    //     // Early queen development penalty if queen left starting square
+    //     if (pos->piecenum[WQ] == 1) {
+    //         int wqSq = pos->piecelist[WQ][0];
+    //         if (wqSq != D1) score -= EarlyQueenPenalty;
+    //     }
+    //     if (pos->piecenum[BQ] == 1) {
+    //         int bqSq = pos->piecelist[BQ][0];
+    //         if (bqSq != D8) score += EarlyQueenPenalty;
+    //     }
+    // }
 
     // Hanging piece penalties: piece is attacked by opponent and not defended by own side
     // White pieces hanging -> bad for white (subtract). Black hanging -> good for white (add)

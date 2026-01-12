@@ -43,6 +43,8 @@ int MoveExists(s_board*pos,const int move)
 
 void AddQuietMove(const s_board *pos, int move, s_movelist *list) {
     ASSERT(list->count < MAX_POSITION_MOVES);
+    ASSERT(SqOnBoard(FROMSQ(move)));
+    ASSERT(SqOnBoard(TOSQ(move)));
     list->moves[list->count].move = move;
     if(pos->searchKillers[0][pos->ply] == move){list->moves[list->count].score = 900000;}
     else if(pos->searchKillers[1][pos->ply] == move ){list->moves[list->count].score =800000;}
@@ -62,6 +64,8 @@ void AddQuietMove(const s_board *pos, int move, s_movelist *list) {
 // Replace your existing AddCaptureMove function with this:
 void AddCaptureMove(const s_board *pos, int move, s_movelist *list) {
     ASSERT(list->count < MAX_POSITION_MOVES);
+    ASSERT(SqOnBoard(FROMSQ(move)));
+    ASSERT(SqOnBoard(TOSQ(move)));
     list->moves[list->count].move = move;
     list->moves[list->count].score = ScoreMove(move, pos);
     list->count++;
@@ -70,6 +74,8 @@ void AddCaptureMove(const s_board *pos, int move, s_movelist *list) {
 // Replace your existing AddEnpasMove function with this:
 void AddEnpasMove(const s_board *pos, int move, s_movelist *list) {
     ASSERT(list->count < MAX_POSITION_MOVES);
+    ASSERT(SqOnBoard(FROMSQ(move)));
+    ASSERT(SqOnBoard(TOSQ(move)));
     list->moves[list->count].move = move;
     list->moves[list->count].score = ScoreMove(move, pos);
     list->count++;
@@ -164,14 +170,16 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
             if(!SQOFFBOARD(sq+11) && pieceCol[pos->pieces[sq+11]]==BLACK)
                 AddWhitePawnCapMove(pos,sq,sq+11,pos->pieces[sq+11],list);
 
-            if(sq+9 == pos->enpas)
-                AddEnpasMove(pos,MOVE(sq,(sq+9),EMPTY,EMPTY,MFLAGEP) ,list);
-            if(sq+11 == pos->enpas)
-                AddEnpasMove(pos,MOVE(sq,(sq+11),EMPTY,EMPTY,MFLAGEP) ,list);
+            if (pos->enpas != NO_SQ) {
+                if(!SQOFFBOARD(sq+9) && sq+9 == pos->enpas)
+                    AddEnpasMove(pos,MOVE(sq,(sq+9),EMPTY,EMPTY,MFLAGEP) ,list);
+                if(!SQOFFBOARD(sq+11) && sq+11 == pos->enpas)
+                    AddEnpasMove(pos,MOVE(sq,(sq+11),EMPTY,EMPTY,MFLAGEP) ,list);
+            }
         }
 		if(pos->castleperm & WKCA)
 		{
-			if(pos->pieces[F1]==EMPTY && pos->pieces[G1]==EMPTY)
+			if(pos->pieces[F1]==EMPTY && pos->pieces[G1]==EMPTY && pos->pieces[H1]==WR)
 			{
 				if(!SqAttacked(E1,BLACK,pos) && !SqAttacked(F1,BLACK,pos) && !SqAttacked(G1,BLACK,pos))
 				AddQuietMove(pos, MOVE(E1,G1,EMPTY,EMPTY,MFLAGCA), list);//cout<<"WKCA Possible\n";
@@ -179,7 +187,7 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
 		}
 		if(pos->castleperm & WQCA)
 		{
-			if(pos->pieces[D1]==EMPTY && pos->pieces[C1]==EMPTY && pos->pieces[B1]==EMPTY)
+			if(pos->pieces[D1]==EMPTY && pos->pieces[C1]==EMPTY && pos->pieces[B1]==EMPTY && pos->pieces[A1]==WR)
 			{
 				if(!SqAttacked(E1,BLACK,pos) && !SqAttacked(D1,BLACK,pos) && !SqAttacked(C1,BLACK,pos))
 				AddQuietMove(pos, MOVE(E1,C1,EMPTY,EMPTY,MFLAGCA), list);//cout<<"WQCA Possible\n";
@@ -203,14 +211,16 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
             if(!SQOFFBOARD(sq-11) && pieceCol[pos->pieces[sq-11]]==WHITE)
                 AddBlackPawnCapMove(pos,sq,sq-11,pos->pieces[sq-11],list);
 
-            if(sq-9 == pos->enpas)
-                AddEnpasMove(pos,MOVE(sq,(sq-9),EMPTY,EMPTY,MFLAGEP) ,list);
-            if(sq-11 == pos->enpas)
-                AddEnpasMove(pos,MOVE(sq,(sq-11),EMPTY,EMPTY,MFLAGEP) ,list);
+            if (pos->enpas != NO_SQ) {
+                if(!SQOFFBOARD(sq-9) && sq-9 == pos->enpas)
+                    AddEnpasMove(pos,MOVE(sq,(sq-9),EMPTY,EMPTY,MFLAGEP) ,list);
+                if(!SQOFFBOARD(sq-11) && sq-11 == pos->enpas)
+                    AddEnpasMove(pos,MOVE(sq,(sq-11),EMPTY,EMPTY,MFLAGEP) ,list);
+            }
         }
 		if(pos->castleperm & BKCA)
 		{
-			if(pos->pieces[F8]==EMPTY && pos->pieces[G8]==EMPTY)
+			if(pos->pieces[F8]==EMPTY && pos->pieces[G8]==EMPTY && pos->pieces[H8]==BR)
 			{
 				if(!SqAttacked(E8,WHITE,pos) && !SqAttacked(F8,WHITE,pos) && !SqAttacked(G8,WHITE,pos))
 				AddQuietMove(pos, MOVE(E8,G8,EMPTY,EMPTY,MFLAGCA), list);//cout<<"BKCA Possible\n";
@@ -218,7 +228,7 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
 		}
 		if(pos->castleperm & BQCA)
 		{
-			if(pos->pieces[D8]==EMPTY && pos->pieces[C8]==EMPTY && pos->pieces[B8]==EMPTY)
+			if(pos->pieces[D8]==EMPTY && pos->pieces[C8]==EMPTY && pos->pieces[B8]==EMPTY && pos->pieces[A8]==BR)
 			{
 				if(!SqAttacked(E8,WHITE,pos) && !SqAttacked(D8,WHITE,pos) && !SqAttacked(C8,WHITE,pos))
 				AddQuietMove(pos, MOVE(E8,C8,EMPTY,EMPTY,MFLAGCA), list);//cout<<"BQCA Possible\n";
@@ -319,11 +329,13 @@ void GenerateAllCaptures(const s_board *pos, s_movelist *list) {
             }
             
             // En passant
-            if (sq+9 == pos->enpas) {
-                AddEnpasMove(pos, MOVE(sq, (sq+9), EMPTY, EMPTY, MFLAGEP), list);
-            }
-            if (sq+11 == pos->enpas) {
-                AddEnpasMove(pos, MOVE(sq, (sq+11), EMPTY, EMPTY, MFLAGEP), list);
+            if (pos->enpas != NO_SQ) {
+                if (!SQOFFBOARD(sq+9) && sq+9 == pos->enpas) {
+                    AddEnpasMove(pos, MOVE(sq, (sq+9), EMPTY, EMPTY, MFLAGEP), list);
+                }
+                if (!SQOFFBOARD(sq+11) && sq+11 == pos->enpas) {
+                    AddEnpasMove(pos, MOVE(sq, (sq+11), EMPTY, EMPTY, MFLAGEP), list);
+                }
             }
         }
     } else {
@@ -341,11 +353,13 @@ void GenerateAllCaptures(const s_board *pos, s_movelist *list) {
             }
             
             // En passant
-            if (sq-9 == pos->enpas) {
-                AddEnpasMove(pos, MOVE(sq, (sq-9), EMPTY, EMPTY, MFLAGEP), list);
-            }
-            if (sq-11 == pos->enpas) {
-                AddEnpasMove(pos, MOVE(sq, (sq-11), EMPTY, EMPTY, MFLAGEP), list);
+            if (pos->enpas != NO_SQ) {
+                if (!SQOFFBOARD(sq-9) && sq-9 == pos->enpas) {
+                    AddEnpasMove(pos, MOVE(sq, (sq-9), EMPTY, EMPTY, MFLAGEP), list);
+                }
+                if (!SQOFFBOARD(sq-11) && sq-11 == pos->enpas) {
+                    AddEnpasMove(pos, MOVE(sq, (sq-11), EMPTY, EMPTY, MFLAGEP), list);
+                }
             }
         }
     }

@@ -76,7 +76,7 @@ void ClearForSearch(s_board* pos, s_searchinfo* info) {
     
     // Periodically check for time/stop
     // Periodically check for time/stop
-if ((info->nodes & 8191) == 0) {
+if ((info->nodes & 2047) == 0) {
     CheckUp(info);
 }
 if (info->stopped) {
@@ -88,11 +88,11 @@ if (info->stopped) {
     }
 
     if (depth == 0) {
-        info->nodes++;
-        return EvalPosition(pos);
+        // info->nodes++;
+        return Quiescence(alpha, beta, pos, info);
     }
     
-    info->nodes++;
+    // info->nodes++;
     
     if (IsRepetition(pos) || pos->fifty == 100) return 0;
     if (pos->ply > MAXDEPTH - 1) return EvalPosition(pos);
@@ -101,13 +101,19 @@ if (info->stopped) {
     int totalMat = pos->material[WHITE] + pos->material[BLACK];
     if (!Incheck && DoNULL && depth > 4 && totalMat > 101600) {
         int oldEp = pos->enpas;
+        if (oldEp != NO_SQ) {
+            pos->poskey ^= PieceKeys[EMPTY][oldEp];
+        }
+        pos->enpas = NO_SQ;
         pos->side ^= 1;
-        pos->enpas = NO_SQ; // avoid leaving a bogus EP square during null move
         pos->poskey ^= SideKey;
-        int nullScore = -AlphaBeta(-beta, -alpha, depth - 1, pos, info, false);
+        int nullScore = -AlphaBeta(-beta, -alpha, depth - 3, pos, info, false);
         pos->side ^= 1;
+        pos->poskey ^= SideKey;
         pos->enpas = oldEp;
-        pos->poskey ^= SideKey;
+        if (oldEp != NO_SQ) {
+            pos->poskey ^= PieceKeys[EMPTY][oldEp];
+        }
         if (nullScore >= beta) {
             return beta;
         }
@@ -205,7 +211,7 @@ int Quiescence(int alpha, int beta, s_board* pos, s_searchinfo* info)
     
     info->nodes++;
     // Periodically check for time/stop
-    if ((info->nodes & 8191) == 0) {
+    if ((info->nodes & 2047) == 0) {
         CheckUp(info);
     }
     if (info->stopped) {

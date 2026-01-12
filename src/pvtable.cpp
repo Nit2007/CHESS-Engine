@@ -16,9 +16,10 @@ int GetHashLine(const int depth, s_board *pos) {
 		move = ProbeHashMove(pos);	
 	}
 	
-	while(pos->ply > 0) {
-		TakeMove(pos);
-	}
+	while(count-- > 0) {
+        TakeMove(pos);
+    }
+
 	return count;
 }
 
@@ -37,8 +38,9 @@ void ClearHashTable(s_hashtable *table) {
 }
 
 void InitHashTable(s_hashtable *table, const int MB) {
+    if (MB <= 1) return;
     // Calculate hash table size in bytes
-    int HashSize = 0x100000 * MB;  // 0x100000 = 1MB in bytes {16^5 = 1,048,576 }
+    int HashSize = 0x100000 * MB ;  // 0x100000 = 1MB in bytes {16^5 = 1,048,576 }
     table->numEntries = HashSize / sizeof(s_hashentry);
     table->numEntries -= 2;  // Safety margin
     
