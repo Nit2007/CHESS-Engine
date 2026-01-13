@@ -161,14 +161,118 @@ void UCI_ParseGo(const string& command) {
     g_info.timeset = false;
     g_info.infinite = false;
     g_info.depth = MAXDEPTH;
-    g_info.movestogo = 40;
+    g_info.movestogo = 30;
+
+    int depth = -1;
+    int movetime = -1;
+    int wtime = -1, btime = -1;
+    int winc = 0, binc = 0;
+    int movestogo = 30;
+    bool infinite = false;
 
     while (ss >> token) {
-        if (token == "depth") ss >> g_info.depth;
+        if (token == "depth") {
+            ss >> depth;
+        } else if (token == "movetime") {
+            ss >> movetime;
+        } else if (token == "wtime") {
+            ss >> wtime;
+        } else if (token == "btime") {
+            ss >> btime;
+        } else if (token == "winc") {
+            ss >> winc;
+        } else if (token == "binc") {
+            ss >> binc;
+        } else if (token == "movestogo") {
+            ss >> movestogo;
+        } else if (token == "infinite") {
+            infinite = true;
+        }
     }
 
-    if (g_info.depth == MAXDEPTH)
+    if (movestogo > 0) {
+        g_info.movestogo = movestogo;
+    } else {
+        g_info.movestogo = 30;
+    }
+
+    if (depth != -1) {
+        g_info.depth = depth;
+    } else {
         g_info.depth = 6;
+    }
+
+    if (infinite) {
+        g_info.infinite = true;
+        g_info.timeset = false;
+    } else {
+        int timeForMove = -1;
+
+        if (movetime != -1) {
+            timeForMove = movetime;
+        } else if (wtime != -1 && btime != -1) {
+            const int remaining = (g_board.side == WHITE) ? wtime : btime;
+            const int inc = (g_board.side == WHITE) ? winc : binc;
+            int movesToGo = g_info.movestogo;
+            if (movesToGo < 1) movesToGo = 30;
+
+            timeForMove = (remaining / movesToGo) + inc;
+
+            timeForMove = (timeForMove * 8) / 10;
+            if (timeForMove < 50) timeForMove = 50;
+        }
+
+        if (timeForMove != -1) {
+            const int safetyBufferMs = 50;
+            g_info.timeset = true;
+            if (timeForMove > safetyBufferMs) {
+                timeForMove -= safetyBufferMs;
+            }
+            g_info.stoptime = g_info.starttime + timeForMove;
+
+            if (depth == -1) {
+                if (timeForMove < 200) {
+                    g_info.depth = 2;
+                } else if (timeForMove < 500) {
+                    g_info.depth = 3;
+                } else if (timeForMove < 1200) {
+                    g_info.depth = 4;
+                } else if (timeForMove < 2500) {
+                    g_info.depth = 5;
+                } else {
+                    g_info.depth = 6;
+                }
+            }
+        }
+    }
+
+    // Opening override (safe + legal): enforce 1. e4 and ...g6
+    // Only applies to the very first moves; otherwise normal search.
+    {
+        if (g_board.hisply == 0 && g_board.side == WHITE) {
+            int mv = ParseMove((char*)"e2e4", &g_board);
+            if (mv != FALSE) {
+                if (MakeMove(&g_board, mv)) {
+                    TakeMove(&g_board);
+                    g_info.bestmove = mv;
+                    UCI_SendBestMove();
+                    return;
+                }
+            }
+        }
+
+        if (g_board.hisply == 1 && g_board.side == BLACK) {
+        int mv = ParseMove((char*)"b7b6", &g_board);
+        if (mv != FALSE) {
+            if (MakeMove(&g_board, mv)) {
+                TakeMove(&g_board);
+                g_info.bestmove = mv;
+                UCI_SendBestMove();
+                return;
+            }
+        }
+}
+    }
 
     SearchPosition(&g_board, &g_info);
     UCI_SendBestMove();

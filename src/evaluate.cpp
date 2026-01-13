@@ -13,8 +13,11 @@ const int CastleBonus = 50;
 const int UncastledPenalty = 30;     // penalty for staying uncastled in opening (stronger)
 const int EarlyQueenPenalty = 15;     // penalty for early queen development (stronger)
 const int HangingBasePenalty = 20;    // base penalty added to a fraction of piece value when hanging (stronger)   // base penalty added to a fraction of piece value when hanging (stronger)
-const int DevMinorBonus = 12;         // bonus for minor pieces developed in opening
-const int KnightRimPenalty = 15;      // penalty for knights on rim in opening
+const int DevMinorBonus = 18;         // bonus for minor pieces developed in opening
+const int KnightRimPenalty = 22;      // penalty for knights on rim in opening
+const int KnightEarlyRaidPenalty = 120;
+const int OpeningSpaceBonus = 12;
+const int OpeningHangingMinorExtra = 90;
 
 // Piece-square tables (from white's perspective)
 const int PawnTable[64] = {
@@ -172,12 +175,42 @@ int MaterialDraw(const s_board *pos) {
     return FALSE;
 }
 
+static inline bool IsWhitePassedPawn(const s_board* pos, int sq) {
+    const int file = FilesBrd[sq];
+    const int rank = RanksBrd[sq];
+
+    for (int f = file - 1; f <= file + 1; ++f) {
+        if (f < FILE_A || f > FILE_H) continue;
+        for (int r = rank + 1; r <= RANK_8; ++r) {
+            const int tSq = smalltobig(f, r);
+            if (pos->pieces[tSq] == BP) return false;
+        }
+    }
+    return true;
+}
+
+static inline bool IsBlackPassedPawn(const s_board* pos, int sq) {
+    const int file = FilesBrd[sq];
+    const int rank = RanksBrd[sq];
+
+    for (int f = file - 1; f <= file + 1; ++f) {
+        if (f < FILE_A || f > FILE_H) continue;
+        for (int r = rank - 1; r >= RANK_1; --r) {
+            const int tSq = smalltobig(f, r);
+            if (pos->pieces[tSq] == WP) return false;
+        }
+    }
+    return true;
+}
+
 // Main position evaluation function
 int EvalPosition(s_board* pos) {
     ASSERT(CheckBoard(pos));
 
     int pce, pceNum, sq;
     int score = pos->material[WHITE] - pos->material[BLACK];
+
+    const bool endgameOnly = (pos->material[WHITE] <= ENDGAME_MAT && pos->material[BLACK] <= ENDGAME_MAT);
     
     // Check for draw by insufficient material
     if (!pos->piecenum[WP] && !pos->piecenum[BP] && MaterialDraw(pos) == TRUE) {
@@ -192,6 +225,16 @@ int EvalPosition(s_board* pos) {
         ASSERT(SQ64(sq) >= 0 && SQ64(sq) <= 63);
         
         score += PawnTable[SQ64(sq)];
+
+        if (pos->hisply < 16) {
+            if (sq == C4 || sq == D4 || sq == E4 || sq == C5 || sq == D5 || sq == E5) {
+                score += OpeningSpaceBonus;
+            }
+        }
+
+        if (endgameOnly && IsWhitePassedPawn(pos, sq)) {
+            score += PawnPassed[RanksBrd[sq]];
+        }
         
         // if ((IsolatedMask[SQ64(sq)] & pos->pawns[WHITE]) == 0) {
         //     score += PawnIsolated;
@@ -209,6 +252,7 @@ int EvalPosition(s_board* pos) {
             int sq = pos->piecelist[WN][i];
             if (sq != B1 && sq != G1) score += DevMinorBonus; // developed
             if (FilesBrd[sq] == FILE_A || FilesBrd[sq] == FILE_H) score -= KnightRimPenalty;
+            if (pos->hisply < 16 && (RanksBrd[sq] == RANK_7 || RanksBrd[sq] == RANK_8)) score -= KnightEarlyRaidPenalty;
         }
         for (int i = 0; i < pos->piecenum[WB]; ++i) {
             int sq = pos->piecelist[WB][i];
@@ -220,10 +264,29 @@ int EvalPosition(s_board* pos) {
             int sq = pos->piecelist[BN][i];
             if (sq != B8 && sq != G8) score -= DevMinorBonus; // developed
             if (FilesBrd[sq] == FILE_A || FilesBrd[sq] == FILE_H) score += KnightRimPenalty;
+            if (pos->hisply < 16 && (RanksBrd[sq] == RANK_1 || RanksBrd[sq] == RANK_2)) score += KnightEarlyRaidPenalty;
         }
         for (int i = 0; i < pos->piecenum[BB]; ++i) {
             int sq = pos->piecelist[BB][i];
             if (sq != C8 && sq != F8) score -= DevMinorBonus; // developed
+        }
+    }
+
+    if (pos->hisply < 30) {
+        if (pos->king[WHITE] == E1 && (pos->castleperm & (WKCA | WQCA))) {
+            score -= UncastledPenalty;
+        }
+        if (pos->king[BLACK] == E8 && (pos->castleperm & (BKCA | BQCA))) {
+            score += UncastledPenalty;
+        }
+ 
+        if (pos->piecenum[WQ] == 1) {
+            int wqSq = pos->piecelist[WQ][0];
+            if (wqSq != D1) score -= EarlyQueenPenalty;
+        }
+        if (pos->piecenum[BQ] == 1) {
+            int bqSq = pos->piecelist[BQ][0];
+            if (bqSq != D8) score += EarlyQueenPenalty;
         }
     }
 
@@ -235,6 +298,16 @@ int EvalPosition(s_board* pos) {
         ASSERT(Mirror64[SQ64(sq)] >= 0 && Mirror64[SQ64(sq)] <= 63);
         
         score -= PawnTable[Mirror64[SQ64(sq)]];
+
+        if (pos->hisply < 16) {
+            if (sq == C4 || sq == D4 || sq == E4 || sq == C5 || sq == D5 || sq == E5) {
+                score -= OpeningSpaceBonus;
+            }
+        }
+
+        if (endgameOnly && IsBlackPassedPawn(pos, sq)) {
+            score -= PawnPassed[7 - RanksBrd[sq]];
+        }
         // if ((IsolatedMask[Mirror64[SQ64(sq)]] & pos->pawns[BLACK]) == 0) {
         //     score -= PawnIsolated;  // Negative for black
         // }
@@ -400,6 +473,9 @@ if (!(pos->castleperm & BQCA) && pos->king[BLACK] != E8 && FilesBrd[pos->king[BL
                 int sq = pos->piecelist[pce][i];
                 if (SqAttacked(sq, BLACK, pos) && !SqAttacked(sq, WHITE, pos)) {
                     int pen = HangingBasePenalty + pieceVal[pce] / 3;
+                    if (pos->hisply < 20 && (pce == WN || pce == WB)) {
+                        pen += OpeningHangingMinorExtra;
+                    }
                     score -= pen;
                 }
             }
@@ -410,6 +486,9 @@ if (!(pos->castleperm & BQCA) && pos->king[BLACK] != E8 && FilesBrd[pos->king[BL
                 int sq = pos->piecelist[pce][i];
                 if (SqAttacked(sq, WHITE, pos) && !SqAttacked(sq, BLACK, pos)) {
                     int pen = HangingBasePenalty + pieceVal[pce] / 3;
+                    if (pos->hisply < 20 && (pce == BN || pce == BB)) {
+                        pen += OpeningHangingMinorExtra;
+                    }
                     score += pen;
                 }
             }

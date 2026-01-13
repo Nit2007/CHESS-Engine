@@ -73,6 +73,7 @@ void ClearForSearch(s_board* pos, s_searchinfo* info) {
 
  int AlphaBeta(int alpha, int beta, int depth, s_board* pos, s_searchinfo* info, int DoNULL) {
     ASSERT(CheckBoard(pos));
+    info->nodes++;
     
     // Periodically check for time/stop
     // Periodically check for time/stop
