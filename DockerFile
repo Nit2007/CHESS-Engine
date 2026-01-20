@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Copy source
+# Copy source .
 COPY . .
 
 # Build the C++ engine (Makefile is in /app/src)
