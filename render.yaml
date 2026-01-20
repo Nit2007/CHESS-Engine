@@ -1,0 +1,32 @@
+services:
+  - type: worker
+    name: lichess-bot
+    env: python
+    plan: free
+    rootDir: lichess-bot
+    buildCommand: |
+      python -m pip install --upgrade pip
+      pip install -r requirements.txt
+
+      make -C ../src || g++ -O2 -std=c++17 -I../src ../src/*.cpp -o ../src/chess
+
+      mkdir -p engines
+      cp ../src/chess engines/chess
+      chmod +x engines/chess
+
+      cat > config.render.yml << 'EOF'
+      token: "RENDER_WILL_OVERRIDE"
+      url: "https://lichess.org/"
+
+      engine:
+        dir: "./engines"
+        name: "chess"
+        protocol: "uci"
+        ponder: true
+
+      challenge: {}
+      EOF
+    startCommand: python lichess-bot.py --config config.render.yml --disable_auto_logging
+    envVars:
+      - key: LICHESS_BOT_TOKEN
+        sync: false
