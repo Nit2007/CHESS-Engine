@@ -8,10 +8,10 @@ url: "https://lichess.org/"
   #name: "myengine.exe"
 engine:
   #dir: "./engine"        # relative path to the folder containing the engine
-  dir : "C:\\Users\\DELL\\Desktop\\CHESS ENGINE\\backend2\\CHESS-Engine\\lichess-bot\\engines"
+  dir : "C:\\Users\\DELL\\Desktop\\CHESS ENGINE\\openingBook\\CHESS-Engine\\lichess-bot\\engines"
   name: "myengine.exe"       # name of the executable (no .exe on Linux)
   #working_dir: ""
-  working_dir: "C:\\Users\\DELL\\Desktop\\CHESS ENGINE\\backend2\\CHESS-Engine\\lichess-bot\\engines"
+  working_dir: "C:\\Users\\DELL\\Desktop\\CHESS ENGINE\\openingBook\\CHESS-Engine\\lichess-bot\\engines"
   protocol: "uci"
   ponder: true
 
@@ -57,7 +57,7 @@ correspondence:
   ponder: false
 
 challenge:
-  concurrency: 1
+  concurrency: 5
   sort_by: "best"
   preference: "none"
   accept_bot: true

@@ -23,7 +23,9 @@ SRC = main.cpp \
 	  evaluate.cpp \
       moveorder.cpp \
       uci.cpp \
-      xboard.cpp
+      xboard.cpp \
+	  openingBook/polykey.cpp \
+	  openingBook/polybook.cpp
 
 # Output executable name
 TARGET = chess
@@ -40,7 +42,7 @@ $(TARGET): $(OBJ)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
 %.o: %.cpp $(HEADERS)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -I. -c $< -o $@
 
 clean:
 	rm -f $(OBJ) $(TARGET)

@@ -7,12 +7,15 @@ A **UCI-compatible chess engine** written in **C++**.
 - Parses FEN and setups board internally
 - Legal Move Generation in a given position and core engine system
 - Achieved Search speed of `2.65M nodes/sec`, validated via Basic & Perft testing
-- UCI compatible and deployed it as a lichess bot
+- Core Engine Logic: Implemented Zobrist Hashing, a Transposition Table for PV retrieval, and a move-ordering system  Heuristics.
+- UCI compatible and deployed it as a `Lichess bot`
+- Integrated Polyglot Support: Implemented PolyKey generation and integrated `komodo.bin` for high-performance opening theory.
 
 ## Overview
 
 - **Protocol**: UCI (Universal Chess Interface)
 - **Language**: C++
+**Build System**: Make
 - **Start date**: July 8, 2025
 - **Run targets**:
   - UCI GUIs 
@@ -34,6 +37,12 @@ A **UCI-compatible chess engine** written in **C++**.
 - MVV-LVA capture scoring
 - Killer moves
 - History heuristic
+
+### Opening Book
+
+- **Format**: Polyglot/Komodo binary books (e.g. `komodo.bin`).
+- **Usage**: Place a book at `openingBook/komodo.bin` or set the `POLYBOOK` environment variable to a custom path.
+- **Behavior**: When present the engine will load the book at startup and prefer book moves (weighted-random selection) before running the search.
 
 ### Evaluation
 
@@ -126,8 +135,14 @@ This project was built to deeply understand:
 Rather than using existing engines, everything was implemented from scratch to
 gain hands-on experience with real-world algorithmic trade-offs.
 
-## Credits
+
+## Credits & Links
 - [Stockfish](https://stockfishchess.org/) for inspiration
-- BlueFever Software [(VICE)](https://github.com/bluefeversoft/vice) for the educational foundation
-- [Chess programming wiki](https://www.chessprogramming.org/) for developing further detailed understanding
+- [Chess Programming Wiki](https://www.chessprogramming.org/) — implementation references and techniques
+- BlueFever Software [(VICE)](https://github.com/bluefeversoft/vice) for the educational foundation and core Algorithms
+- [Chess Stack Exchange](https://chess.stackexchange.com/) -  For community expertise and technical problem-solving.
+
+#Opening Theory
+- [Polyglot format](http://hgm.nubati.net/book_format.html) — For polyKey Generation and opening book interoperability based on the standard Polyglot specifications.
+- [Komodo Chess](https://komodochess.com/) — This engine uses the komodo.bin Polyglot book provided by Komodo Chess to handle opening theory.
 

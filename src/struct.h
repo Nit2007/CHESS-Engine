@@ -103,3 +103,10 @@ struct s_board
     int searchHistory[13][120]; // BRD_SQ_NUM // A 2D array used by the history heuristic for move ordering. It scores moves based on how often they have been good in the past.
     int searchKillers[2][64];   // MAXDEPTH // The "killer move" heuristic. Stores 2 moves that caused beta-cutoffs at each ply, to be tried early in other branches.
 };
+
+struct s_poly_book_entry{// 8 + 2 + 2 + 4 => 16 Bytes
+    uint64_t key;      
+    uint16_t move;    
+    uint16_t weight;  
+    uint32_t learn;   
+};

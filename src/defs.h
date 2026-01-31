@@ -266,3 +266,12 @@ extern string XBoard_GetEngineName();
 extern string XBoard_GetEngineAuthor();
 extern void XBoard_SetEngineInfo(const string& name, const string& author);
 extern bool XBoard_IsActive();
+
+    //OPENING_BOOKS
+//polybook.cpp
+extern uint64_t polyKeyFromBoard(s_board* board);
+extern s_poly_book_entry* InitPolyBook(uint64_t&NumEntries);
+extern void CleanPolyBook(s_poly_book_entry* entries);
+extern int GetBookMove(s_board* board, s_poly_book_entry* entries, uint64_t NumEntries);
+//polykey.cpp
+extern const uint64_t Random64[781];

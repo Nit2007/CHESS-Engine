@@ -37,7 +37,7 @@ engine:
   ponder: true
 
 challenge:
-  concurrency: 1
+  concurrency: 5
   sort_by: "best"
   preference: "none"
   accept_bot: true

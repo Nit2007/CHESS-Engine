@@ -192,3 +192,12 @@ if (choice == 2) {
         cout << endl << "*************end*************" << endl;
 delete info;
     }
+
+
+//FOR POLYKEY Testing
+allinit();
+    s_board board;
+    #define TEST_FEN_POLY1 "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+    Parse_FEN((char*)TEST_FEN_POLY1,&board);
+    PrintBoard(&board);
+    cout<<"polyKeyFromBoard : "<<polyKeyFromBoard(&board)<<endl;

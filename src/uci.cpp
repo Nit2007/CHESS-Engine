@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 #include <cstring>
+#include <ctime>
 
 using namespace std;
 
@@ -11,6 +12,10 @@ using namespace std;
 
 s_board g_board;
 s_searchinfo g_info;
+
+// Opening book globals
+s_poly_book_entry* g_book = nullptr;
+uint64_t g_book_entries = 0;
 
 bool g_uciMode = false;
 
@@ -44,6 +49,10 @@ void UCI_Init() {
     g_info.bestmove = 0;
 
     cerr << g_engineName << " by " << g_engineAuthor << " initialized\n";
+    // seed RNG for book weighted selection and load book
+    srand((unsigned)time(NULL));
+    g_book = InitPolyBook(g_book_entries);
+    if (g_book != nullptr) cerr << "Opening book loaded: " << g_book_entries << " entries\n";
 }
 
 // ================= UCI LOOP ======================
@@ -93,6 +102,9 @@ void UCI_Loop() {
             break;
         }
     }
+
+    // free opening book on exit
+    if (g_book) CleanPolyBook(g_book);
 }
 
 // ================= POSITION ======================
@@ -246,32 +258,49 @@ void UCI_ParseGo(const string& command) {
         }
     }
 
-    // Opening override (safe + legal): enforce 1. e4 and ...g6
-    // Only applies to the very first moves; otherwise normal search.
-    {
-        if (g_board.hisply == 0 && g_board.side == WHITE) {
-            int mv = ParseMove((char*)"e2e4", &g_board);
-            if (mv != FALSE) {
-                if (MakeMove(&g_board, mv)) {
-                    TakeMove(&g_board);
-                    g_info.bestmove = mv;
-                    UCI_SendBestMove();
-                    return;
-                }
-            }
-        }
+//     // Opening override (safe + legal): enforce 1. e4 and ...g6
+//     // Only applies to the very first moves; otherwise normal search.
+//     {
+//         if (g_board.hisply == 0 && g_board.side == WHITE) {
+//             int mv = ParseMove((char*)"e2e4", &g_board);
+//             if (mv != FALSE) {
+//                 if (MakeMove(&g_board, mv)) {
+//                     TakeMove(&g_board);
+//                     g_info.bestmove = mv;
+//                     UCI_SendBestMove();
+//                     return;
+//                 }
+//             }
+//         }
 
-        if (g_board.hisply == 1 && g_board.side == BLACK) {
-        int mv = ParseMove((char*)"b7b6", &g_board);
-        if (mv != FALSE) {
-            if (MakeMove(&g_board, mv)) {
+//         if (g_board.hisply == 1 && g_board.side == BLACK) {
+//         int mv = ParseMove((char*)"b7b6", &g_board);
+//         if (mv != FALSE) {
+//             if (MakeMove(&g_board, mv)) {
+//                 TakeMove(&g_board);
+//                 g_info.bestmove = mv;
+//                 UCI_SendBestMove();
+//                 return;
+//             }
+//         }
+// }
+//     }
+
+    // Try book move before searching
+    if (g_book != nullptr && g_book_entries > 0) {
+        int bmove = GetBookMove(&g_board, g_book, g_book_entries);
+        if (bmove != 0) {
+            cerr << "Book candidate: " << UCI_MoveToString(bmove) << "\n";
+            if (MakeMove(&g_board, bmove)) {
                 TakeMove(&g_board);
-                g_info.bestmove = mv;
+                g_info.bestmove = bmove;
+                cerr << "Using book move: " << UCI_MoveToString(bmove) << "\n";
                 UCI_SendBestMove();
                 return;
+            } else {
+                cerr << "Book move illegal in current position: " << UCI_MoveToString(bmove) << "\n";
             }
         }
-}
     }
 
     SearchPosition(&g_board, &g_info);
