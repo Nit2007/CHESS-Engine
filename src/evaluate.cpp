@@ -21,82 +21,92 @@ const int OpeningHangingMinorExtra = 90;
 
 // Piece-square tables (from white's perspective)
 const int PawnTable[64] = {
-    0,   0,   0,   0,   0,   0,   0,   0,  // Rank 8
-  200, 200, 200, 200, 200, 200, 200, 200,  // Rank 7 (passed pawn push is very strong!)
-   90, 100, 100, 120, 120, 100, 100,  90,  // Rank 6
-   40,  50,  50,  80,  80,  50,  50,  40,  // Rank 5
-   10,  20,  20,  50,  50,  20,  20,  10,  // Rank 4
-    5,  10,  10,  20,  20,  10,  10,   5,  // Rank 3
-    0,   0,   0, -10, -10,   0,   0,   0,  // Rank 2 (slight penalty, undeveloped)
-    0,   0,   0,   0,   0,   0,   0,   0   // Rank 1 (start)
+    0,  0,  0,  0,  0,  0,  0,  0,          // Rank 8 (Promotion - handled by move gen/eval)
+   50, 50, 50, 50, 50, 50, 50, 50,          // Rank 7 (Strong, but not worth a whole piece yet)
+   10, 10, 20, 30, 30, 20, 10, 10,          // Rank 6
+    5,  5, 10, 25, 25, 10,  5,  5,          // Rank 5
+    0,  0,  0, 20, 20,  0,  0,  0,          // Rank 4 (Center control)
+    5, -5,-10,  0,  0,-10, -5,  5,          // Rank 3 (Avoid blocking bishops)
+    5, 10, 10,-20,-20, 10, 10,  5,          // Rank 2 (Defensive base)
+    0,  0,  0,  0,  0,  0,  0,  0           // Rank 1
 };
 
+const int PawnTableEndgame[64] = {
+    0,  0,  0,  0,  0,  0,  0,  0,          // Rank 8 (Promotion)
+    150, 150, 150, 150, 150, 150, 150, 150, // Rank 7 (Massive push incentive)
+    100, 110, 120, 130, 130, 120, 110, 100, // Rank 6
+     60,  70,  80,  90,  90,  80,  70,  60, // Rank 5
+     30,  40,  50,  60,  60,  50,  40,  30, // Rank 4
+     10,  20,  25,  30,  30,  25,  20,  10, // Rank 3
+      0,   0,   0,   0,   0,   0,   0,   0, // Rank 2
+      0,   0,   0,   0,   0,   0,   0,   0  // Rank 1
+};
 
 const int KnightTable[64] = {
-     0,  -10,    0,    0,    0,    0,  -10,    0,
-     0,    0,    0,    5,    5,    0,    0,    0,
-     0,    0,   10,   10,   10,   10,    0,    0,
-     0,    0,   10,   20,   20,   10,    5,    0,
-     5,   10,   15,   20,   20,   15,   10,    5,
-     5,   10,   10,   20,   20,   10,   10,    5,
-     0,    0,    5,   10,   10,    5,    0,    0,
-     0,    0,    0,    0,    0,    0,    0,    0
+    -50,-40,-30,-30,-30,-30,-40,-50,        // Rank 8
+    -40,-20,  0,  5,  5,  0,-20,-40,
+    -30,  5, 10, 15, 15, 10,  5,-30,
+    -30,  0, 15, 20, 20, 15,  0,-30,
+    -30,  5, 15, 20, 20, 15,  5,-30,
+    -30,  0, 10, 15, 15, 10,  0,-30,
+    -40,-20,  0,  0,  0,  0,-20,-40,
+    -50,-40,-30,-30,-30,-30,-40,-50         // Rank 1
 };
 
 const int BishopTable[64] = {
-     0,    0,  -10,    0,    0,  -10,    0,    0,
-     0,    0,    0,   10,   10,    0,    0,    0,
-     0,    0,   10,   15,   15,   10,    0,    0,
-     0,   10,   15,   20,   20,   15,   10,    0,
-     0,   10,   15,   20,   20,   15,   10,    0,
-     0,    0,   10,   15,   15,   10,    0,    0,
-     0,    0,    0,   10,   10,    0,    0,    0,
-     0,    0,    0,    0,    0,    0,    0,    0
+    -20,-10,-10,-10,-10,-10,-10,-20,
+    -10,  5,  0,  0,  0,  0,  5,-10,
+    -10, 10, 10, 10, 10, 10, 10,-10,
+    -10,  0, 10, 10, 10, 10,  0,-10,
+    -10,  5,  5, 10, 10,  5,  5,-10,
+    -10,  0,  5, 10, 10,  5,  0,-10,
+    -10,  0,  0,  0,  0,  0,  0,-10,
+    -20,-10,-10,-10,-10,-10,-10,-20
 };
 
 const int RookTable[64] = {
-     0,    0,    5,   10,   10,    5,    0,    0,
-     0,    0,    5,   10,   10,    5,    0,    0,
-     0,    0,    5,   10,   10,    5,    0,    0,
-     0,    0,    5,   10,   10,    5,    0,    0,
-     0,    0,    5,   10,   10,    5,    0,    0,
-     0,    0,    5,   10,   10,    5,    0,    0,
-    25,   25,   25,   25,   25,   25,   25,   25,
-     0,    0,    5,   10,   10,    5,    0,    0
+     0,  0,  0,  5,  5,  0,  0,  0,         // Rank 8
+    15, 20, 20, 20, 20, 20, 20, 15,         // Rank 7 (The "Pig" on the 7th)
+    -5,  0,  0,  0,  0,  0,  0, -5,
+    -5,  0,  0,  0,  0,  0,  0, -5,
+    -5,  0,  0,  0,  0,  0,  0, -5,
+    -5,  0,  0,  0,  0,  0,  0, -5,
+    -5,  0,  0,  0,  0,  0,  0, -5,
+     0,  0,  0,  5,  5,  0,  0,  0          // Rank 1
 };
 
 const int QueenTable[64] = {
-   -20,  -10,  -10,   -5,   -5,  -10,  -10,  -20,
-   -10,    0,    0,    0,    0,    0,    0,  -10,
-   -10,    0,    5,    5,    5,    5,    0,  -10,
-    -5,    0,    5,    5,    5,    5,    0,   -5,
-     0,    0,    5,    5,    5,    5,    0,   -5,
-   -10,    5,    5,    5,    5,    5,    0,  -10,
-   -10,    0,    5,    0,    0,    0,    0,  -10,
-   -20,  -10,  -10,   -5,   -5,  -10,  -10,  -20
+    -20,-10,-10, -5, -5,-10,-10,-20,
+    -10,  0,  5,  0,  0,  0,  0,-10,
+    -10,  5,  5,  5,  5,  5,  0,-10,
+      0,  0,  5,  5,  5,  5,  0, -5,
+     -5,  0,  5,  5,  5,  5,  0, -5,
+    -10,  0,  5,  5,  5,  5,  0,-10,
+    -10,  0,  0,  0,  0,  0,  0,-10,
+    -20,-10,-10, -5, -5,-10,-10,-20
 };
 
 // King tables for endgame and opening/middlegame
-const int KingEndgame[64] = {
-   -50,  -10,    0,    0,    0,    0,  -10,  -50,
-   -10,    0,   10,   10,   10,   10,    0,  -10,
-     0,   10,   20,   20,   20,   20,   10,    0,
-     0,   10,   20,   40,   40,   20,   10,    0,
-     0,   10,   20,   40,   40,   20,   10,    0,
-     0,   10,   20,   20,   20,   20,   10,    0,
-   -10,    0,   10,   10,   10,   10,    0,  -10,
-   -50,  -10,    0,    0,    0,    0,  -10,  -50
+const int KingOpening[64] = {
+    -30,-40,-40,-50,-50,-40,-40,-30,        // Rank 8
+    -30,-40,-40,-50,-50,-40,-40,-30,
+    -30,-40,-40,-50,-50,-40,-40,-30,
+    -30,-40,-40,-50,-50,-40,-40,-30,
+    -20,-30,-30,-40,-40,-30,-30,-20,
+    -10,-20,-20,-20,-20,-20,-20,-10,
+     20, 20,  0,  0,  0,  0, 20, 20,        // Rank 2
+     20, 30, 10,  0,  0, 10, 30, 20         // Rank 1 (C1 and G1 are gold)
 };
 
-const int KingOpening[64] = {
-     0,    5,    5,  -10,  -10,    0,   10,    5,
-   -30,  -30,  -30,  -30,  -30,  -30,  -30,  -30,
-   -50,  -50,  -50,  -50,  -50,  -50,  -50,  -50,
-   -70,  -70,  -70,  -70,  -70,  -70,  -70,  -70,
-   -70,  -70,  -70,  -70,  -70,  -70,  -70,  -70,
-   -70,  -70,  -70,  -70,  -70,  -70,  -70,  -70,
-   -70,  -70,  -70,  -70,  -70,  -70,  -70,  -70,
-   -70,  -70,  -70,  -70,  -70,  -70,  -70,  -70
+const int KingEndgame[64] = {
+    -50,-30,-30,-30,-30,-30,-30,-50,
+    -30,-10,  0,  0,  0,  0,-10,-30,
+    -30,  0, 20, 30, 30, 20,  0,-30,
+    -30,  0, 30, 40, 40, 30,  0,-30,
+    -30,  0, 30, 40, 40, 30,  0,-30,
+    -30,  0, 20, 30, 30, 20,  0,-30,
+    -30,-10,  0,  0,  0,  0,-10,-30,
+    -50,-30,-30,-30,-30,-30,-30,-50
 };
 
 // Mirror table for flipping piece-square tables for black pieces
@@ -118,8 +128,6 @@ extern uint64_t WhitePassedMask[64];
 extern uint64_t BlackPassedMask[64];
 extern uint64_t FileBBMask[8];
 
-// Endgame material threshold
-#define ENDGAME_MAT (1 * pieceVal[WR] + 2 * pieceVal[WN] + 2 * pieceVal[WP] + pieceVal[WK])
 
 // Material draw detection function
 int MaterialDraw(const s_board *pos) {
@@ -203,119 +211,47 @@ static inline bool IsBlackPassedPawn(const s_board* pos, int sq) {
     return true;
 }
 
-// Main position evaluation function
-int EvalPosition(s_board* pos) {
-    ASSERT(CheckBoard(pos));
+// Threshold: 50,000 (King) + 1,300 (Active Material)
+const int ENDGAME_MAT = 51300; 
 
-    int pce, pceNum, sq;
-    int score = pos->material[WHITE] - pos->material[BLACK];
-
-    const bool endgameOnly = (pos->material[WHITE] <= ENDGAME_MAT && pos->material[BLACK] <= ENDGAME_MAT);
-    
-    // Check for draw by insufficient material
-    if (!pos->piecenum[WP] && !pos->piecenum[BP] && MaterialDraw(pos) == TRUE) {
-        return 0;
+bool IsEndgame(s_board *pos) {
+    // Check White: No Queen and material below threshold
+    if (pos->piecenum[WQ] == 0 && pos->material[WHITE] <= ENDGAME_MAT) {
+        return true;
+    }
+    // Check Black: No Queen and material below threshold
+    if (pos->piecenum[BQ] == 0 && pos->material[BLACK] <= ENDGAME_MAT) {
+        return true;
     }
     
-    // Evaluate white pawns
+    // Optional: If both sides are very low on material even with Queens
+    if (pos->material[WHITE] <= ENDGAME_MAT && pos->material[BLACK] <= ENDGAME_MAT) {
+        return true;
+    }
+
+    return false;
+}
+
+int EvalPosition(s_board* pos) {
+    ASSERT(CheckBoard(pos));
+    
+    int pce, pceNum, sq;
+    int score = pos->material[WHITE] - pos->material[BLACK];
+    bool endgame = IsEndgame(pos);
+    // Evaluate white pieces with piece-square tables
     pce = WP;
     for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
         sq = pos->piecelist[pce][pceNum];
         ASSERT(SqOnBoard(sq));
         ASSERT(SQ64(sq) >= 0 && SQ64(sq) <= 63);
-        
-        score += PawnTable[SQ64(sq)];
-
-        if (pos->hisply < 16) {
-            if (sq == C4 || sq == D4 || sq == E4 || sq == C5 || sq == D5 || sq == E5) {
-                score += OpeningSpaceBonus;
-            }
+        if (endgame) {
+            score += PawnTableEndgame[SQ64(sq)];
+        } else {
+            score += PawnTable[SQ64(sq)];
         }
-
-        if (endgameOnly && IsWhitePassedPawn(pos, sq)) {
-            score += PawnPassed[RanksBrd[sq]];
-        }
-        
-        // if ((IsolatedMask[SQ64(sq)] & pos->pawns[WHITE]) == 0) {
-        //     score += PawnIsolated;
-        // }// Check for isolated pawns (requires IsolatedMask implementation)
- /* if ((WhitePassedMask[SQ64(sq)] & pos->pawns[BLACK]) == 0) 
-        {     // Check for passed pawns (requires PassedMask implementation)
-    score += PawnPassed[RanksBrd[sq]];
-        }*/
-    }
-
-    // Opening development bonuses and knight-rim penalties
-    if (pos->hisply < 24) {
-        // White development bonuses
-        for (int i = 0; i < pos->piecenum[WN]; ++i) {
-            int sq = pos->piecelist[WN][i];
-            if (sq != B1 && sq != G1) score += DevMinorBonus; // developed
-            if (FilesBrd[sq] == FILE_A || FilesBrd[sq] == FILE_H) score -= KnightRimPenalty;
-            if (pos->hisply < 16 && (RanksBrd[sq] == RANK_7 || RanksBrd[sq] == RANK_8)) score -= KnightEarlyRaidPenalty;
-        }
-        for (int i = 0; i < pos->piecenum[WB]; ++i) {
-            int sq = pos->piecelist[WB][i];
-            if (sq != C1 && sq != F1) score += DevMinorBonus; // developed
-        }
-
-        // Black development bonuses (good for black -> subtract for white)
-        for (int i = 0; i < pos->piecenum[BN]; ++i) {
-            int sq = pos->piecelist[BN][i];
-            if (sq != B8 && sq != G8) score -= DevMinorBonus; // developed
-            if (FilesBrd[sq] == FILE_A || FilesBrd[sq] == FILE_H) score += KnightRimPenalty;
-            if (pos->hisply < 16 && (RanksBrd[sq] == RANK_1 || RanksBrd[sq] == RANK_2)) score += KnightEarlyRaidPenalty;
-        }
-        for (int i = 0; i < pos->piecenum[BB]; ++i) {
-            int sq = pos->piecelist[BB][i];
-            if (sq != C8 && sq != F8) score -= DevMinorBonus; // developed
-        }
-    }
-
-    if (pos->hisply < 30) {
-        if (pos->king[WHITE] == E1 && (pos->castleperm & (WKCA | WQCA))) {
-            score -= UncastledPenalty;
-        }
-        if (pos->king[BLACK] == E8 && (pos->castleperm & (BKCA | BQCA))) {
-            score += UncastledPenalty;
-        }
- 
-        if (pos->piecenum[WQ] == 1) {
-            int wqSq = pos->piecelist[WQ][0];
-            if (wqSq != D1) score -= EarlyQueenPenalty;
-        }
-        if (pos->piecenum[BQ] == 1) {
-            int bqSq = pos->piecelist[BQ][0];
-            if (bqSq != D8) score += EarlyQueenPenalty;
-        }
-    }
-
-    // Evaluate black pawns
-    pce = BP;
-    for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
-        sq = pos->piecelist[pce][pceNum];
-        ASSERT(SqOnBoard(sq));
-        ASSERT(Mirror64[SQ64(sq)] >= 0 && Mirror64[SQ64(sq)] <= 63);
-        
-        score -= PawnTable[Mirror64[SQ64(sq)]];
-
-        if (pos->hisply < 16) {
-            if (sq == C4 || sq == D4 || sq == E4 || sq == C5 || sq == D5 || sq == E5) {
-                score -= OpeningSpaceBonus;
-            }
-        }
-
-        if (endgameOnly && IsBlackPassedPawn(pos, sq)) {
-            score -= PawnPassed[7 - RanksBrd[sq]];
-        }
-        // if ((IsolatedMask[Mirror64[SQ64(sq)]] & pos->pawns[BLACK]) == 0) {
-        //     score -= PawnIsolated;  // Negative for black
-        // }
-        
-        // Isolated and passed pawn evaluation for black would go here
     }
     
-    // Evaluate white knights
+    
     pce = WN;
     for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
         sq = pos->piecelist[pce][pceNum];
@@ -323,8 +259,44 @@ int EvalPosition(s_board* pos) {
         ASSERT(SQ64(sq) >= 0 && SQ64(sq) <= 63);
         score += KnightTable[SQ64(sq)];
     }
-
-    // Evaluate black knights
+    
+    pce = WB;
+    for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
+        sq = pos->piecelist[pce][pceNum];
+        ASSERT(SqOnBoard(sq));
+        ASSERT(SQ64(sq) >= 0 && SQ64(sq) <= 63);
+        score += BishopTable[SQ64(sq)];
+    }
+    
+    pce = WR;
+    for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
+        sq = pos->piecelist[pce][pceNum];
+        ASSERT(SqOnBoard(sq));
+        ASSERT(SQ64(sq) >= 0 && SQ64(sq) <= 63);
+        score += RookTable[SQ64(sq)];
+    }
+    
+    pce = WQ;
+    for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
+        sq = pos->piecelist[pce][pceNum];
+        ASSERT(SqOnBoard(sq));
+        ASSERT(SQ64(sq) >= 0 && SQ64(sq) <= 63);
+        score += QueenTable[SQ64(sq)];
+    }
+    
+    // Evaluate black pieces with piece-square tables (mirrored)
+    pce = BP;
+    for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
+        sq = pos->piecelist[pce][pceNum];
+        ASSERT(SqOnBoard(sq));
+        ASSERT(Mirror64[SQ64(sq)] >= 0 && Mirror64[SQ64(sq)] <= 63);
+        if (endgame) {
+            score -= PawnTableEndgame[SQ64(sq)];
+        } else {
+            score -= PawnTable[SQ64(sq)];
+        }
+    }
+    
     pce = BN;
     for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
         sq = pos->piecelist[pce][pceNum];
@@ -333,16 +305,6 @@ int EvalPosition(s_board* pos) {
         score -= KnightTable[Mirror64[SQ64(sq)]];
     }
     
-    // Evaluate white bishops
-    pce = WB;
-    for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
-        sq = pos->piecelist[pce][pceNum];
-        ASSERT(SqOnBoard(sq));
-        ASSERT(SQ64(sq) >= 0 && SQ64(sq) <= 63);
-        score += BishopTable[SQ64(sq)];
-    }
-
-    // Evaluate black bishops
     pce = BB;
     for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
         sq = pos->piecelist[pce][pceNum];
@@ -350,155 +312,347 @@ int EvalPosition(s_board* pos) {
         ASSERT(Mirror64[SQ64(sq)] >= 0 && Mirror64[SQ64(sq)] <= 63);
         score -= BishopTable[Mirror64[SQ64(sq)]];
     }
-
-    // Evaluate white rooks
-    pce = WR;
-    for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
-        sq = pos->piecelist[pce][pceNum];
-        ASSERT(SqOnBoard(sq));
-        ASSERT(SQ64(sq) >= 0 && SQ64(sq) <= 63);
-        score += RookTable[SQ64(sq)];
-        
-        ASSERT(FileRankValid(FilesBrd[sq]));
-        
-        // Open and semi-open file bonuses (requires FileBBMask implementation)
-        // if (!(pos->pawns[BOTH] & FileBBMask[FilesBrd[sq]])) {
-        //     score += RookOpenFile;
-        // } else if (!(pos->pawns[WHITE] & FileBBMask[FilesBrd[sq]])) {
-        //     score += RookSemiOpenFile;
-        // }
-    }
-
-    // Evaluate black rooks
+    
     pce = BR;
     for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
         sq = pos->piecelist[pce][pceNum];
         ASSERT(SqOnBoard(sq));
         ASSERT(Mirror64[SQ64(sq)] >= 0 && Mirror64[SQ64(sq)] <= 63);
         score -= RookTable[Mirror64[SQ64(sq)]];
-        
-        // Open and semi-open file evaluation for black would go here
     }
     
-    // Evaluate white queens
-    pce = WQ;
-    for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
-        sq = pos->piecelist[pce][pceNum];
-        ASSERT(SqOnBoard(sq));
-        ASSERT(SQ64(sq) >= 0 && SQ64(sq) <= 63);
-        score += QueenTable[SQ64(sq)];
-        
-        // Queen open/semi-open file evaluation would go here
-    }
-
-    // Evaluate black queens
     pce = BQ;
     for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
         sq = pos->piecelist[pce][pceNum];
         ASSERT(SqOnBoard(sq));
         ASSERT(Mirror64[SQ64(sq)] >= 0 && Mirror64[SQ64(sq)] <= 63);
         score -= QueenTable[Mirror64[SQ64(sq)]];
-        
-        // Queen open/semi-open file evaluation would go here
     }
     
-    // Evaluate white king
-    pce = WK;
-    sq = pos->piecelist[pce][0];
-    ASSERT(SqOnBoard(sq));
-    ASSERT(SQ64(sq) >= 0 && SQ64(sq) <= 63);
     
-    if (pos->material[BLACK] <= ENDGAME_MAT) {
-        score += KingEndgame[SQ64(sq)];
+    int whiteKingSq = pos->king[WHITE];
+    int blackKingSq = pos->king[BLACK];
+
+    // Ensure squares are valid for index mapping
+    ASSERT(SqOnBoard(whiteKingSq));
+    ASSERT(SqOnBoard(blackKingSq));
+
+    if (endgame) {
+        score += KingEndgame[SQ64(whiteKingSq)];
     } else {
-        score += KingOpening[SQ64(sq)];
+        score += KingOpening[SQ64(whiteKingSq)];
     }
-    
-    // Evaluate black king
-    pce = BK;
-    sq = pos->piecelist[pce][0];
-    ASSERT(SqOnBoard(sq));
-    ASSERT(Mirror64[SQ64(sq)] >= 0 && Mirror64[SQ64(sq)] <= 63);
-    
-    if (pos->material[WHITE] <= ENDGAME_MAT) {
-        score -= KingEndgame[Mirror64[SQ64(sq)]];
+
+    if (endgame) {
+        score -= KingEndgame[Mirror64[SQ64(blackKingSq)]];
     } else {
-        score -= KingOpening[Mirror64[SQ64(sq)]];
-    }
-    
-    // Bishop pair bonus
-    if (pos->piecenum[WB] >= 2) score += BishopPair;
-    if (pos->piecenum[BB] >= 2) score -= BishopPair;
-    
-   // White
-if (!(pos->castleperm & WKCA) && pos->king[WHITE] != E1 && FilesBrd[pos->king[WHITE]] >= FILE_F) {
-    score += CastleBonus;
-}
-if (!(pos->castleperm & WQCA) && pos->king[WHITE] != E1 && FilesBrd[pos->king[WHITE]] <= FILE_C) {
-    score += CastleBonus;
-}
-
-// Black
-if (!(pos->castleperm & BKCA) && pos->king[BLACK] != E8 && FilesBrd[pos->king[BLACK]] >= FILE_F) {
-    score -= CastleBonus;
-}
-if (!(pos->castleperm & BQCA) && pos->king[BLACK] != E8 && FilesBrd[pos->king[BLACK]] <= FILE_C) {
-    score -= CastleBonus;
-}
-    // // Uncastled penalty (opening only): king still on E1/E8 and castling rights exist
-    // if (pos->hisply < 30) {
-    //     if (pos->king[WHITE] == E1 && (pos->castleperm & (WKCA | WQCA))) {
-    //         score -= UncastledPenalty;
-    //     }
-    //     if (pos->king[BLACK] == E8 && (pos->castleperm & (BKCA | BQCA))) {
-    //         score += UncastledPenalty;
-    //     }
-    //     // Early queen development penalty if queen left starting square
-    //     if (pos->piecenum[WQ] == 1) {
-    //         int wqSq = pos->piecelist[WQ][0];
-    //         if (wqSq != D1) score -= EarlyQueenPenalty;
-    //     }
-    //     if (pos->piecenum[BQ] == 1) {
-    //         int bqSq = pos->piecelist[BQ][0];
-    //         if (bqSq != D8) score += EarlyQueenPenalty;
-    //     }
-    // }
-
-    // Hanging piece penalties: piece is attacked by opponent and not defended by own side
-    // White pieces hanging -> bad for white (subtract). Black hanging -> good for white (add)
-    {
-        // White side
-        for (int pce = WN; pce <= WQ; ++pce) {
-            for (int i = 0; i < pos->piecenum[pce]; ++i) {
-                int sq = pos->piecelist[pce][i];
-                if (SqAttacked(sq, BLACK, pos) && !SqAttacked(sq, WHITE, pos)) {
-                    int pen = HangingBasePenalty + pieceVal[pce] / 3;
-                    if (pos->hisply < 20 && (pce == WN || pce == WB)) {
-                        pen += OpeningHangingMinorExtra;
-                    }
-                    score -= pen;
-                }
-            }
-        }
-        // Black side
-        for (int pce = BN; pce <= BQ; ++pce) {
-            for (int i = 0; i < pos->piecenum[pce]; ++i) {
-                int sq = pos->piecelist[pce][i];
-                if (SqAttacked(sq, WHITE, pos) && !SqAttacked(sq, BLACK, pos)) {
-                    int pen = HangingBasePenalty + pieceVal[pce] / 3;
-                    if (pos->hisply < 20 && (pce == BN || pce == BB)) {
-                        pen += OpeningHangingMinorExtra;
-                    }
-                    score += pen;
-                }
-            }
-        }
+        score -= KingOpening[Mirror64[SQ64(blackKingSq)]];
     }
 
-    // Return score from the perspective of the side to move
+
+    // Return score from perspective of side to move
     if (pos->side == WHITE) {
         return score;
     } else {
         return -score;
     }
 }
+// Main position evaluation function
+// int EvalPosition(s_board* pos) {
+//     ASSERT(CheckBoard(pos));
+
+//     int pce, pceNum, sq;
+//     int score = pos->material[WHITE] - pos->material[BLACK];
+
+//     const bool endgameOnly = (pos->material[WHITE] <= ENDGAME_MAT && pos->material[BLACK] <= ENDGAME_MAT);
+    
+//     // Check for draw by insufficient material
+//     if (!pos->piecenum[WP] && !pos->piecenum[BP] && MaterialDraw(pos) == TRUE) {
+//         return 0;
+//     }
+    
+//     // Evaluate white pawns
+//     pce = WP;
+//     for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
+//         sq = pos->piecelist[pce][pceNum];
+//         ASSERT(SqOnBoard(sq));
+//         ASSERT(SQ64(sq) >= 0 && SQ64(sq) <= 63);
+        
+//         score += PawnTable[SQ64(sq)];
+
+//         if (pos->hisply < 16) {
+//             if (sq == C4 || sq == D4 || sq == E4 || sq == C5 || sq == D5 || sq == E5) {
+//                 score += OpeningSpaceBonus;
+//             }
+//         }
+
+//         if (endgameOnly && IsWhitePassedPawn(pos, sq)) {
+//             score += PawnPassed[RanksBrd[sq]];
+//         }
+        
+//         // if ((IsolatedMask[SQ64(sq)] & pos->pawns[WHITE]) == 0) {
+//         //     score += PawnIsolated;
+//         // }// Check for isolated pawns (requires IsolatedMask implementation)
+//  /* if ((WhitePassedMask[SQ64(sq)] & pos->pawns[BLACK]) == 0) 
+//         {     // Check for passed pawns (requires PassedMask implementation)
+//     score += PawnPassed[RanksBrd[sq]];
+//         }*/
+//     }
+
+//     // Opening development bonuses and knight-rim penalties
+//     if (pos->hisply < 24) {
+//         // White development bonuses
+//         for (int i = 0; i < pos->piecenum[WN]; ++i) {
+//             int sq = pos->piecelist[WN][i];
+//             if (sq != B1 && sq != G1) score += DevMinorBonus; // developed
+//             if (FilesBrd[sq] == FILE_A || FilesBrd[sq] == FILE_H) score -= KnightRimPenalty;
+//             if (pos->hisply < 16 && (RanksBrd[sq] == RANK_7 || RanksBrd[sq] == RANK_8)) score -= KnightEarlyRaidPenalty;
+//         }
+//         for (int i = 0; i < pos->piecenum[WB]; ++i) {
+//             int sq = pos->piecelist[WB][i];
+//             if (sq != C1 && sq != F1) score += DevMinorBonus; // developed
+//         }
+
+//         // Black development bonuses (good for black -> subtract for white)
+//         for (int i = 0; i < pos->piecenum[BN]; ++i) {
+//             int sq = pos->piecelist[BN][i];
+//             if (sq != B8 && sq != G8) score -= DevMinorBonus; // developed
+//             if (FilesBrd[sq] == FILE_A || FilesBrd[sq] == FILE_H) score += KnightRimPenalty;
+//             if (pos->hisply < 16 && (RanksBrd[sq] == RANK_1 || RanksBrd[sq] == RANK_2)) score += KnightEarlyRaidPenalty;
+//         }
+//         for (int i = 0; i < pos->piecenum[BB]; ++i) {
+//             int sq = pos->piecelist[BB][i];
+//             if (sq != C8 && sq != F8) score -= DevMinorBonus; // developed
+//         }
+//     }
+
+//     if (pos->hisply < 30) {
+//         if (pos->king[WHITE] == E1 && (pos->castleperm & (WKCA | WQCA))) {
+//             score -= UncastledPenalty;
+//         }
+//         if (pos->king[BLACK] == E8 && (pos->castleperm & (BKCA | BQCA))) {
+//             score += UncastledPenalty;
+//         }
+ 
+//         if (pos->piecenum[WQ] == 1) {
+//             int wqSq = pos->piecelist[WQ][0];
+//             if (wqSq != D1) score -= EarlyQueenPenalty;
+//         }
+//         if (pos->piecenum[BQ] == 1) {
+//             int bqSq = pos->piecelist[BQ][0];
+//             if (bqSq != D8) score += EarlyQueenPenalty;
+//         }
+//     }
+
+//     // Evaluate black pawns
+//     pce = BP;
+//     for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
+//         sq = pos->piecelist[pce][pceNum];
+//         ASSERT(SqOnBoard(sq));
+//         ASSERT(Mirror64[SQ64(sq)] >= 0 && Mirror64[SQ64(sq)] <= 63);
+        
+//         score -= PawnTable[Mirror64[SQ64(sq)]];
+
+//         if (pos->hisply < 16) {
+//             if (sq == C4 || sq == D4 || sq == E4 || sq == C5 || sq == D5 || sq == E5) {
+//                 score -= OpeningSpaceBonus;
+//             }
+//         }
+
+//         if (endgameOnly && IsBlackPassedPawn(pos, sq)) {
+//             score -= PawnPassed[7 - RanksBrd[sq]];
+//         }
+//         // if ((IsolatedMask[Mirror64[SQ64(sq)]] & pos->pawns[BLACK]) == 0) {
+//         //     score -= PawnIsolated;  // Negative for black
+//         // }
+        
+//         // Isolated and passed pawn evaluation for black would go here
+//     }
+    
+//     // Evaluate white knights
+//     pce = WN;
+//     for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
+//         sq = pos->piecelist[pce][pceNum];
+//         ASSERT(SqOnBoard(sq));
+//         ASSERT(SQ64(sq) >= 0 && SQ64(sq) <= 63);
+//         score += KnightTable[SQ64(sq)];
+//     }
+
+//     // Evaluate black knights
+//     pce = BN;
+//     for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
+//         sq = pos->piecelist[pce][pceNum];
+//         ASSERT(SqOnBoard(sq));
+//         ASSERT(Mirror64[SQ64(sq)] >= 0 && Mirror64[SQ64(sq)] <= 63);
+//         score -= KnightTable[Mirror64[SQ64(sq)]];
+//     }
+    
+//     // Evaluate white bishops
+//     pce = WB;
+//     for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
+//         sq = pos->piecelist[pce][pceNum];
+//         ASSERT(SqOnBoard(sq));
+//         ASSERT(SQ64(sq) >= 0 && SQ64(sq) <= 63);
+//         score += BishopTable[SQ64(sq)];
+//     }
+
+//     // Evaluate black bishops
+//     pce = BB;
+//     for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
+//         sq = pos->piecelist[pce][pceNum];
+//         ASSERT(SqOnBoard(sq));
+//         ASSERT(Mirror64[SQ64(sq)] >= 0 && Mirror64[SQ64(sq)] <= 63);
+//         score -= BishopTable[Mirror64[SQ64(sq)]];
+//     }
+
+//     // Evaluate white rooks
+//     pce = WR;
+//     for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
+//         sq = pos->piecelist[pce][pceNum];
+//         ASSERT(SqOnBoard(sq));
+//         ASSERT(SQ64(sq) >= 0 && SQ64(sq) <= 63);
+//         score += RookTable[SQ64(sq)];
+        
+//         ASSERT(FileRankValid(FilesBrd[sq]));
+        
+//         // Open and semi-open file bonuses (requires FileBBMask implementation)
+//         // if (!(pos->pawns[BOTH] & FileBBMask[FilesBrd[sq]])) {
+//         //     score += RookOpenFile;
+//         // } else if (!(pos->pawns[WHITE] & FileBBMask[FilesBrd[sq]])) {
+//         //     score += RookSemiOpenFile;
+//         // }
+//     }
+
+//     // Evaluate black rooks
+//     pce = BR;
+//     for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
+//         sq = pos->piecelist[pce][pceNum];
+//         ASSERT(SqOnBoard(sq));
+//         ASSERT(Mirror64[SQ64(sq)] >= 0 && Mirror64[SQ64(sq)] <= 63);
+//         score -= RookTable[Mirror64[SQ64(sq)]];
+        
+//         // Open and semi-open file evaluation for black would go here
+//     }
+    
+//     // Evaluate white queens
+//     pce = WQ;
+//     for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
+//         sq = pos->piecelist[pce][pceNum];
+//         ASSERT(SqOnBoard(sq));
+//         ASSERT(SQ64(sq) >= 0 && SQ64(sq) <= 63);
+//         score += QueenTable[SQ64(sq)];
+        
+//         // Queen open/semi-open file evaluation would go here
+//     }
+
+//     // Evaluate black queens
+//     pce = BQ;
+//     for (pceNum = 0; pceNum < pos->piecenum[pce]; ++pceNum) {
+//         sq = pos->piecelist[pce][pceNum];
+//         ASSERT(SqOnBoard(sq));
+//         ASSERT(Mirror64[SQ64(sq)] >= 0 && Mirror64[SQ64(sq)] <= 63);
+//         score -= QueenTable[Mirror64[SQ64(sq)]];
+        
+//         // Queen open/semi-open file evaluation would go here
+//     }
+    
+//     // Evaluate white king
+//     pce = WK;
+//     sq = pos->piecelist[pce][0];
+//     ASSERT(SqOnBoard(sq));
+//     ASSERT(SQ64(sq) >= 0 && SQ64(sq) <= 63);
+    
+//     if (pos->material[BLACK] <= ENDGAME_MAT) {
+//         score += KingEndgame[SQ64(sq)];
+//     } else {
+//         score += KingOpening[SQ64(sq)];
+//     }
+    
+//     // Evaluate black king
+//     pce = BK;
+//     sq = pos->piecelist[pce][0];
+//     ASSERT(SqOnBoard(sq));
+//     ASSERT(Mirror64[SQ64(sq)] >= 0 && Mirror64[SQ64(sq)] <= 63);
+    
+//     if (pos->material[WHITE] <= ENDGAME_MAT) {
+//         score -= KingEndgame[Mirror64[SQ64(sq)]];
+//     } else {
+//         score -= KingOpening[Mirror64[SQ64(sq)]];
+//     }
+    
+//     // Bishop pair bonus
+//     if (pos->piecenum[WB] >= 2) score += BishopPair;
+//     if (pos->piecenum[BB] >= 2) score -= BishopPair;
+    
+//    // White
+// if (!(pos->castleperm & WKCA) && pos->king[WHITE] != E1 && FilesBrd[pos->king[WHITE]] >= FILE_F) {
+//     score += CastleBonus;
+// }
+// if (!(pos->castleperm & WQCA) && pos->king[WHITE] != E1 && FilesBrd[pos->king[WHITE]] <= FILE_C) {
+//     score += CastleBonus;
+// }
+
+// // Black
+// if (!(pos->castleperm & BKCA) && pos->king[BLACK] != E8 && FilesBrd[pos->king[BLACK]] >= FILE_F) {
+//     score -= CastleBonus;
+// }
+// if (!(pos->castleperm & BQCA) && pos->king[BLACK] != E8 && FilesBrd[pos->king[BLACK]] <= FILE_C) {
+//     score -= CastleBonus;
+// }
+//     // // Uncastled penalty (opening only): king still on E1/E8 and castling rights exist
+//     // if (pos->hisply < 30) {
+//     //     if (pos->king[WHITE] == E1 && (pos->castleperm & (WKCA | WQCA))) {
+//     //         score -= UncastledPenalty;
+//     //     }
+//     //     if (pos->king[BLACK] == E8 && (pos->castleperm & (BKCA | BQCA))) {
+//     //         score += UncastledPenalty;
+//     //     }
+//     //     // Early queen development penalty if queen left starting square
+//     //     if (pos->piecenum[WQ] == 1) {
+//     //         int wqSq = pos->piecelist[WQ][0];
+//     //         if (wqSq != D1) score -= EarlyQueenPenalty;
+//     //     }
+//     //     if (pos->piecenum[BQ] == 1) {
+//     //         int bqSq = pos->piecelist[BQ][0];
+//     //         if (bqSq != D8) score += EarlyQueenPenalty;
+//     //     }
+//     // }
+
+//     // Hanging piece penalties: piece is attacked by opponent and not defended by own side
+//     // White pieces hanging -> bad for white (subtract). Black hanging -> good for white (add)
+//     {
+//         // White side
+//         for (int pce = WN; pce <= WQ; ++pce) {
+//             for (int i = 0; i < pos->piecenum[pce]; ++i) {
+//                 int sq = pos->piecelist[pce][i];
+//                 if (SqAttacked(sq, BLACK, pos) && !SqAttacked(sq, WHITE, pos)) {
+//                     int pen = HangingBasePenalty + pieceVal[pce] / 3;
+//                     if (pos->hisply < 20 && (pce == WN || pce == WB)) {
+//                         pen += OpeningHangingMinorExtra;
+//                     }
+//                     score -= pen;
+//                 }
+//             }
+//         }
+//         // Black side
+//         for (int pce = BN; pce <= BQ; ++pce) {
+//             for (int i = 0; i < pos->piecenum[pce]; ++i) {
+//                 int sq = pos->piecelist[pce][i];
+//                 if (SqAttacked(sq, WHITE, pos) && !SqAttacked(sq, BLACK, pos)) {
+//                     int pen = HangingBasePenalty + pieceVal[pce] / 3;
+//                     if (pos->hisply < 20 && (pce == BN || pce == BB)) {
+//                         pen += OpeningHangingMinorExtra;
+//                     }
+//                     score += pen;
+//                 }
+//             }
+//         }
+//     }
+
+//     // Return score from the perspective of the side to move
+//     if (pos->side == WHITE) {
+//         return score;
+//     } else {
+//         return -score;
+//     }
+// }

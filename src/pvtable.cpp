@@ -64,22 +64,63 @@ void InitHashTable(s_hashtable *table, const int MB) {
         #endif
     }
 }
-
-void StoreHashMove(const s_board* pos, const int move)
+void StoreHashMove(s_board* pos,  int move,int score,int depth,int flags)
 {
     int index = (pos->poskey) % (pos->hashtable->numEntries);
     ASSERT(index>=0 && index<=(pos->hashtable->numEntries-1));
-    pos->hashtable->pTable[index].move=move;
+
+     if (pos->hashtable->pTable[index].poskey == 0) {
+        pos->hashtable->newWrite++;
+    } else {
+        pos->hashtable->overWrite++;
+    }
+
     pos->hashtable->pTable[index].poskey=pos->poskey;
+    pos->hashtable->pTable[index].move=move;
+    pos->hashtable->pTable[index].score=score;
+    pos->hashtable->pTable[index].depth=depth;
+    pos->hashtable->pTable[index].flags=flags;
 }
 
 int ProbeHashMove(const s_board* pos)
-{
+{//Probing the TT for Move Ordering 
+    int index = (pos->poskey) % (pos->hashtable->numEntries);
+    ASSERT(index >= 0 && index <= (pos->hashtable->numEntries - 1));
+
+    s_hashentry* entry = &pos->hashtable->pTable[index];
+    if(entry->poskey == pos->poskey) {
+        return entry->move;
+    }
+
+    return FALSE;  // No Move Found
+}
+
+int ProbeHashMove(s_board* pos,int* move,int*score,int*depth,int*alpha,int*beta)
+{//Probing the TT for using the cached Evaluation 
     int index = (pos->poskey) % (pos->hashtable->numEntries);
     ASSERT(index>=0 && index<=(pos->hashtable->numEntries-1));
-    if(pos->hashtable->pTable[index].poskey==pos->poskey)   
-     return pos->hashtable->pTable[index].move;
-    return FALSE;//No Move Found
+
+    s_hashentry* entry = &pos->hashtable->pTable[index];
+    if(entry->poskey==pos->poskey && entry->depth >= *depth){
+        *move  = entry->move;
+        *score = entry->score;
+        pos->hashtable[0].hit++;
+
+        if(entry->flags == HFEXACT){
+            return entry->move;
+        }
+        if(entry->flags == HFALPHA &&  entry->score <= *alpha ){
+            *score = *alpha;
+            return entry->move;
+        }
+        if (entry->flags == HFBETA && entry->score >= *beta) {
+            *score = *beta;
+            pos->hashtable[0].cut++;
+            return entry->move;
+        }
+    }
+
+     return FALSE;//No (Useable move/Move) Found
 }
 
 

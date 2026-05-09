@@ -76,13 +76,17 @@ void ClearForSearch(s_board* pos, s_searchinfo* info) {
     info->nodes++;
     
     // Periodically check for time/stop
-    // Periodically check for time/stop
-if ((info->nodes & 2047) == 0) {
-    CheckUp(info);
-}
-if (info->stopped) {
-    return 0;
-}
+    if ((info->nodes & 2047) == 0) {
+        CheckUp(info);
+    }
+    if (info->stopped) {
+        return 0;
+    }
+    int cachedMove, cachedScore;
+    if (ProbeHashMove(pos, &cachedMove, &cachedScore, &depth, &alpha, &beta)) {
+        return cachedScore;  // TT cutoff!
+    }
+
     int Incheck=SqAttacked(pos->king[pos->side], pos->side^1, pos);
     if(Incheck){
         depth++;
@@ -99,26 +103,26 @@ if (info->stopped) {
     if (pos->ply > MAXDEPTH - 1) return EvalPosition(pos);
     
     // Null move pruning (more conservative to avoid tactical blunders in openings)
-    int totalMat = pos->material[WHITE] + pos->material[BLACK];
-    if (!Incheck && DoNULL && depth > 4 && totalMat > 101600) {
-        int oldEp = pos->enpas;
-        if (oldEp != NO_SQ) {
-            pos->poskey ^= PieceKeys[EMPTY][oldEp];
-        }
-        pos->enpas = NO_SQ;
-        pos->side ^= 1;
-        pos->poskey ^= SideKey;
-        int nullScore = -AlphaBeta(-beta, -alpha, depth - 3, pos, info, false);
-        pos->side ^= 1;
-        pos->poskey ^= SideKey;
-        pos->enpas = oldEp;
-        if (oldEp != NO_SQ) {
-            pos->poskey ^= PieceKeys[EMPTY][oldEp];
-        }
-        if (nullScore >= beta) {
-            return beta;
-        }
-    }
+    // int totalMat = pos->material[WHITE] + pos->material[BLACK];
+    // if (!Incheck && DoNULL && depth > 4 && totalMat > 101600) {
+    //     int oldEp = pos->enpas;
+    //     if (oldEp != NO_SQ) {
+    //         pos->poskey ^= PieceKeys[EMPTY][oldEp];
+    //     }
+    //     pos->enpas = NO_SQ;
+    //     pos->side ^= 1;
+    //     pos->poskey ^= SideKey;
+    //     int nullScore = -AlphaBeta(-beta, -alpha, depth - 3, pos, info, false);
+    //     pos->side ^= 1;
+    //     pos->poskey ^= SideKey;
+    //     pos->enpas = oldEp;
+    //     if (oldEp != NO_SQ) {
+    //         pos->poskey ^= PieceKeys[EMPTY][oldEp];
+    //     }
+    //     if (nullScore >= beta) {
+    //         return beta;
+    //     }
+    // }
     
     int oldalpha = alpha;
     int bestmove = 0;
@@ -128,22 +132,22 @@ if (info->stopped) {
     s_movelist list;
     GenerateAllMoves(pos, &list);
     // Probe hash table for best move
-int hashMove = ProbeHashMove(pos);
-if (hashMove != 0) {
-    // Move hash move to front of list for better ordering
-    for (int i = 0; i < list.count; i++) {
-        if (list.moves[i].move == hashMove) {
-            // Swap with first move
-            int tempMove = list.moves[0].move;
-            int tempScore = list.moves[0].score;
-            list.moves[0].move = list.moves[i].move;
-            list.moves[0].score = list.moves[i].score;
-            list.moves[i].move = tempMove;
-            list.moves[i].score = tempScore;
-            break;
+    int hashMove = ProbeHashMove(pos);
+    if (hashMove != 0) {
+        // Move hash move to front of list for better ordering
+        for (int i = 0; i < list.count; i++) {
+            if (list.moves[i].move == hashMove) {
+                // Swap with first move
+                int tempMove = list.moves[0].move;
+                int tempScore = list.moves[0].score;
+                list.moves[0].move = list.moves[i].move;
+                list.moves[0].score = list.moves[i].score;
+                list.moves[i].move = tempMove;
+                list.moves[i].score = tempScore;
+                break;
+            }
         }
     }
-}
     // Sort moves for better ordering
     for (int movenum = 0; movenum < list.count; movenum++) {
         PickNextMove(movenum, &list);
@@ -198,11 +202,13 @@ if (hashMove != 0) {
             return 0;
         }
     }
-    
-    if (oldalpha != alpha) {
-        StoreHashMove(pos, bestmove);
-    }
-    
+    int flags;
+    if(alpha <= oldalpha)flags = HFALPHA; //Fail Low
+    else if(alpha >= beta)flags = HFBETA; //Fail High
+    else flags = HFEXACT;
+
+    StoreHashMove(pos, bestmove,alpha,depth,flags);
+
     return alpha;
 }
 
@@ -254,22 +260,22 @@ int Quiescence(int alpha, int beta, s_board* pos, s_searchinfo* info)
     int legal = 0;
     int bestscore = standPat;
     // Probe hash table for best move
-int hashMove = ProbeHashMove(pos);
-if (hashMove != 0) {
-    // Move hash move to front of list for better ordering
-    for (int i = 0; i < list.count; i++) {
-        if (list.moves[i].move == hashMove) {
-            // Swap with first move
-            int tempMove = list.moves[0].move;
-            int tempScore = list.moves[0].score;
-            list.moves[0].move = list.moves[i].move;
-            list.moves[0].score = list.moves[i].score;
-            list.moves[i].move = tempMove;
-            list.moves[i].score = tempScore;
-            break;
+    int hashMove = ProbeHashMove(pos);
+    if (hashMove != 0) {
+        // Move hash move to front of list for better ordering
+        for (int i = 0; i < list.count; i++) {
+            if (list.moves[i].move == hashMove) {
+                // Swap with first move
+                int tempMove = list.moves[0].move;
+                int tempScore = list.moves[0].score;
+                list.moves[0].move = list.moves[i].move;
+                list.moves[0].score = list.moves[i].score;
+                list.moves[i].move = tempMove;
+                list.moves[i].score = tempScore;
+                break;
+            }
         }
     }
-}
     // Try all capture moves
     for (int movenum = 0; movenum < list.count; movenum++) {
         PickNextMove(movenum, &list);

@@ -25,7 +25,7 @@ int ScoreMove(const int move, const s_board* pos) {
     
     // Castling bonus
     if (move & MFLAGCA) {
-        score += 2000;
+        score += 850000;
     }
     // Penalize early queen development for quiet moves in opening to prevent pawn-hunting
     {
@@ -46,7 +46,7 @@ int ScoreMove(const int move, const s_board* pos) {
             int pce = pos->pieces[from];
             if (pce == WP || pce == BP) {
                 if (to == C4 || to == D4 || to == E4 || to == C5 || to == D5 || to == E5) {
-                    score += 2500;
+                    score += 850000;
                 }
             }
         }

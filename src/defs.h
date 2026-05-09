@@ -108,6 +108,12 @@ enum Castle{WKCA =1,WQCA=2,BKCA=4,BQCA=8};
 #define KILLER_ONE_SCORE 900000    // First killer move
 #define KILLER_TWO_SCORE 800000    // Second killer move
 
+//PV table Hash FLAGS  [Alpha-->----------<--Beta] - Minimize the Worst score possible
+#define HFNONE    0  // No entry
+#define HFEXACT   1  // Exact score (alpha < score < beta) - Interesting to further explore
+#define HFALPHA   2  // Upper bound (score <= alpha) - Can be ignored
+#define HFBETA    3  // Lower bound (score >= beta) - Can be ignored
+
 // bitboard.cpp
 extern int sq64tosq120[64];        //8 * 8
 extern int sq120tosq64[BOARD_SQ_NUM];// 10 * 12
@@ -228,8 +234,9 @@ extern int GetTimeMs();
 extern int GetHashLine(const int depth, s_board *pos);
 extern void ClearHashTable(s_hashtable *table) ;
 extern void InitHashTable(s_hashtable *table, const int MB) ;
-extern void StoreHashMove(const s_board* pos, const int move);
+extern void StoreHashMove(s_board* pos,  int move,int score,int depth,int flags);
 extern int ProbeHashMove(const s_board* pos);
+extern int ProbeHashMove(s_board* pos,int* move,int*score,int*depth,int*alpha,int*beta);
 
 //evaluate.cpp
 extern int EvalPosition(s_board* pos);
