@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Engine Frontend</title>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- jQuery (required by chessboard.js) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Chessboard.js -->
+    <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
+    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+
+    <!-- Chess.js (Rules Engine) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #121212; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        h1 { margin-bottom: 10px; font-weight: 600; color: #ffeb3b; }
+        .container { display: flex; gap: 40px; align-items: flex-start; background: #1e1e1e; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .controls { display: flex; flex-direction: column; gap: 15px; min-width: 250px; }
+        button { background: #3f51b5; color: white; border: none; padding: 12px 20px; font-size: 16px; border-radius: 6px; cursor: pointer; transition: 0.2s; font-weight: bold; }
+        button:hover { background: #5c6bc0; }
+        button:disabled { background: #555; cursor: not-allowed; }
+        .status { padding: 15px; background: #2c2c2c; border-radius: 6px; font-size: 14px; white-space: pre-wrap; font-family: monospace; }
+        #myBoard { width: 400px; border: 4px solid #333; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const API_BASE = "http://localhost:8080/api/engine";
+
+        function ChessApp() {
+            const [engineStatus, setEngineStatus] = useState("Initializing...");
+            const [isThinking, setIsThinking] = useState(false);
+            const [gameResult, setGameResult] = useState("");
+            
+            const boardRef = useRef(null);
+            const gameRef = useRef(new Chess());
+
+            // --- API Calls ---
+            const initEngine = async () => {
+                await fetch(`${API_BASE}/init`, { method: "POST" });
+                const res = await fetch(`${API_BASE}/status`);
+                const data = await res.json();
+                setEngineStatus(`Engine: ${data.engineName}\nAuthor: ${data.engineAuthor}`);
+            };
+
+            const makeEngineMove = async () => {
+                setIsThinking(true);
+                setEngineStatus("Engine is thinking...");
+                try {
+                    const res = await fetch(`${API_BASE}/bestmove`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ fen: gameRef.current.fen(), depth: 5, timeMs: 1000 })
+                    });
+                    const data = await res.json();
+                    
+                    if (data.bestMove) {
+                        // The backend returns strings like "e2e4". We parse it for chess.js
+                        const from = data.bestMove.substring(0, 2);
+                        const to = data.bestMove.substring(2, 4);
+                        const promotion = data.bestMove.length > 4 ? data.bestMove[4] : undefined;
+
+                        gameRef.current.move({ from, to, promotion });
+                        boardRef.current.position(gameRef.current.fen());
+                        updateStatus();
+                    }
+                } catch (e) {
+                    console.error("Engine failure", e);
+                }
+                setIsThinking(false);
+            };
+
+            const resetGame = async () => {
+                await fetch(`${API_BASE}/reset`, { method: "POST" });
+                gameRef.current.reset();
+                boardRef.current.start();
+                updateStatus();
+            };
+
+            // --- Chessboard.js Logic ---
+            useEffect(() => {
+                initEngine();
+                
+                const onDragStart = (source, piece) => {
+                    if (gameRef.current.game_over() || isThinking) return false;
+                    // Only allow white to move
+                    if (piece.search(/^b/) !== -1) return false;
+                };
+
+                const onDrop = (source, target) => {
+                    // Try to make the move
+                    const move = gameRef.current.move({
+                        from: source,
+                        to: target,
+                        promotion: 'q' // Always promote to queen for simplicity
+                    });
+
+                    // Illegal move
+                    if (move === null) return 'snapback';
+
+                    updateStatus();
+                    
+                    // Trigger engine response
+                    setTimeout(makeEngineMove, 250);
+                };
+
+                const onSnapEnd = () => {
+                    boardRef.current.position(gameRef.current.fen());
+                };
+
+                boardRef.current = Chessboard('myBoard', {
+                    draggable: true,
+                    position: 'start',
+                    onDragStart: onDragStart,
+                    onDrop: onDrop,
+                    onSnapEnd: onSnapEnd,
+                    pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
+                });
+            }, []);
+
+            const updateStatus = () => {
+                let status = '';
+                let moveColor = gameRef.current.turn() === 'b' ? 'Black' : 'White';
+
+                if (gameRef.current.in_checkmate()) {
+                    status = `Game over, ${moveColor} is in checkmate.`;
+                } else if (gameRef.current.in_draw()) {
+                    status = 'Game over, drawn position';
+                } else {
+                    status = `${moveColor} to move`;
+                    if (gameRef.current.in_check()) status += ', ' + moveColor + ' is in check';
+                }
+                setGameResult(status);
+                setEngineStatus(isThinking ? "Engine is thinking..." : "Ready");
+            };
+
+            return (
+                <div>
+                    <h1>React C++ Chess GUI</h1>
+                    <div className="container">
+                        <div id="myBoard"></div>
+                        <div className="controls">
+                            <div className="status">
+                                <strong>System Status:</strong>
+                                <hr style={{borderColor: '#444'}}/>
+                                {engineStatus}
+                                <br/><br/>
+                                <strong>Game Status:</strong>
+                                <hr style={{borderColor: '#444'}}/>
+                                {gameResult || "White to move"}
+                            </div>
+                            <button onClick={resetGame} disabled={isThinking}>New Game</button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<ChessApp />);
+    </script>
+</body>
+</html>
