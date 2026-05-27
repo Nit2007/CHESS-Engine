@@ -100,16 +100,42 @@ JAVA_HOME := $(dir $(dir $(JAVAC_PATH)))
 endif
 endif
 
-ifeq ($(strip $(JAVA_HOME)),)
-$(warning JAVA_HOME is not set. Set JAVA_HOME to your JDK root to include JNI headers.)
-JNI_INCLUDES =
+## Robust JNI include detection
+## Prefer explicit JAVA_HOME when it contains jni.h, otherwise search common JDK locations
+ifneq ($(strip $(JAVA_HOME)),)
+ifneq ($(wildcard $(JAVA_HOME)/include/jni.h),)
+JNI_ROOT := $(JAVA_HOME)
 else
-# Quote include paths to handle spaces in Windows JAVA_HOME (e.g. "Program Files")
-JNI_INCLUDES = -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/$(JNI_PLATFORM)"
+$(warning JAVA_HOME does not contain jni.h. Will search common JDK locations.)
+endif
+else
+$(warning JAVA_HOME is not set. Will search common JDK locations for jni.h.)
+endif
+
+ifneq ($(strip $(JNI_ROOT)),)
+# JNI_ROOT already set from JAVA_HOME
+else
+JNI_SEARCH := /c/Program\ Files/Java/*/include/jni.h /c/Program\ Files\ \(x86\)/Java/*/include/jni.h C:/Program\ Files/Java/*/include/jni.h C:/Program\ Files\ \(x86\)/Java/*/include/jni.h /usr/lib/jvm/*/include/jni.h /c/Users/*/scoop/apps/openjdk/*/current/include/jni.h /c/Users/*/jdk*/include/jni.h C:/Users/*/scoop/apps/openjdk/*/current/include/jni.h C:/Users/*/jdk*/include/jni.h
+JNI_HEADER := $(firstword $(wildcard $(JNI_SEARCH)))
+ifneq ($(JNI_HEADER),)
+JNI_ROOT := $(patsubst %/include/jni.h,%,$(JNI_HEADER))
+endif
+endif
+
+ifneq ($(strip $(JNI_ROOT)),)
+JNI_INCLUDES = -I"$(JNI_ROOT)/include" -I"$(JNI_ROOT)/include/$(JNI_PLATFORM)"
+else
+$(warning Could not locate jni.h. Set JAVA_HOME to your JDK root (e.g. C:/Program Files/Java/jdk-17.0.8).)
+JNI_INCLUDES =
 endif
 
 # Sources to include in the shared library: exclude only `main.cpp` (the real driver)
+# If JNI headers were not located, exclude `jni_wrapper.cpp` so the shared build still succeeds.
+ifneq ($(strip $(JNI_INCLUDES)),)
 SHARED_SRC = $(filter-out main.cpp,$(SRC))
+else
+SHARED_SRC = $(filter-out main.cpp jni_wrapper.cpp,$(SRC))
+endif
 
 # Object names for the shared build (use distinct suffix to avoid collisions)
 SHARED_OBJ = $(patsubst %.cpp,%.so.o,$(SHARED_SRC))
@@ -127,11 +153,22 @@ $(SHARED_LIB): $(SHARED_OBJ)
 
 # Convenience target: build and place the native lib into `native/` directory
 shared: $(SHARED_LIB)
-	if not exist native (mkdir native)
-	copy /Y $(SHARED_LIB) native\
+	@mkdir -p native
+	@cp -f $(SHARED_LIB) native/
 	@echo "✅ Built shared library: native/$(SHARED_LIB)"
 
 clean-shared:
 	rm -f $(SHARED_OBJ) $(SHARED_LIB)
 	@echo "🧹 Cleaned shared-library artifacts"
 
+# Debug helper: show resolved JNI-related variables and whether jni.h exists
+check-jni:
+	@echo "JAVA_HOME='$(JAVA_HOME)'"
+	@echo "JNI_ROOT='$(JNI_ROOT)'"
+	@echo "JNI_HEADER='$(JNI_HEADER)'"
+	@echo "JNI_INCLUDES='$(JNI_INCLUDES)'"
+	@if [ -n "$(JNI_ROOT)" ] && [ -f "$(JNI_ROOT)/include/jni.h" ]; then \
+		echo "Found jni.h at $(JNI_ROOT)/include/jni.h"; \
+	else \
+		echo "jni.h NOT found"; \
+	fi

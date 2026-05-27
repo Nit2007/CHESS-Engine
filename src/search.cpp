@@ -314,6 +314,8 @@ void SearchPosition(s_board* pos, s_searchinfo* info)
         if (info->stopped) {
             break;
         }
+        // Update the active search depth so callers (and telemetry) see the current iteration
+        info->depth = depth;
         bestscore = AlphaBeta( -INFINITE , INFINITE , depth, pos, info, true);
         pvmove = GetHashLine( depth, pos);
         bestmove = pos->pvarray[0];

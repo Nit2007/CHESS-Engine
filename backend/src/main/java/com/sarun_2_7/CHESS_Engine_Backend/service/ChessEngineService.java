@@ -161,4 +161,10 @@ public class ChessEngineService {
             engineLock.unlock();
         }
     }
+
+
+    public String getEvaluationJson() {
+        ChessEngineJNI jni = new ChessEngineJNI();
+        return jni.getEvaluationJson();
+    }
 }

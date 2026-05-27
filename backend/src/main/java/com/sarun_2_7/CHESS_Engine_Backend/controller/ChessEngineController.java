@@ -40,7 +40,21 @@ public class ChessEngineController {
         try {
             String best = chessEngineService.getBestMoveSync(req.depth <= 0 ? 6 : req.depth, req.timeMs);
             BestMoveResponse res = new BestMoveResponse();
-            res.bestMove = best;
+            // Some JNI wrappers return a JSON string with telemetry; detect and parse it.
+            if (best != null && best.trim().startsWith("{")) {
+                // simple and lenient parsing without extra deps
+                res.bestMove = extractJsonString(best, "bestMove");
+                Long nodes = extractJsonLong(best, "nodesVisited");
+                Integer d = extractJsonInt(best, "depth");
+                Long nps = extractJsonLong(best, "nps");
+                Integer eval = extractJsonInt(best, "evaluation");
+                res.nodesVisited = nodes;
+                res.depth = d;
+                res.nps = nps;
+                res.evaluation = eval;
+            } else {
+                res.bestMove = best;
+            }
             return ResponseEntity.ok(res);
         } catch (EngineException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new BestMoveResponse(e.getMessage()));
@@ -76,15 +90,67 @@ public class ChessEngineController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/evaluate")
+    public ResponseEntity<String> getEvaluationJson(@RequestBody PositionRequest req) {
+        if (req != null && req.fen != null) {
+            chessEngineService.setPosition(req.fen);
+        }
+        return ResponseEntity.ok(chessEngineService.getEvaluationJson());
+    }
+
+    @GetMapping("/stockfish-eval")
+    public ResponseEntity<String> getStockfishEval(@RequestParam String fen) {
+        try {
+            org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
+            String url = "https://stockfish.online/api/s/v2.php?fen=" + java.net.URLEncoder.encode(fen, "UTF-8") + "&depth=12";
+            String response = restTemplate.getForObject(url, String.class);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\":\"failed\"}");
+        }
+    }
+
     // --- simple request/response DTOs ---
     public static class PositionRequest { public String fen; }
 
     public static class BestMoveRequest { public String fen; public int depth; public long timeMs; }
 
     public static class BestMoveResponse { public String bestMove; public String error;
+        // optional telemetry (filled when JNI returns JSON)
+        public Long nodesVisited;
+        public Integer depth;
+        public Long nps;
+        public Integer evaluation;
+
         public BestMoveResponse() {}
         public BestMoveResponse(String error) { this.error = error; }
     }
 
     public static class StartRequest { public int depth; }
+
+    // --- lightweight JSON helpers (no external libs) ---
+    private static String extractJsonString(String json, String key) {
+        String pattern = "\"" + key + "\":\"";
+        int idx = json.indexOf(pattern);
+        if (idx < 0) return null;
+        int start = idx + pattern.length();
+        int end = json.indexOf('"', start);
+        if (end < 0) return null;
+        return json.substring(start, end);
+    }
+
+    private static Long extractJsonLong(String json, String key) {
+        String pattern = "\"" + key + "\":";
+        int idx = json.indexOf(pattern);
+        if (idx < 0) return null;
+        int start = idx + pattern.length();
+        int end = start;
+        while (end < json.length() && (Character.isDigit(json.charAt(end)) || json.charAt(end)=='-')) end++;
+        try { return Long.parseLong(json.substring(start, end)); } catch (Exception e) { return null; }
+    }
+
+    private static Integer extractJsonInt(String json, String key) {
+        Long v = extractJsonLong(json, key);
+        return v == null ? null : v.intValue();
+    }
 }

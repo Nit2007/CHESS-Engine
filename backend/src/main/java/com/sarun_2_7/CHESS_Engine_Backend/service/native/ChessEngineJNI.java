@@ -16,7 +16,7 @@ public class ChessEngineJNI {
     public native String getBestMoveWithTimeControl(long wTime, long bTime, 
                                                    long wInc, long bInc, int movesToGo);
     
-    public native int evaluatePosition(int depth);
+    public native String getEvaluationJson();
     
     public native String[] getLegalMoves();
     
