@@ -39,6 +39,7 @@ public class ChessEngineController {
         chessEngineService.setPosition(req.fen);
         try {
             String best = chessEngineService.getBestMoveSync(req.depth <= 0 ? 6 : req.depth, req.timeMs);
+            System.out.println("[DEBUG] Raw best move from JNI: " + best);
             BestMoveResponse res = new BestMoveResponse();
             // Some JNI wrappers return a JSON string with telemetry; detect and parse it.
             if (best != null && best.trim().startsWith("{")) {
@@ -91,11 +92,12 @@ public class ChessEngineController {
     }
 
     @PostMapping("/evaluate")
-    public ResponseEntity<String> getEvaluationJson(@RequestBody PositionRequest req) {
-        if (req != null && req.fen != null) {
-            chessEngineService.setPosition(req.fen);
+    public ResponseEntity<Integer> getEvaluationJson(@RequestBody FenRequest request) {
+        String fen = request != null ? request.getFen() : null;
+        if (fen != null ) {
+            chessEngineService.setPosition(fen);
         }
-        return ResponseEntity.ok(chessEngineService.getEvaluationJson());
+        return ResponseEntity.ok(chessEngineService.evaluatePositionService(fen));
     }
 
     @GetMapping("/stockfish-eval")
@@ -110,7 +112,13 @@ public class ChessEngineController {
         }
     }
 
-    // --- simple request/response DTOs ---
+    // ------------------------------- simple request/response DTOs ---------------------------------------
+    public static class FenRequest {
+        private String fen;
+        public String getFen() { return fen; }
+        public void setFen(String fen) { this.fen = fen; }
+    }
+
     public static class PositionRequest { public String fen; }
 
     public static class BestMoveRequest { public String fen; public int depth; public long timeMs; }

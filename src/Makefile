@@ -24,8 +24,7 @@ SRC = main.cpp \
       moveorder.cpp \
       uci.cpp \
       xboard.cpp \
-	  jni_wrapper.cpp \
-	  openingBook/polykey.cpp \
+      openingBook/polykey.cpp \
 	  openingBook/polybook.cpp
 
 # Output executable name
@@ -132,9 +131,9 @@ endif
 # Sources to include in the shared library: exclude only `main.cpp` (the real driver)
 # If JNI headers were not located, exclude `jni_wrapper.cpp` so the shared build still succeeds.
 ifneq ($(strip $(JNI_INCLUDES)),)
-SHARED_SRC = $(filter-out main.cpp,$(SRC))
+SHARED_SRC = $(filter-out main.cpp,$(SRC)) jni_wrapper.cpp
 else
-SHARED_SRC = $(filter-out main.cpp jni_wrapper.cpp,$(SRC))
+SHARED_SRC = $(filter-out main.cpp,$(SRC))
 endif
 
 # Object names for the shared build (use distinct suffix to avoid collisions)

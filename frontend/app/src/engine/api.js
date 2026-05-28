@@ -12,7 +12,7 @@ export const api = {
     },
     getEvaluation: async (fen) => {
         const response = await axios.post(`${API_BASE_URL}/evaluate`, { fen });
-        return response.data;
+        return parseInt(response.data, 10);
     },
     getStockfishEval: async (fen) => {
         const response = await axios.get(`${API_BASE_URL}/stockfish-eval?fen=${encodeURIComponent(fen)}`);

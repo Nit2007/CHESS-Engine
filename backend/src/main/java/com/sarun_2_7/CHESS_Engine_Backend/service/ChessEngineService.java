@@ -163,8 +163,8 @@ public class ChessEngineService {
     }
 
 
-    public String getEvaluationJson() {
+    public int evaluatePositionService(String fen) {
         ChessEngineJNI jni = new ChessEngineJNI();
-        return jni.getEvaluationJson();
+        return jni.evaluatePosition(fen);
     }
 }

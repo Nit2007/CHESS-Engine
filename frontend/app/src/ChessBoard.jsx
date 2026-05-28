@@ -63,7 +63,7 @@ export default function ChessBoardComponent() {
     if ((engineColor === 'both' || engineColor === turn) && !isEngineThinking) {
       makeEngineMove(game.fen(), turn);
     }
-  }, [fen, engineColor]);
+  }, [fen, engineColor, isEngineThinking]);
 
   async function resetGame() {
     gameRef.current = new Chess();

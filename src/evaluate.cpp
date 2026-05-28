@@ -291,9 +291,9 @@ int EvalPosition(s_board* pos) {
         ASSERT(SqOnBoard(sq));
         ASSERT(Mirror64[SQ64(sq)] >= 0 && Mirror64[SQ64(sq)] <= 63);
         if (endgame) {
-            score -= PawnTableEndgame[SQ64(sq)];
+            score -= PawnTableEndgame[Mirror64[SQ64(sq)]];
         } else {
-            score -= PawnTable[SQ64(sq)];
+            score -= PawnTable[Mirror64[SQ64(sq)]];
         }
     }
     

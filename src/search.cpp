@@ -308,8 +308,8 @@ void SearchPosition(s_board* pos, s_searchinfo* info)
     int pvmove=0;
     
     ClearForSearch(pos,  info);
-    
-    for(int depth=1; depth<=info->depth ;depth++)
+    int targetDepth = info->depth;
+    for(int depth=1; depth<=targetDepth ;depth++)
     {
         if (info->stopped) {
             break;

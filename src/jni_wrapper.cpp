@@ -40,7 +40,7 @@ JNIEXPORT void JNICALL Java_com_sarun_12_17_CHESS_1Engine_1Backend_service_jni_C
     ClearHashTable(g_board.hashtable);
 }
 
-JNIEXPORT jint JNICALL Java_com_sarun_12_17_CHESS_1Engine_1Backend_service_jni_ChessEngineJNI_evaluatePosition(JNIEnv *env, jobject obj, jint depth) {
+JNIEXPORT jint JNICALL Java_com_sarun_12_17_CHESS_1Engine_1Backend_service_jni_ChessEngineJNI_evaluatePosition(JNIEnv *env, jobject obj, jstring fen) {
     // Simple static evaluation of current board position (ignoring depth)
     int eval = EvalPosition(&g_board);
     // Log evaluation for debugging
