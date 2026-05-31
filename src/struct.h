@@ -23,6 +23,8 @@ struct s_undo
     int enpas;        // The en passant square before the move was made.
     int fifty;        // The fifty-move rule counter before the move was made.
     uint64_t poskey;  // The Zobrist hash key of the position before the move was made.
+    int evalOpening;
+    int evalEndgame;
 };
 
 // Represents a single entry in the transposition table (hash table).
@@ -102,6 +104,9 @@ struct s_board
 
     int searchHistory[13][120]; // BRD_SQ_NUM // A 2D array used by the history heuristic for move ordering. It scores moves based on how often they have been good in the past.
     int searchKillers[2][64];   // MAXDEPTH // The "killer move" heuristic. Stores 2 moves that caused beta-cutoffs at each ply, to be tried early in other branches.
+
+    int evalOpening;            // Incrementally updated opening PSQT + Material score
+    int evalEndgame;            // Incrementally updated endgame PSQT + Material score
 };
 
 struct s_poly_book_entry{// 8 + 2 + 2 + 4 => 16 Bytes

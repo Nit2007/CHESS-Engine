@@ -103,26 +103,26 @@ void ClearForSearch(s_board* pos, s_searchinfo* info) {
     if (pos->ply > MAXDEPTH - 1) return EvalPosition(pos);
     
     // Null move pruning (more conservative to avoid tactical blunders in openings)
-    // int totalMat = pos->material[WHITE] + pos->material[BLACK];
-    // if (!Incheck && DoNULL && depth > 4 && totalMat > 101600) {
-    //     int oldEp = pos->enpas;
-    //     if (oldEp != NO_SQ) {
-    //         pos->poskey ^= PieceKeys[EMPTY][oldEp];
-    //     }
-    //     pos->enpas = NO_SQ;
-    //     pos->side ^= 1;
-    //     pos->poskey ^= SideKey;
-    //     int nullScore = -AlphaBeta(-beta, -alpha, depth - 3, pos, info, false);
-    //     pos->side ^= 1;
-    //     pos->poskey ^= SideKey;
-    //     pos->enpas = oldEp;
-    //     if (oldEp != NO_SQ) {
-    //         pos->poskey ^= PieceKeys[EMPTY][oldEp];
-    //     }
-    //     if (nullScore >= beta) {
-    //         return beta;
-    //     }
-    // }
+    int totalMat = pos->material[WHITE] + pos->material[BLACK];
+    if (!Incheck && DoNULL && depth >= 4 && totalMat > 101600) {
+        int oldEp = pos->enpas;
+        if (oldEp != NO_SQ) {
+            pos->poskey ^= PieceKeys[EMPTY][oldEp];
+        }
+        pos->enpas = NO_SQ;
+        pos->side ^= 1;
+        pos->poskey ^= SideKey;
+        int nullScore = -AlphaBeta(-beta, -alpha, depth - 3, pos, info, false);
+        pos->side ^= 1;
+        pos->poskey ^= SideKey;
+        pos->enpas = oldEp;
+        if (oldEp != NO_SQ) {
+            pos->poskey ^= PieceKeys[EMPTY][oldEp];
+        }
+        if (nullScore >= beta) {
+            return beta;
+        }
+    }
     
     int oldalpha = alpha;
     int bestmove = 0;
