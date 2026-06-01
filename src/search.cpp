@@ -100,7 +100,7 @@ void ClearForSearch(s_board* pos, s_searchinfo* info) {
     // info->nodes++;
     
     if (IsRepetition(pos) || pos->fifty == 100) return 0;
-    if (pos->ply > MAXDEPTH - 1) return EvalPosition(pos);
+    if (pos->ply > MAXDEPTH - 1) return GetIncrementalEval(pos);
     
     // Null move pruning (more conservative to avoid tactical blunders in openings)
     int totalMat = pos->material[WHITE] + pos->material[BLACK];
@@ -155,7 +155,17 @@ void ClearForSearch(s_board* pos, s_searchinfo* info) {
         if (!MakeMove(pos, list.moves[movenum].move)) continue;
         
         legal++;
-        score = -AlphaBeta(-beta, -alpha, depth - 1, pos, info, TRUE);
+        bool LMR = depth >= 4 && legal >= 4 && !Incheck &&
+        CAPTURED(list.moves[movenum].move) == EMPTY &&
+        PROMOTED(list.moves[movenum].move) == EMPTY;
+        if(LMR){
+            score = -AlphaBeta(-alpha-1, -alpha, max(depth-4,0), pos, info, TRUE);//Alpha is improved by atleast 0.01 Pawns ,then it is worth exploring further (Statistically)
+            if(score > alpha){
+                score = -AlphaBeta(-beta,-alpha,depth - 1,pos,info,TRUE);
+            }
+        }else{
+            score = -AlphaBeta(-beta, -alpha, depth - 1, pos, info, TRUE);
+        }
         TakeMove(pos);
         
         if (info->stopped) {
@@ -229,11 +239,11 @@ int Quiescence(int alpha, int beta, s_board* pos, s_searchinfo* info)
     if (IsRepetition(pos) || pos->fifty >= 100) return 0;
     
     // Prevent search explosion at extreme depths
-    if (pos->ply > MAXDEPTH - 1) return EvalPosition(pos);
+    if (pos->ply > MAXDEPTH - 1) return GetIncrementalEval(pos);
     
     // Stand pat: evaluate current position
     // In quiescence, we assume the current position is "good enough"
-    int standPat = EvalPosition(pos);
+    int standPat = GetIncrementalEval(pos);
     
     // Beta cutoff on stand pat score
     if (standPat >= beta) {

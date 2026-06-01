@@ -357,6 +357,46 @@ int EvalPosition(s_board* pos) {
         return -score;
     }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PSQT delta helpers — called by incrementalEval.cpp
+// Defined here so they share the const tables without external linkage tricks.
+// ─────────────────────────────────────────────────────────────────────────────
+int PsqtDeltaOpening(int pce, int idx) {
+    switch (pce) {
+        case WP: return PawnTable[idx];
+        case BP: return -PawnTable[Mirror64[idx]];
+        case WN: return KnightTable[idx];
+        case BN: return -KnightTable[Mirror64[idx]];
+        case WB: return BishopTable[idx];
+        case BB: return -BishopTable[Mirror64[idx]];
+        case WR: return RookTable[idx];
+        case BR: return -RookTable[Mirror64[idx]];
+        case WQ: return QueenTable[idx];
+        case BQ: return -QueenTable[Mirror64[idx]];
+        case WK: return KingOpening[idx];
+        case BK: return -KingOpening[Mirror64[idx]];
+        default: return 0;
+    }
+}
+
+int PsqtDeltaEndgame(int pce, int idx) {
+    switch (pce) {
+        case WP: return PawnTableEndgame[idx];
+        case BP: return -PawnTableEndgame[Mirror64[idx]];
+        case WN: return KnightTable[idx];
+        case BN: return -KnightTable[Mirror64[idx]];
+        case WB: return BishopTable[idx];
+        case BB: return -BishopTable[Mirror64[idx]];
+        case WR: return RookTable[idx];
+        case BR: return -RookTable[Mirror64[idx]];
+        case WQ: return QueenTable[idx];
+        case BQ: return -QueenTable[Mirror64[idx]];
+        case WK: return KingEndgame[idx];
+        case BK: return -KingEndgame[Mirror64[idx]];
+        default: return 0;
+    }
+}
 // Main position evaluation function
 // int EvalPosition(s_board* pos) {
 //     ASSERT(CheckBoard(pos));

@@ -178,6 +178,7 @@ void Parse_FEN(char* fen,s_board*pos)
     fen++;                    // advance past '-'
 }
     UpdatePieceList(pos);
+    InitEval(pos);  // seed incremental eval from full EvalPosition
 
 
 pos->poskey = GeneratePosKey(pos);

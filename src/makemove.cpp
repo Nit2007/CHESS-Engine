@@ -59,6 +59,7 @@ ASSERT(t_piecenum != -1);// Make sure we actually found it
 pos->piecenum[pce]--;// Decrease the count of this piece type
 // Replace the removed square with the last element in the list
 pos->piecelist[pce][t_piecenum] = pos->piecelist[pce][pos->piecenum[pce]];//Nexttime we only loop till (pos->piecenum-1) as we decremented it
+    IncrementEvalClearPiece(sq, pce, pos);
 }
 
 void AddPiece(const int sq,s_board* pos,const int pce)
@@ -86,6 +87,7 @@ void AddPiece(const int sq,s_board* pos,const int pce)
      setBit(pos->pawns[BOTH] , SQ64(sq));
   }
   pos->piecelist[pce][pos->piecenum[pce]++]=sq;
+  IncrementEvalAddPiece(sq, pce, pos);
 }
 
 void MovePiece(const int from,const int to,s_board* pos)
@@ -109,16 +111,17 @@ pos->pieces[to]=pce;
      setBit(pos->pawns[BOTH] , SQ64(to));
   }
   for(int index = 0; index < pos->piecenum[pce]; index++) {
-    if(pos->piecelist[pce][index] == from) 
-    {
-       pos->piecelist[pce][index] = to;
-#ifdef DEBUG
-        t_piecenum=TRUE;
+      if(pos->piecelist[pce][index] == from)
+      {
+          pos->piecelist[pce][index] = to;
+          #ifdef DEBUG
+          t_piecenum=TRUE;
 #endif
         break;
     }
-  }
-  ASSERT(t_piecenum);
+}
+ASSERT(t_piecenum);
+IncrementEvalMovePiece(from, to, pce, pos);
 }
 
 int MakeMove(s_board*pos ,int move)

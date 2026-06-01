@@ -1,0 +1,13 @@
+Depth - 9
+Nodes - 391,511,802
+FEN  - rnbqkbnr/ppp2ppp/8/3pP3/8/8/PPP1PPPP/RNBQKBNR w KQkq d6 0 1
+Move -  g1f3
+My Engine Eval: 1.40
+Stockfish Eval: 1.19
+
+Configuration,     Time(ms),          NPS,
+BestMoveWithout LMR,    404225,        968,721,        
+With LMR (depth-3),     321853,      1,216,661,         
+LMR (max(depth-4,0)),   320447,      1,222,011, {Best Performance , LMR constant tuning}
+LMR (max(depth-5,0)),   322911,      1,212,696
+LMR (max(depth-6,1)),   338151,      1,158,014,

@@ -10,6 +10,7 @@ using namespace std;
 #include <vector>
 #include "struct.h"
 
+
 #define MAXGAMEMOVES 2048
 #define BOARD_SQ_NUM 120
 #define MAXDEPTH 64
@@ -240,6 +241,9 @@ extern int ProbeHashMove(s_board* pos,int* move,int*score,int*depth,int*alpha,in
 
 //evaluate.cpp
 extern int EvalPosition(s_board* pos);
+extern bool IsEndgame(s_board* pos);
+extern int PsqtDeltaOpening(int pce, int idx);
+extern int PsqtDeltaEndgame(int pce, int idx);
 
 //moveorder.cpp
 extern int MvvLvaScores[13][13];
@@ -282,3 +286,10 @@ extern void CleanPolyBook(s_poly_book_entry* entries);
 extern int GetBookMove(s_board* board, s_poly_book_entry* entries, uint64_t NumEntries);
 //polykey.cpp
 extern const uint64_t Random64[781];
+
+//IncrementalEval.cpp
+extern void IncrementEvalAddPiece(const int sq, const int pce, s_board* pos);
+extern void IncrementEvalClearPiece(const int sq, const int pce, s_board* pos);
+extern void IncrementEvalMovePiece(const int from, const int to, const int pce, s_board* pos);
+extern void InitEval(s_board* pos);
+extern int  GetIncrementalEval(s_board* pos);
