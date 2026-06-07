@@ -167,4 +167,15 @@ public class ChessEngineService {
         ChessEngineJNI jni = new ChessEngineJNI();
         return jni.evaluatePosition(fen);
     }
+
+    public List<String> getPrincipalVariation(int maxDepth) {
+        engineLock.lock();
+        try {
+            ChessEngineJNI jni = new ChessEngineJNI();
+            String[] pv = jni.getPrincipalVariation(maxDepth);
+            return pv == null ? List.of() : List.of(pv);
+        } finally {
+            engineLock.unlock();
+        }
+    }
 }

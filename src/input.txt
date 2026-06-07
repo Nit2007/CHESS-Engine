@@ -201,3 +201,20 @@ allinit();
     Parse_FEN((char*)TEST_FEN_POLY1,&board);
     PrintBoard(&board);
     cout<<"polyKeyFromBoard : "<<polyKeyFromBoard(&board)<<endl;
+
+
+//FOR EXTRACTING THE LINE FROM THE PV TABLE
+allinit();
+    s_board board;
+    s_searchinfo* info = new s_searchinfo;
+    Parse_FEN((char*)START_FEN,&board);
+    info->depth = 10;
+    SearchPosition(&board, info);
+    int pvLen = GetHashLine(50, &board);
+    for (int i = 0; i < pvLen; i++) {
+        cout << PrMove(board.pvarray[i]) << " ";
+    }
+    cout <<endl<<"The number of Moves in the Line : " << pvLen<< "\n";
+    delete info;
+    /*b1c3 g8f6 g1f3 b8c6 a1b1 a8b8 b1a1 h8g8 a1b1 b8a8
+    The number of Moves in the Line : 10*/

@@ -242,4 +242,25 @@ JNIEXPORT jstring JNICALL Java_com_sarun_12_17_CHESS_1Engine_1Backend_service_jn
     return env->NewStringUTF(side);
 }
 
+JNIEXPORT jobjectArray JNICALL Java_com_sarun_12_17_CHESS_1Engine_1Backend_service_jni_ChessEngineJNI_getPrincipalVariation(JNIEnv *env, jobject obj, jint maxDepth) {
+    // Ensure maxDepth is within safe limits for GetHashLine (must be < 64)
+    if (maxDepth <= 0 || maxDepth >= 64) {
+        maxDepth = 63; 
+    }
+    
+    int pvLen = GetHashLine(maxDepth, &g_board);
+    
+    jclass stringClass = env->FindClass("java/lang/String");
+    jobjectArray moveArray = env->NewObjectArray(pvLen, stringClass, nullptr);
+    
+    for (int i = 0; i < pvLen; i++) {
+        std::string moveStr = std::string(PrMove(g_board.pvarray[i]));
+        jstring move = env->NewStringUTF(moveStr.c_str());
+        env->SetObjectArrayElement(moveArray, i, move);
+        env->DeleteLocalRef(move);
+    }
+    
+    return moveArray;
+}
+
 }

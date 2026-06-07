@@ -159,7 +159,7 @@ shared: $(SHARED_LIB)
 	@echo "✅ Built shared library: native/$(SHARED_LIB)"
 
 clean-shared:
-	rm -f $(SHARED_OBJ) $(SHARED_LIB)
+	-del /Q /F $(subst /,\,$(SHARED_OBJ)) $(SHARED_LIB) 2>nul || rm -f $(SHARED_OBJ) $(SHARED_LIB)
 	@echo "🧹 Cleaned shared-library artifacts"
 
 # Build optimised shared JNI library  [O3 + march=native + NDEBUG]

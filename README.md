@@ -13,14 +13,19 @@ A **UCI-compatible chess engine** written in **C++**, with Python bindings, JNI 
 - Integrated Opening Book Support: Implemented PolyKey generation and integrated `komodo.bin` for high-performance opening theory.
 - `Web-based UI` for interactive gameplay and analysis
 - Java Native Interface (`JNI`) bindings for Java/Android integration
+- Visualized the Engine's Principal Variation table as Thought Process on the Web Interface 
 
-| Depth | Time Taken |
-| :--- | :--- |
-| 4 |  0.1 sec |
-| 5 | 0.3 sec |
-| 6 | 3 sec  |
+| Depth | Time Taken Per Move | Estimated Nodes |
+| :--- | :--- | :--- |
+| 4 |  0.03 sec | 50K |
+| 6 | 0.1 sec  | 200K  |
+| 8 | 0.6 sec  | 1.5M  |
+| 10 | 4 sec  |  8M |
 
 <sup>Averaged across multiple positions · Intel i5-6200U @ 2.40GHz · Single-threaded</sup>
+
+![Effective_Branching_Factor](images/Effective_Branching_Factor.png)
+
 ## Overview
 
 - **Protocol**: UCI (Universal Chess Interface)

@@ -39,4 +39,6 @@ public class ChessEngineJNI {
     public native boolean isStalemate();
     
     public native String getSideToMove();
+    
+    public native String[] getPrincipalVariation(int maxDepth);
 }

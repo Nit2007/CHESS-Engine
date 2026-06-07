@@ -22,6 +22,9 @@ export default function ChessBoardComponent() {
   const [legalDestinations, setLegalDestinations] = useState({});
   const [isEngineThinking, setIsEngineThinking] = useState(false);
   const [stats, setStats] = useState(null);
+  const pvGameRef = useRef(new Chess());
+  const [pvFen, setPvFen] = useState(pvGameRef.current.fen());
+  const animationIdRef = useRef(0);
   
   // Settings
   const [engineColor, setEngineColor] = useState('b'); // 'w', 'b', 'both', 'none'
@@ -71,6 +74,9 @@ export default function ChessBoardComponent() {
     setStats(null);
     setEvalComparison(null);
     setGameResult(null);
+    pvGameRef.current = new Chess();
+    setPvFen(pvGameRef.current.fen());
+    animationIdRef.current++;
     try {
       await api.resetEngine();
     } catch (e) {
@@ -86,6 +92,24 @@ export default function ChessBoardComponent() {
   function onPromotionCheck(sourceSquare, targetSquare) {
     const moves = gameRef.current.moves({ square: sourceSquare, verbose: true });
     return moves.some(m => m.to === targetSquare && m.promotion);
+  }
+
+  function formatEngineMove(game, moveStr) {
+    let from = moveStr.substring(0, 2);
+    let to = moveStr.substring(2, 4);
+    const promotion = moveStr.length > 4 ? moveStr.substring(4, 5) : undefined;
+
+    try {
+      const piece = game.get(from);
+      if (piece && piece.type === 'k') {
+        if (from === 'e1' && to === 'a1') to = 'c1';
+        if (from === 'e1' && to === 'h1') to = 'g1';
+        if (from === 'e8' && to === 'a8') to = 'c8';
+        if (from === 'e8' && to === 'h8') to = 'g8';
+      }
+    } catch (e) {}
+
+    return { from, to, promotion };
   }
 
   async function onPromotionPieceSelect(piece, promoteFromSquare, promoteToSquare) {
@@ -142,11 +166,63 @@ export default function ChessBoardComponent() {
       const response = await api.getBestMove(currentFen, depth);
       const endTime = performance.now();
       
+      try {
+        const pvData = await api.getPv(10);
+        console.log("PV Data received from backend:", pvData);
+        if (pvData && pvData.length > 0) {
+          console.log("Starting PV Animation with FEN:", currentFen);
+          animatePv(currentFen, pvData);
+        } else {
+          console.warn("PV Data was empty!");
+        }
+      } catch (e) {
+        console.error("Failed to fetch PV! Is the backend rebuilt and restarted?", e);
+      }
+      
       if (response && response.bestMove) {
-        const from = response.bestMove.substring(0, 2);
-        const to = response.bestMove.substring(2, 4);
-        const promotion = response.bestMove.length > 4 ? response.bestMove.substring(4, 5) : undefined;
-        
+        let { from, to, promotion } = formatEngineMove(gameRef.current, response.bestMove);
+        let finalBestMove = response.bestMove;
+
+        // Prevent premature draws
+        try {
+           const testGame = new Chess(gameRef.current.fen());
+           testGame.move({ from, to, promotion });
+           if (testGame.isThreefoldRepetition()) {
+               const engineEval = (currentTurn === 'w' ? response.evaluation : -response.evaluation) / 100;
+               if (Math.abs(engineEval) > 0.5) {
+                   console.warn("Premature draw detected! Engine Eval is", engineEval, "> 0.5. Forcing alternative move.");
+                   const legalMoves = gameRef.current.moves({ verbose: true });
+                   let bestAltMove = null;
+                   let bestAltScore = currentTurn === 'w' ? -Infinity : Infinity;
+                   
+                   for (const m of legalMoves) {
+                       const moveNotation = m.from + m.to + (m.promotion || '');
+                       if (moveNotation === finalBestMove || moveNotation === response.bestMove) continue;
+                       
+                       const tempGame = new Chess(gameRef.current.fen());
+                       tempGame.move(m);
+                       
+                       try {
+                           const score = await api.getEvaluation(tempGame.fen());
+                           if (currentTurn === 'w') {
+                               if (score > bestAltScore) { bestAltScore = score; bestAltMove = m; }
+                           } else {
+                               if (score < bestAltScore) { bestAltScore = score; bestAltMove = m; }
+                           }
+                       } catch (e) {}
+                   }
+                   
+                   if (bestAltMove) {
+                       finalBestMove = bestAltMove.from + bestAltMove.to + (bestAltMove.promotion || '');
+                       from = bestAltMove.from;
+                       to = bestAltMove.to;
+                       promotion = bestAltMove.promotion;
+                       console.log("Selected alternative move:", finalBestMove, "with static score:", bestAltScore);
+                   }
+               }
+           }
+        } catch (e) {}
+
         try {
           const move = gameRef.current.move({ from, to, promotion });
           if (move) {
@@ -202,6 +278,29 @@ export default function ChessBoardComponent() {
     }
   }
 
+  async function animatePv(startFen, moves) {
+    const currentId = ++animationIdRef.current;
+    pvGameRef.current.load(startFen);
+    setPvFen(startFen);
+    
+    await new Promise(r => setTimeout(r, 400));
+    
+    for (let i = 0; i < moves.length; i++) {
+        if (animationIdRef.current !== currentId) break;
+        const moveStr = moves[i];
+        if (!moveStr || moveStr === "0000") break;
+        
+        const { from, to, promotion } = formatEngineMove(pvGameRef.current, moveStr);
+        
+        try {
+           const moveRes = pvGameRef.current.move({ from, to, promotion });
+           if (!moveRes) break;
+           setPvFen(pvGameRef.current.fen());
+           await new Promise(r => setTimeout(r, 800));
+        } catch (e) { break; }
+    }
+  }
+
   function onDragStart(sourceSquare) {
     if (isEngineThinking || !isUserTurn()) return;
     const moves = gameRef.current.moves({ square: sourceSquare, verbose: true });
@@ -220,6 +319,17 @@ export default function ChessBoardComponent() {
 
   return (
     <div className="layout-container" style={{ display: 'flex', gap: '30px', alignItems: 'flex-start' }}>
+      <div className="sidebar pv-board" style={{ minWidth: '220px', padding: '15px', background: '#222', borderRadius: '8px' }}>
+          <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', color: '#aaa', textAlign: 'center' }}>Thought Process</h3>
+          <Chessboard
+            position={pvFen}
+            boardWidth={220}
+            arePiecesDraggable={false}
+            showNotation={false}
+            boardOrientation={engineColor === 'w' ? 'black' : 'white'}
+          />
+      </div>
+
       <div className="board-section">
         <div className="board-wrapper">
           <Chessboard

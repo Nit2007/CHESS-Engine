@@ -112,6 +112,11 @@ public class ChessEngineController {
         }
     }
 
+    @GetMapping("/pv")
+    public ResponseEntity<List<String>> getPrincipalVariation(@RequestParam(defaultValue = "50") int maxDepth) {
+        return ResponseEntity.ok(chessEngineService.getPrincipalVariation(maxDepth));
+    }
+
     // ------------------------------- simple request/response DTOs ---------------------------------------
     public static class FenRequest {
         private String fen;

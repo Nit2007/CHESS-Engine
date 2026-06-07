@@ -8,25 +8,46 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
 /**
- * NativeLibLoader extracts a packaged native library from classpath
- * `resources/native/` to a temporary file and loads it via System.load().
+ * NativeLibLoader loads the native chess engine library.
  *
- * Purpose: avoid requiring users to configure java.library.path manually
- * and to allow the Spring Boot jar to contain the native library.
+ * Strategy (in priority order):
+ *   1. Load directly from the C++ build output at {@code src/native/} —
+ *      this avoids the need to copy the DLL after every rebuild.
+ *   2. Fallback: extract from classpath {@code resources/native/} for
+ *      packaged/deployed scenarios.
  */
 public final class NativeLibLoader {
     private NativeLibLoader() {}
 
+    /**
+     * Relative path to the C++ build output directory.
+     * Resolved from the backend's working directory (backend/).
+     * backend/ → ../src/native/
+     */
+    private static final String SRC_NATIVE_DIR = "../src/native";
+
     public static void load(String baseName) {
         String mappedName = mapLibraryName(baseName);
+
+        // --- Strategy 1: load directly from the src build output ---
+        File srcLib = new File(SRC_NATIVE_DIR, mappedName);
+        if (srcLib.isFile()) {
+            System.out.println("[NativeLibLoader] Loading from src: " + srcLib.getAbsolutePath());
+            System.load(srcLib.getAbsolutePath());
+            return;
+        }
+
+        // --- Strategy 2: fallback to classpath resources ---
         String resourcePath = "/native/" + mappedName;
+        System.out.println("[NativeLibLoader] src lib not found, falling back to classpath: " + resourcePath);
 
         try (InputStream in = NativeLibLoader.class.getResourceAsStream(resourcePath)) {
             if (in == null) {
-                throw new UnsatisfiedLinkError("Native library not found in resources: " + resourcePath);
+                throw new UnsatisfiedLinkError(
+                        "Native library not found at " + srcLib.getAbsolutePath()
+                        + " nor in classpath resources: " + resourcePath);
             }
 
-            // Write to a temp file and load from there
             Path tempDir = Files.createTempDirectory("chess_native_");
             tempDir.toFile().deleteOnExit();
 

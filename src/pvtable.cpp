@@ -15,12 +15,12 @@ int GetHashLine(const int depth, s_board *pos) {
 		} else break;
 		move = ProbeHashMove(pos);	
 	}
-	
+	int line_count = count;
 	while(count-- > 0) {
         TakeMove(pos);
     }
 
-	return count;
+	return line_count;
 }
 
 void ClearHashTable(s_hashtable *table) {

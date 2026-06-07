@@ -20,5 +20,9 @@ export const api = {
     },
     resetEngine: async () => {
         await axios.post(`${API_BASE_URL}/reset`);
+    },
+    getPv: async (maxDepth = 10) => {
+        const response = await axios.get(`${API_BASE_URL}/pv?maxDepth=${maxDepth}`);
+        return response.data;
     }
 };
