@@ -19,4 +19,4 @@ RUN mvn clean package -DskipTests -Dnative.build=true
 # Expose the port (Render sets PORT env variable dynamically)
 EXPOSE 8080
 
-CMD ["java", "-jar", "target/CHESS-Engine-Backend-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-Xmx256m", "-XX:+UseSerialGC", "-jar", "target/CHESS-Engine-Backend-0.0.1-SNAPSHOT.jar"]

@@ -40,7 +40,7 @@ void UCI_Init() {
     ResetBoard(&g_board);
     Parse_FEN((char*)START_FEN, &g_board);
 
-    InitHashTable(g_board.hashtable, 64);
+    InitHashTable(g_board.hashtable, 16);
 
     g_info.quit = false;
     g_info.stopped = false;

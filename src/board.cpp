@@ -97,7 +97,7 @@ void ResetBoard(s_board* pos)
     pos->hashtable[0].hit = 0;
     pos->hashtable[0].cut = 0;
 
-    InitHashTable(pos->hashtable, 64) ;
+    InitHashTable(pos->hashtable, 16) ;
 }
 
 void Parse_FEN(char* fen,s_board*pos)
