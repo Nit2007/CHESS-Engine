@@ -51,3 +51,10 @@ services:
     envVars:
       - key: LICHESS_BOT_TOKEN
         sync: false
+  
+  - type: web
+    name: chess-backend
+    env: docker
+    plan: free
+    rootDir: .
+    dockerfilePath: ./backend/Dockerfile
