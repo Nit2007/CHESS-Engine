@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-const defaultRenderUrl = 'https://chess-backend.onrender.com/api/engine';
+const defaultRenderUrl = 'https://chess-engine-backend.onrender.com/api/engine';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (isLocal ? 'http://localhost:8080/api/engine' : defaultRenderUrl);
 
 export const api = {
