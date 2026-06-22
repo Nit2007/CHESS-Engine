@@ -1,19 +1,23 @@
 import axios from 'axios';
 
+// Flag to force using the local backend regardless of auto‑detect
+let forceLocal = false;
+export const setForceLocal = (value) => {
+  forceLocal = !!value;
+  // reset cached URL so the next request re‑evaluates the desired source
+  cachedBaseUrl = null;
+};
+
 const defaultRenderUrl = 'https://chess-engine-backend.onrender.com/api/engine';
 const LOCAL_URL = 'http://localhost:8080/api/engine';
 let cachedBaseUrl = null;
-// Determine which base URL to use, preferring local if reachable
+
+// Determine which base URL to use, preferring local if reachable or forced
 const getBaseUrl = async () => {
-  if (cachedBaseUrl) return cachedBaseUrl;
-  try {
-    // lightweight endpoint to test local backend
-    await axios.get(`${LOCAL_URL}/status`, { timeout: 500 });
-    cachedBaseUrl = LOCAL_URL;
-  } catch (e) {
-    cachedBaseUrl = defaultRenderUrl;
+  if (forceLocal) {
+    return LOCAL_URL;
   }
-  return cachedBaseUrl;
+  return defaultRenderUrl;
 };
 
 export const api = {

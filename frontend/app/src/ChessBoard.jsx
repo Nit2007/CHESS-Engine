@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Chessboard } from 'react-chessboard';
-import { api } from './engine/api';
+import { api, setForceLocal } from './engine/api';
 import { Chess } from 'chess.js';
 
 const moveSound = new Audio('https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Move.ogg');
@@ -40,6 +40,7 @@ export default function ChessBoardComponent() {
   const [moveNumber, setMoveNumber] = useState(0);
   const [npsData, setNpsData] = useState([]);
   const [evalComparison, setEvalComparison] = useState(null);
+  const [useLocal, setUseLocal] = useState(false);
 
   useEffect(() => {
     const checkConnection = async () => {
@@ -667,6 +668,31 @@ export default function ChessBoardComponent() {
               style={{ padding: '10px', cursor: 'pointer', background: 'linear-gradient(45deg, #FFD700, #F39C12)', color: '#000', border: '1px solid #E67E22', borderRadius: '4px', fontWeight: 'bold', boxShadow: '0 4px 15px rgba(243, 156, 18, 0.4)' }}
             >
               ⚡ Self Deploy <span style={{ fontSize: '11px', fontWeight: 'normal' }}>(For better performance)</span>
+            </button>
+
+            <button
+              onClick={() => {
+                const newVal = !useLocal;
+                setUseLocal(newVal);
+                setForceLocal(newVal);
+              }}
+              style={{
+                padding: '10px',
+                cursor: 'pointer',
+                background: useLocal
+                  ? 'linear-gradient(45deg, #4CAF50, #2E7D32)'
+                  : 'linear-gradient(45deg, #2196F3, #1565C0)',
+                color: 'white',
+                border: useLocal ? '1px solid #81C784' : '1px solid #64B5F6',
+                borderRadius: '4px',
+                fontWeight: 'bold',
+                boxShadow: useLocal
+                  ? '0 4px 15px rgba(76, 175, 80, 0.4)'
+                  : '0 4px 15px rgba(33, 150, 243, 0.4)',
+                transition: 'all 0.3s ease'
+              }}
+            >
+              {useLocal ? '🟢 Using Local Backend' : '🌐 Using Render Backend'}
             </button>
           </div>
 
