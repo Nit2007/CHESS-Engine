@@ -14,6 +14,7 @@ using namespace std;
 #define MAXGAMEMOVES 2048
 #define BOARD_SQ_NUM 120
 #define MAXDEPTH 64
+#define HASHTABLESIZE 16  // Transposition table size in MB
 #define INFINITE 30000
 #define ISMATE (INFINITE - MAXDEPTH)
 #define START_FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"

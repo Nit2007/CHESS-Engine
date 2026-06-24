@@ -89,15 +89,17 @@ void ResetBoard(s_board* pos)
 
     pos->poskey=0ULL;        //uint64_t poskey;
 
-    // Ensure hashtable fields are initialized to safe defaults
-    pos->hashtable[0].pTable = NULL;
-    pos->hashtable[0].numEntries = 0;
-    pos->hashtable[0].newWrite = 0;
-    pos->hashtable[0].overWrite = 0;
-    pos->hashtable[0].hit = 0;
-    pos->hashtable[0].cut = 0;
-
-    InitHashTable(pos->hashtable, 16) ;
+    // Only allocate hash table on first init; clear on subsequent resets
+    if (pos->hashtable[0].pTable == NULL) {
+        pos->hashtable[0].numEntries = 0;
+        pos->hashtable[0].newWrite = 0;
+        pos->hashtable[0].overWrite = 0;
+        pos->hashtable[0].hit = 0;
+        pos->hashtable[0].cut = 0;
+        InitHashTable(pos->hashtable, HASHTABLESIZE);
+    } else {
+        ClearHashTable(pos->hashtable);
+    }
 }
 
 void Parse_FEN(char* fen,s_board*pos)
