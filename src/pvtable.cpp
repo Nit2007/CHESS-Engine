@@ -66,6 +66,7 @@ void InitHashTable(s_hashtable *table, const int MB) {
 }
 void StoreHashMove(s_board* pos,  int move,int score,int depth,int flags)
 {
+    if (pos->hashtable->numEntries <= 0) return; // guard: table not initialised
     int index = (pos->poskey) % (pos->hashtable->numEntries);
     ASSERT(index>=0 && index<=(pos->hashtable->numEntries-1));
 
@@ -84,6 +85,7 @@ void StoreHashMove(s_board* pos,  int move,int score,int depth,int flags)
 
 int ProbeHashMove(const s_board* pos)
 {//Probing the TT for Move Ordering 
+    if (pos->hashtable->numEntries <= 0) return FALSE; // guard: table not initialised
     int index = (pos->poskey) % (pos->hashtable->numEntries);
     ASSERT(index >= 0 && index <= (pos->hashtable->numEntries - 1));
 
@@ -97,6 +99,7 @@ int ProbeHashMove(const s_board* pos)
 
 int ProbeHashMove(s_board* pos,int* move,int*score,int*depth,int*alpha,int*beta)
 {//Probing the TT for using the cached Evaluation 
+    if (pos->hashtable->numEntries <= 0) return FALSE; // guard: table not initialised
     int index = (pos->poskey) % (pos->hashtable->numEntries);
     ASSERT(index>=0 && index<=(pos->hashtable->numEntries-1));
 
