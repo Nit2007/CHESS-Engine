@@ -45,7 +45,7 @@ void UCI_Init() {
     g_info.quit = false;
     g_info.stopped = false;
     g_info.timeset = false;
-    g_info.depth = 6;
+    g_info.depth = 8;
     g_info.bestmove = 0;
 
     cerr << g_engineName << " by " << g_engineAuthor << " initialized\n";
@@ -252,7 +252,7 @@ void UCI_ParseGo(const string& command) {
                 } else if (timeForMove < 2500) {
                     g_info.depth = 5;
                 } else {
-                    g_info.depth = 6;
+                    g_info.depth = 7;
                 }
             }
         }
