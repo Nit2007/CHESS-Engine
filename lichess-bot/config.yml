@@ -4,8 +4,8 @@ token: "${LICHESS_TOKEN}"
 url: "https://lichess.org/"
 
 engine:
-  dir: "../CHESS-Engine/src"
-  working_dir: "../CHESS-Engine/src"
+  dir: "../src"
+  working_dir: "../src"
   name: "chess"
   protocol: "uci"
   ponder: true
