@@ -4,9 +4,9 @@ token: "API_TOKEN"
 url: "https://lichess.org/"
 
 engine:
-  dir: "./engines"
-  working_dir: "./engines"
-  name: "myengine"
+  dir: "../CHESS-Engine/src"
+  working_dir: "../CHESS-Engine/src"
+  name: "chess"
   protocol: "uci"
   ponder: true
 # #engine:
