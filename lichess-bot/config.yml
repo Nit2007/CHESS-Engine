@@ -1,6 +1,6 @@
 # Lichess bot configuration for homemade UCI engine
 
-token: "API_TOKEN"
+token: "${LICHESS_TOKEN}"
 url: "https://lichess.org/"
 
 engine:
