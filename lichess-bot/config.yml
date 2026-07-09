@@ -3,17 +3,23 @@
 token: "API_TOKEN"
 url: "https://lichess.org/"
 
-#engine:
-  #dir: "C:/Users/DELL/Desktop/CHESS ENGINE/CodeSpaces/CHESS-Engine/src"
-  #name: "myengine.exe"
 engine:
-  #dir: "./engine"        # relative path to the folder containing the engine
-  dir : "D:\\CHESS ENGINE\\RenderSEM_5\\CHESS-Engine\\lichess-bot\\engines"
-  name: "myengine.exe"       # name of the executable (no .exe on Linux)
-  #working_dir: ""
-  working_dir: "D:\\CHESS ENGINE\\RenderSEM_5\\CHESS-Engine\\lichess-bot\\engines"
+  dir: "./engines"
+  working_dir: "./engines"
+  name: "myengine"
   protocol: "uci"
   ponder: true
+# #engine:
+#   #dir: "C:/Users/DELL/Desktop/CHESS ENGINE/CodeSpaces/CHESS-Engine/src"
+#   #name: "myengine.exe"
+# engine:
+#   #dir: "./engine"        # relative path to the folder containing the engine
+#   dir : "D:\\CHESS ENGINE\\RenderSEM_5\\CHESS-Engine\\lichess-bot\\engines"
+#   name: "myengine.exe"       # name of the executable (no .exe on Linux)
+#   #working_dir: ""
+#   working_dir: "D:\\CHESS ENGINE\\RenderSEM_5\\CHESS-Engine\\lichess-bot\\engines"
+#   protocol: "uci"
+#   ponder: true
 
   polyglot:
     enabled: false
