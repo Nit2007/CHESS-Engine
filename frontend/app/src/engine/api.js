@@ -11,7 +11,15 @@ export const setForceLocal = (value) => {
 const defaultRenderUrl = 'https://chess-engine-backend.onrender.com/api/engine';
 const LOCAL_URL = 'http://localhost:8080/api/engine';
 let cachedBaseUrl = null;
-
+/*
+curl -X POST https://chess-engine-backend.onrender.com/api/engine/bestmove \
+     -H "Content-Type: application/json" \
+     -d '{
+           "fen":"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+           "depth":6,
+           "timeMs":500
+         }' -i
+ */
 // Determine which base URL to use, preferring local if reachable or forced
 const getBaseUrl = async () => {
   if (forceLocal) {
