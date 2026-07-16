@@ -75,3 +75,8 @@ gain hands-on experience with real-world algorithmic trade-offs.
 ### Opening Theory
 - [Polyglot format](http://hgm.nubati.net/book_format.html) — For polyKey Generation and opening book interoperability based on the standard Polyglot specifications.
 - [Komodo Chess](https://komodochess.com/) — This engine uses the komodo.bin Polyglot book provided by Komodo Chess to handle opening theory.
+
+
+https://analog-hors.github.io/site/magic-bitboards/
+https://github.com/maksimKorzh/bbc 
+https://www.chessprogramming.org/Magic_Bitboards
