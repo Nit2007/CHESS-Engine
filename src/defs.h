@@ -122,10 +122,24 @@ extern int sq120tosq64[BOARD_SQ_NUM];// 10 * 12
 extern void init120to64();
 extern void print12064();
 extern void PrintBitBoard(uint64_t bb);
-extern int SQ64(int sq120);
-extern int SQ120(int sq64);
-extern int countBitBoard(uint64_t bb);
-extern int popBitBoard(uint64_t *bb);
+inline int SQ64(int sq120) {
+    return sq120tosq64[sq120];
+}
+
+inline int SQ120(int sq64) {
+    return sq64tosq120[sq64];
+}
+
+inline int popBitBoard(uint64_t *bb) {
+    if (*bb == 0) return -1;
+    int index = __builtin_ctzll(*bb);
+    *bb &= (*bb - 1);
+    return index;
+}
+
+inline int countBitBoard(uint64_t bb) {
+    return __builtin_popcountll(bb);
+}
 extern uint64_t setBitMask[64];
 extern uint64_t clearBitMask[64];
 extern void initBitMask();
@@ -295,3 +309,9 @@ extern void IncrementEvalClearPiece(const int sq, const int pce, s_board* pos);
 extern void IncrementEvalMovePiece(const int from, const int to, const int pce, s_board* pos);
 extern void InitEval(s_board* pos);
 extern int  GetIncrementalEval(s_board* pos);
+
+// magic.cpp
+extern void InitMagicTables();
+extern uint64_t GetRookAttacks(int sq64, uint64_t occupied);
+extern uint64_t GetBishopAttacks(int sq64, uint64_t occupied);
+extern uint64_t GetQueenAttacks(int sq64, uint64_t occupied);

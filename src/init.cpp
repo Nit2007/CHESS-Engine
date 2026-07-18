@@ -73,4 +73,5 @@ void allinit()
     initBitMask();
     InitIsolatedMask();
     InitMvvLva(); 
+    InitMagicTables();
 }

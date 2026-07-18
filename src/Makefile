@@ -26,7 +26,8 @@ SRC = main.cpp \
       xboard.cpp \
       openingBook/polykey.cpp \
 	  openingBook/polybook.cpp \
-	  incrementalEval.cpp
+	  incrementalEval.cpp \
+      magic.cpp
 
 # Output executable name
 TARGET = chess

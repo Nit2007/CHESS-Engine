@@ -1,3 +1,4 @@
+##############Iterative Slider Perft results##############
 DELL@NITHISH MINGW64 /d/CHESS ENGINE/magic_board/chess-engine/src (magic_board)
 $ ./perft 5
 Starting perft suite...
@@ -71,3 +72,10 @@ Total Nodes: 10746536
 Total Time: 2034 ms
 OVERALL PERFORMANCE: 5.28 M NPS
 ======================================================== 
+
+
+
+
+
+
+######  After Magic_Board , avg NPS = 6.2 M NPS
