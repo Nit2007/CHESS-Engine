@@ -3,7 +3,7 @@
 
 Consider challenging me on [Deployed-Link](https://chess-engine-mu.vercel.app/)  ,  [Lichess](https://lichess.org/@/Sarun_2_7) !
 
-![High_Level_Representation](images/Chess-engine-high-level-representation-editedjpeg.JPG)
+![High_Level_Representation](images/Chess-engine-high-level-representation-editedjpeg.png)
 
 ## Key MileStones
 - Estimated Strength : `1900 - 2000 Elo` (Top 13% @Lichess)
