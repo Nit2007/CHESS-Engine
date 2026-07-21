@@ -252,25 +252,27 @@ void GenerateAllMoves(const s_board *pos ,  s_movelist *list)
 			sq = pos->piecelist[pce][pcenum];
 			ASSERT(SqOnBoard(sq));
 			//cout<<"Piece "<<pceChar[pce]<<" on "<<PrSq(sq)<<endl;
-			for(index=0;index<NumDir[pce];index++)
-			{
-				dir = PceDir[pce][index];
-				t_sq = sq + dir;
-				while(!SQOFFBOARD(t_sq))
-				{
+            int sq64 = SQ64(sq);
+            uint64_t attacks = 0ULL;
+            if (pce == WB || pce == BB) attacks = GetBishopAttacks(sq64, pos->occupied[BOTH]);
+            else if (pce == WR || pce == BR) attacks = GetRookAttacks(sq64, pos->occupied[BOTH]);
+            else attacks = GetQueenAttacks(sq64, pos->occupied[BOTH]);
 
-					if(pos->pieces[t_sq] !=EMPTY)
-					{
-						if( pieceCol[ pos->pieces[t_sq] ] == (pos->side^1))
-						{
-							AddCaptureMove(pos, MOVE(sq,t_sq,pos->pieces[t_sq],EMPTY,0), list);//cout<<"     Capture on "<<PrSq(t_sq)<<endl;
-						}
-						break;
-					}
-					AddQuietMove(pos, MOVE(sq,t_sq,EMPTY,EMPTY,0), list);//cout<<"     Attack on "<<PrSq(t_sq)<<endl;
-					t_sq += dir;
-				}
-			}
+            attacks &= ~pos->occupied[pos->side];
+            
+            uint64_t captures = attacks & pos->occupied[pos->side ^ 1];
+            uint64_t quiets = attacks & ~pos->occupied[BOTH];
+            
+            while (captures) {
+                int target64 = popBitBoard(&captures);
+                t_sq = SQ120(target64);
+                AddCaptureMove(pos, MOVE(sq, t_sq, pos->pieces[t_sq], EMPTY, 0), list);
+            }
+            while (quiets) {
+                int target64 = popBitBoard(&quiets);
+                t_sq = SQ120(target64);
+                AddQuietMove(pos, MOVE(sq, t_sq, EMPTY, EMPTY, 0), list);
+            }
 		}
         pce=LoopSlidePce[pceIndex++];
 	}
@@ -373,19 +375,19 @@ void GenerateAllCaptures(const s_board *pos, s_movelist *list) {
             sq = pos->piecelist[pce][pcenum];
             ASSERT(SqOnBoard(sq));
             
-            for (index = 0; index < NumDir[pce]; index++) {
-                dir = PceDir[pce][index];
-                t_sq = sq + dir;
-                
-                while (!SQOFFBOARD(t_sq)) {
-                    if (pos->pieces[t_sq] != EMPTY) {
-                        if (pieceCol[pos->pieces[t_sq]] == (pos->side^1)) {
-                            AddCaptureMove(pos, MOVE(sq, t_sq, pos->pieces[t_sq], EMPTY, 0), list);
-                        }
-                        break;
-                    }
-                    t_sq += dir;
-                }
+            int sq64 = SQ64(sq);
+            uint64_t attacks = 0ULL;
+            if (pce == WB || pce == BB) attacks = GetBishopAttacks(sq64, pos->occupied[BOTH]);
+            else if (pce == WR || pce == BR) attacks = GetRookAttacks(sq64, pos->occupied[BOTH]);
+            else attacks = GetQueenAttacks(sq64, pos->occupied[BOTH]);
+
+            attacks &= ~pos->occupied[pos->side];
+            attacks &= pos->occupied[pos->side ^ 1];
+            
+            while (attacks) {
+                int target64 = popBitBoard(&attacks);
+                t_sq = SQ120(target64);
+                AddCaptureMove(pos, MOVE(sq, t_sq, pos->pieces[t_sq], EMPTY, 0), list);
             }
         }
         pce = LoopSlidePce[pceIndex++];

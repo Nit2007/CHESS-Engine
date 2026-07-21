@@ -249,6 +249,9 @@ int EvalPosition(s_board* pos) {
         } else {
             score += PawnTable[SQ64(sq)];
         }
+        if (IsWhitePassedPawn(pos, sq)) {
+            score += PawnPassed[RanksBrd[sq]];
+        }
     }
     
     
@@ -294,6 +297,9 @@ int EvalPosition(s_board* pos) {
             score -= PawnTableEndgame[Mirror64[SQ64(sq)]];
         } else {
             score -= PawnTable[Mirror64[SQ64(sq)]];
+        }
+        if (IsBlackPassedPawn(pos, sq)) {
+            score -= PawnPassed[7 - RanksBrd[sq]];
         }
     }
     
@@ -347,6 +353,18 @@ int EvalPosition(s_board* pos) {
         score -= KingEndgame[Mirror64[SQ64(blackKingSq)]];
     } else {
         score -= KingOpening[Mirror64[SQ64(blackKingSq)]];
+    }
+
+    // Bishop pair bonus
+    if (pos->piecenum[WB] >= 2) score += BishopPair;
+    if (pos->piecenum[BB] >= 2) score -= BishopPair;
+
+    // Center control bonus
+    const int CenterSquares[] = { D4, E4, D5, E5 };
+    const int CenterBonus = 5;
+    for (int i = 0; i < 4; ++i) {
+        if (SqAttacked(CenterSquares[i], WHITE, pos)) score += CenterBonus;
+        if (SqAttacked(CenterSquares[i], BLACK, pos)) score -= CenterBonus;
     }
 
 

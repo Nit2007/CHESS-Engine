@@ -65,6 +65,7 @@ void ResetBoard(s_board* pos)
     for(int i=0;i<=2;i++)
     {
          pos->pawns[i]=0ULL;
+         pos->occupied[i]=0ULL;
          pos->bigpce[i]=0;
          pos->majpce[i]=0;
          pos->minpce[i]=0;
@@ -270,6 +271,8 @@ void UpdatePieceList(s_board*pos)
                 setBit(pos->pawns[BLACK],SQ64(i));
                 setBit(pos->pawns[BOTH],SQ64(i));
             }
+            setBit(pos->occupied[colour], SQ64(i));
+            setBit(pos->occupied[BOTH], SQ64(i));
         }
     }
 }
@@ -281,6 +284,7 @@ int CheckBoard(const s_board *pos)
     int t_minpce[3]={0,0,0};//int minpce[3];
     int t_material[3]={0,0,0};//int material[3];
     uint64_t t_pawns[3]={0ULL,0ULL,0ULL};//uint64_t pawns[3];
+    uint64_t t_occupied[3]={0ULL,0ULL,0ULL};
     int t_piecenum[13]={0,0,0,0,0,0,0,0,0,0,0,0,0};;// int piecenum[13];
     int sq120;
      
@@ -318,6 +322,8 @@ int CheckBoard(const s_board *pos)
                 setBit(t_pawns[BLACK],i);
                 setBit(t_pawns[BOTH],i);
             }
+            setBit(t_occupied[colour], i);
+            setBit(t_occupied[BOTH], i);
         }
     }
     for(int t_piece=WP;t_piece<=BK;t_piece++)//int piecelist[13][10];
@@ -328,6 +334,9 @@ int CheckBoard(const s_board *pos)
     ASSERT(countBitBoard(pos->pawns[WHITE]) == pos->piecenum[WP]);
     ASSERT(countBitBoard(pos->pawns[BLACK]) == pos->piecenum[BP]);
     ASSERT(countBitBoard(pos->pawns[BOTH]) == (pos->piecenum[WP] +  pos->piecenum[BP]) );
+    int total_pieces = 0;
+    for (int pce = WP; pce <= BK; pce++) total_pieces += pos->piecenum[pce];
+    ASSERT(countBitBoard(pos->occupied[BOTH]) == total_pieces);
     // CHECK BITBOARD SQUARES
     while(t_pawns[WHITE])
     {

@@ -46,7 +46,10 @@ void ClearPiece(const int sq,s_board* pos)
   {
      clearBit(pos->pawns[col] , SQ64(sq));
      clearBit(pos->pawns[BOTH] , SQ64(sq));
-  }// We want to remove a piece 'pce' from square 'sq'
+  }
+  clearBit(pos->occupied[col], SQ64(sq));
+  clearBit(pos->occupied[BOTH], SQ64(sq));
+// We want to remove a piece 'pce' from square 'sq'
 // Every piece type has a list of the squares it occupies (piecelist[pce])
 // and a count of how many there are (piecenum[pce])
 for(int index = 0; index < pos->piecenum[pce]; index++) {
@@ -86,6 +89,8 @@ void AddPiece(const int sq,s_board* pos,const int pce)
      setBit(pos->pawns[col] , SQ64(sq));
      setBit(pos->pawns[BOTH] , SQ64(sq));
   }
+  setBit(pos->occupied[col], SQ64(sq));
+  setBit(pos->occupied[BOTH], SQ64(sq));
   pos->piecelist[pce][pos->piecenum[pce]++]=sq;
   IncrementEvalAddPiece(sq, pce, pos);
 }
@@ -110,6 +115,10 @@ pos->pieces[to]=pce;
     setBit(pos->pawns[col] , SQ64(to));
      setBit(pos->pawns[BOTH] , SQ64(to));
   }
+  clearBit(pos->occupied[col], SQ64(from));
+  clearBit(pos->occupied[BOTH], SQ64(from));
+  setBit(pos->occupied[col], SQ64(to));
+  setBit(pos->occupied[BOTH], SQ64(to));
   for(int index = 0; index < pos->piecenum[pce]; index++) {
       if(pos->piecelist[pce][index] == from)
       {

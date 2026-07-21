@@ -77,6 +77,7 @@ struct s_board
     int pieces[120]; // BOARD_SQ_NUM // An array representing the board. Each element stores the piece on that square. Uses a 120-square representation to easily detect off-board squares.
 
     uint64_t pawns[3]; // Bitboards for pawns: [0] for WHITE, [1] for BLACK, [2] for BOTH. Used for fast pawn-specific operations like pawn attacks and moves.
+    uint64_t occupied[3]; // Occupancy bitboards for all pieces: [0] for WHITE, [1] for BLACK, [2] for BOTH.
     int king[3];       // Stores the square of the king for each side ([0] WHITE, [1] BLACK). [2] is not used.
 
     int bigpce[3];     // The number of "big" pieces (not pawns) for each side ([0] WHITE, [1] BLACK).
