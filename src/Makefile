@@ -142,7 +142,7 @@ SHARED_OBJ = $(patsubst %.cpp,%.so.o,$(SHARED_SRC))
 
 # Compiler flags for shared objects
 # SHARED_CXXFLAGS = $(CXXFLAGS) -I. $(JNI_INCLUDES) -fPIC
-SHARED_CXXFLAGS = $(CXXFLAGS) -O2 -DNDEBUG -march=native -funroll-loops -fomit-frame-pointer -I. $(JNI_INCLUDES) -fPIC
+SHARED_CXXFLAGS = $(CXXFLAGS) -O2 -DNDEBUG -mtune=generic -funroll-loops -fomit-frame-pointer -I. $(JNI_INCLUDES) -fPIC
 
 # Pattern rule to compile shared objects (keeps them separate from normal .o files)
 %.so.o: %.cpp $(HEADERS)
@@ -163,7 +163,7 @@ clean-shared:
 	@echo "🧹 Cleaned shared-library artifacts"
 
 # Build optimised shared JNI library  [O3 + march=native + NDEBUG]
-fast-shared: SHARED_CXXFLAGS += -O3 -DNDEBUG -march=native -funroll-loops -fomit-frame-pointer
+fast-shared: SHARED_CXXFLAGS += -O3 -DNDEBUG -funroll-loops -fomit-frame-pointer
 fast-shared: clean-shared shared
 	@echo "🚀 Built FAST shared library: native/$(SHARED_LIB)  [O3 + native + NDEBUG]"
 
