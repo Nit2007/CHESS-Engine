@@ -1,21 +1,20 @@
 # Sarun_2_7 (UCI Compatible Chess Engine)
-Consider challenging me on [Deployed-Link](https://chess-engine-mu.vercel.app/)  ,  [Lichess](https://lichess.org/@/Sarun_2_7)!
+  **I built a program that can play CHESS**. It is available through a web interface and runs as a Lichess Bot.
 
-A **UCI-compatible chess engine** written in **C++**, with Python bindings, JNI support, and a modern web frontend.
+Consider challenging me on [Deployed-Link](https://chess-engine-mu.vercel.app/)  ,  [Lichess](https://lichess.org/@/Sarun_2_7) !
+
+![High_Level_Representation](images/Chess-engine-high-level-representation-editedjpeg.png)
 
 ## Key MileStones
-- Estimated Strength : `1900 - 2000 Elo` (self assessed)
-- Parses FEN and setups board internally 
-- Legal Move Generation in a given position and core engine system
-- Achieved Search speed of `2.65M nodes/sec`, validated via Basic & Perft testing
-- Core Engine Logic & Optimizations implemented
+- Estimated Strength : `1900 - 2000 Elo` (Top 13% @Lichess)
+- Achieved Search speed of `2.7 Million positions/sec`, validated via Basic & Perft testing 
 - UCI compatible and deployed it as a `Lichess bot`
 - Integrated Opening Book Support: Implemented PolyKey generation and integrated `komodo.bin` for high-performance opening theory.
 - `Web-based UI` for interactive gameplay and analysis
 - Java Native Interface (`JNI`) bindings for Java/Android integration
-- Visualized the Engine's Principal Variation table as Thought Process on the Web Interface 
+- Visualized the Engine's expected continuation as `Thought Process` on the Web Interface.
 
-| Depth | Time Taken Per Move | Estimated Nodes |
+| Depth | Time Taken Per Move | Positions Evaluated |
 | :--- | :--- | :--- |
 | 4 |  0.03 sec | 50K |
 | 6 | 0.1 sec  | 200K  |
@@ -45,14 +44,15 @@ A **UCI-compatible chess engine** written in **C++**, with Python bindings, JNI 
   - Web browser (React + Vite frontend + Spring Boot (REST API Wrapper))
 
 
-## Optimizations
+## Optimizations on Search
 - Incremental Evaluation for lesser computation
-- Iterative deepening , Quiescence search , Alpha Beta Pruning
+- Iterative deepening , Quiescence search , `Alpha Beta Pruning`
 - Null Move Pruning and Late Move Reduction
-- Move Ordering at Game Tree
+- `Move Ordering` at Game Tree
 - Opening Book in Binary Format
 - Zobrist Hashing & Transposition table
 - Uses `JNI` to bridge C++ performance directly to Java (Spring Boot) with zero logic duplication while effectively pulling APIs.
+- `Magic Board` for sliding piece legal move generation
 
 ## Motivation
 
@@ -67,11 +67,12 @@ This project was built to deeply understand:
 Rather than using existing engines, everything was implemented from scratch to
 gain hands-on experience with real-world algorithmic trade-offs.
 
+
 ## Credits & Links
 - [Stockfish](https://stockfishchess.org/) for inspiration
 - [Chess Programming Wiki](https://www.chessprogramming.org/) — implementation references and techniques
 - BlueFever Software [(VICE)](https://github.com/bluefeversoft/vice) for the educational foundation and core Algorithms
 - [Chess Stack Exchange](https://chess.stackexchange.com/) -  For community expertise and technical problem-solving.
-### Opening Theory
 - [Polyglot format](http://hgm.nubati.net/book_format.html) — For polyKey Generation and opening book interoperability based on the standard Polyglot specifications.
 - [Komodo Chess](https://komodochess.com/) — This engine uses the komodo.bin Polyglot book provided by Komodo Chess to handle opening theory.
+- [Magic Board](https://analog-hors.github.io/site/magic-bitboards/) - For conceptual understanding and implementation of Magic Bit Board for sliding pieces

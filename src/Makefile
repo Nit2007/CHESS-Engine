@@ -15,8 +15,8 @@ SRC = main.cpp \
       movegen.cpp \
       validate.cpp \
       makemove.cpp \
-      perft.cpp \
-      test.cpp \
+      test/perft.cpp \
+      test/test.cpp \
 	  search.cpp \
 	  misc.cpp \
 	  pvtable.cpp \
@@ -26,7 +26,8 @@ SRC = main.cpp \
       xboard.cpp \
       openingBook/polykey.cpp \
 	  openingBook/polybook.cpp \
-	  incrementalEval.cpp
+	  incrementalEval.cpp \
+      magic.cpp
 
 # Output executable name
 TARGET = chess
@@ -46,7 +47,7 @@ $(TARGET): $(OBJ)
 	$(CXX) $(CXXFLAGS) -I. -c $< -o $@
 
 clean:
-	rm -f $(OBJ) $(TARGET)
+	rm -f $(OBJ) $(TARGET) $(PERFT_OBJ) $(PERFT_TARGET)
 	@echo "🧹 Cleaned up object files and executable"
 
 # Show compiler and source info
@@ -65,6 +66,17 @@ fast: clean $(TARGET)
 faster: CXXFLAGS += -O3
 faster: clean $(TARGET)
 	@echo "🚀 Built with O3 optimization"
+
+# Build perft testing suite executable
+PERFT_SRC = $(filter-out main.cpp,$(SRC)) test/perft_main.cpp
+PERFT_OBJ = $(PERFT_SRC:.cpp=.o)
+PERFT_TARGET = perft
+
+perft: CXXFLAGS += -O3
+perft: $(PERFT_OBJ)
+	$(CXX) $(CXXFLAGS) -o $(PERFT_TARGET) $^
+	@echo "🧪 Built perft suite executable: $(PERFT_TARGET)"
+	@echo "Run it with: ./$(PERFT_TARGET) [depth] [filename]"
 
 # Show git diff stats (files changed, lines added/deleted) + untracked files
 diff:

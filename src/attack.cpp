@@ -26,37 +26,22 @@ int SqAttacked(const int sq, const int side, const s_board *pos) {// sq - 120 ba
       if( (pce != OFFBOARD && pce != EMPTY) && IsKn(pce) && pieceCol[pce]==side)return true;
   }
 
-  for(int i=0;i<4;i++)
-  {//Queen ,Rook
-      dir=RkDir[i];
-      t_sq= sq + dir;
-      pce=pos->pieces[t_sq];
-      while(pce!=OFFBOARD)
-      {
-           if(pce!=EMPTY)
-           {
-               if(IsRQ(pce) && pieceCol[pce]==side)  return true;
-               break;
-           }
-          t_sq+=dir;
-          pce=pos->pieces[t_sq];
-      }
+    if (pos->piecenum[side == WHITE ? WR : BR] > 0 || pos->piecenum[side == WHITE ? WQ : BQ] > 0) {
+        uint64_t attacksRook = GetRookAttacks(SQ64(sq), pos->occupied[BOTH]) & pos->occupied[side];
+        while (attacksRook) {
+            int sq64 = popBitBoard(&attacksRook);
+            pce = pos->pieces[SQ120(sq64)];
+            if (IsRQ(pce)) return true;
+        }
     }
-    for(int i=0;i<4;i++)
-    {//Bishop
-      dir=BiDir[i];
-      t_sq= sq + dir;
-      pce=pos->pieces[t_sq];
-      while(pce!=OFFBOARD)
-      {
-           if(pce!=EMPTY)
-           {
-               if(IsBQ(pce) && pieceCol[pce]==side)  return true;
-               break;
-           }
-          t_sq+=dir;
-          pce=pos->pieces[t_sq];
-      }
+
+    if (pos->piecenum[side == WHITE ? WB : BB] > 0 || pos->piecenum[side == WHITE ? WQ : BQ] > 0) {
+        uint64_t attacksBishop = GetBishopAttacks(SQ64(sq), pos->occupied[BOTH]) & pos->occupied[side];
+        while (attacksBishop) {
+            int sq64 = popBitBoard(&attacksBishop);
+            pce = pos->pieces[SQ120(sq64)];
+            if (IsBQ(pce)) return true;
+        }
     }
     for(int i=0;i<8;i++)
     {
