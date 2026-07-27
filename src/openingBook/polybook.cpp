@@ -23,6 +23,7 @@ s_poly_book_entry* InitPolyBook(uint64_t &NumEntries){
 	candidates.push_back("src/openingBook/komodo.bin");
 	candidates.push_back("../openingBook/komodo.bin");
 	candidates.push_back("../src/openingBook/komodo.bin");
+	candidates.push_back("../chess-engine/src/openingBook/komodo.bin");
 
 	FILE *pFILE = nullptr;
 	const char *usedPath = nullptr;
@@ -114,9 +115,16 @@ static int PolyMoveToEngineMove(s_board* board, uint16_t polyMove){
 	int movedPce = board->pieces[from];
 	if(movedPce == EMPTY) return 0; // no piece to move
 
-	int captured = board->pieces[to]; // captured piece or EMPTY
-
 	int flag = 0;
+
+	// Polyglot encodes castling as "king takes own rook" (e1h1, e1a1, e8h8, e8a8) — translate to the real king move
+	if(movedPce == WK && from == E1 && to == H1) { to = G1; flag |= MFLAGCA; }
+	else if(movedPce == WK && from == E1 && to == A1) { to = C1; flag |= MFLAGCA; }
+	else if(movedPce == BK && from == E8 && to == H8) { to = G8; flag |= MFLAGCA; }
+	else if(movedPce == BK && from == E8 && to == A8) { to = C8; flag |= MFLAGCA; }
+
+	int captured = board->pieces[to]; // captured piece or EMPTY (read after possible castling 'to' fix-up)
+
 	// Pawn two-square push -> set pawn start flag
 	if(PiecePawn[movedPce]){
 		int fromRank = RanksBrd[from];
