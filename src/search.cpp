@@ -333,6 +333,25 @@ void SearchPosition(s_board* pos, s_searchinfo* info)
         // Store best move in search info for UCI
         info->bestmove = bestmove;
         info->bestscore = bestscore;
+        // Emit a UCI "info" line for this depth so GUIs/tools (fastchess,
+        // cutechess-cli, Lichess bridge) can read score/PV instead of
+        // reporting "no info line" and only seeing the final bestmove.
+        if (!info->stopped) {
+            long elapsed = GetTimeMs() - info->starttime;
+            if (elapsed < 0) elapsed = 0;
+            long nps = elapsed > 0 ? (info->nodes * 1000) / elapsed : info->nodes;
+
+            cout << "info depth " << depth
+                 << " score cp " << bestscore
+                 << " nodes " << info->nodes
+                 << " time " << elapsed
+                 << " nps " << nps
+                 << " pv";
+            for (int pvCount = 0; pvCount < pvmove; pvCount++) {
+                cout << " " << UCI_MoveToString(pos->pvarray[pvCount]);
+            }
+            cout << endl;
+        }
     }
 
     // Fallback: ensure we always have a legal move to play

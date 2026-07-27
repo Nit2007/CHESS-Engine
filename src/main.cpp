@@ -8,9 +8,6 @@ using namespace std;
 int main()
 {
     // Initialize the engine
-    allinit();
-    
-    // Automatically start in UCI mode for Lichess compatibility
     UCI_Init();
     UCI_Loop();
     

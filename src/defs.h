@@ -280,6 +280,7 @@ extern string UCI_GetEngineName();
 extern string UCI_GetEngineAuthor();
 extern void UCI_SetEngineInfo(const string& name, const string& author);
 extern bool UCI_IsActive();
+extern string UCI_MoveToString(int move);
 
 //xboard.cpp - xBoard Protocol Implementation
 extern void XBoard_Init();
